@@ -23,7 +23,7 @@
             border: 1px solid #404040;
         }
         .card-header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             padding: 25px;
             border: none;
@@ -47,11 +47,11 @@
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            border-left: 5px solid #3498db;
+            border-left: 5px solid #9b59b6;
             color: #e0e0e0;
         }
         .result-card {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             border-radius: 15px;
             padding: 20px;
@@ -75,7 +75,7 @@
             color: white;
         }
         .btn-calculate {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -87,18 +87,18 @@
         }
         .btn-calculate:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.4);
             color: white;
         }
         .btn-add {
-            background: #27ae60;
+            background: #8e44ad;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 50px;
         }
         .btn-add:hover {
-            background: #2ecc71;
+            background: #9b59b6;
         }
         .btn-remove {
             background: #c0392b;
@@ -127,7 +127,7 @@
             color: #e0e0e0;
         }
         .table-result th {
-            background: #2c3e50;
+            background: #8e44ad;
             color: white;
             border: none;
         }
@@ -151,15 +151,15 @@
         }
         .form-control:focus {
             background: #4a4a4a;
-            border-color: #3498db;
+            border-color: #9b59b6;
             color: white;
-            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+            box-shadow: 0 0 0 0.2rem rgba(155, 89, 182, 0.25);
         }
         .form-control::placeholder {
             color: #888;
         }
         .badge.bg-secondary {
-            background: #3498db !important;
+            background: #9b59b6 !important;
             color: white;
             font-size: 1rem;
         }
@@ -277,8 +277,6 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Сообщение об ошибке -->
                         <div id="error" class="alert alert-danger mt-3" style="display: none;"></div>
                     </div>
                 </div>
@@ -347,7 +345,7 @@
             }
         }
         
-        // Основной алгоритм (как в C++ коде)
+        // Основной алгоритм
         function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
@@ -373,7 +371,7 @@
                 products.push({ name, labor, material, profit });
             }
             
-            // Вычисление максимальных количеств (как в C++ коде)
+            // Вычисление максимальных количеств
             const maxCount = [];
             for (let i = 0; i < productCount; i++) {
                 const byHours = Math.floor(totalHours / products[i].labor);
@@ -384,7 +382,7 @@
             // Засекаем время
             const startTime = performance.now();
             
-            // Перебор (brute force)
+            // Перебор
             let best = new Array(productCount).fill(0);
             let current = new Array(productCount).fill(0);
             let maxProfit = 0;
