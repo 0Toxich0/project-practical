@@ -10,19 +10,20 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a1a1a;
             min-height: 100vh;
             padding: 30px 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         .calculator-card {
-            background: white;
+            background: #2d2d2d;
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             overflow: hidden;
+            border: 1px solid #404040;
         }
         .card-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             color: white;
             padding: 25px;
             border: none;
@@ -38,16 +39,19 @@
         }
         .card-body {
             padding: 30px;
+            background: #2d2d2d;
+            color: #e0e0e0;
         }
         .product-row {
-            background: #f8f9fa;
+            background: #363636;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
-            border-left: 5px solid #667eea;
+            border-left: 5px solid #3498db;
+            color: #e0e0e0;
         }
         .result-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             color: white;
             border-radius: 15px;
             padding: 20px;
@@ -57,6 +61,7 @@
             font-size: 1.2rem;
             padding: 10px;
             border-bottom: 1px solid rgba(255,255,255,0.2);
+            color: white;
         }
         .result-item:last-child {
             border-bottom: none;
@@ -67,9 +72,10 @@
             border-radius: 50px;
             font-size: 1.5rem;
             font-weight: bold;
+            color: white;
         }
         .btn-calculate {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
             color: white;
             border: none;
             padding: 15px 30px;
@@ -81,39 +87,92 @@
         }
         .btn-calculate:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(52, 152, 219, 0.3);
             color: white;
         }
         .btn-add {
-            background: #28a745;
+            background: #27ae60;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 50px;
         }
+        .btn-add:hover {
+            background: #2ecc71;
+        }
         .btn-remove {
-            background: #dc3545;
+            background: #c0392b;
             color: white;
             border: none;
             padding: 5px 15px;
             border-radius: 50px;
         }
+        .btn-remove:hover {
+            background: #e74c3c;
+        }
         .checks-info {
-            background: #e9ecef;
+            background: #363636;
             border-radius: 10px;
             padding: 15px;
             text-align: center;
             font-size: 1.1rem;
+            color: #e0e0e0;
+            border: 1px solid #404040;
         }
         .table-result {
-            background: white;
+            background: #2d2d2d;
             border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            color: #e0e0e0;
         }
         .table-result th {
-            background: #667eea;
+            background: #2c3e50;
             color: white;
+            border: none;
+        }
+        .table-result td {
+            background: #363636;
+            color: #e0e0e0;
+            border-color: #404040;
+        }
+        .table-result .table-success {
+            background: #27ae60 !important;
+            color: white !important;
+        }
+        .form-label {
+            color: #e0e0e0;
+            font-weight: 500;
+        }
+        .form-control {
+            background: #404040;
+            border: 1px solid #4a4a4a;
+            color: #e0e0e0;
+        }
+        .form-control:focus {
+            background: #4a4a4a;
+            border-color: #3498db;
+            color: white;
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        .form-control::placeholder {
+            color: #888;
+        }
+        .badge.bg-secondary {
+            background: #3498db !important;
+            color: white;
+            font-size: 1rem;
+        }
+        h3, h5 {
+            color: #e0e0e0;
+        }
+        .text-warning {
+            color: #f1c40f !important;
+        }
+        .alert-danger {
+            background: #c0392b;
+            color: white;
+            border: none;
         }
     </style>
 </head>
