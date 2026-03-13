@@ -297,6 +297,12 @@
             color: white !important;
             font-weight: bold;
         }
+
+        .table-result .table-danger {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;
+            color: white !important;
+            font-weight: bold;
+        }
         
         .form-label {
             color: #e0e0e0;
@@ -334,6 +340,18 @@
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
         }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
+            font-size: 1.1rem;
+            padding: 10px 20px !important;
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;
+            font-size: 1.1rem;
+            padding: 10px 20px !important;
+        }
         
         h3, h5 {
             color: #e0e0e0;
@@ -352,6 +370,31 @@
             border: none;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .form-check-input {
+            background-color: rgba(64, 64, 64, 0.8);
+            border-color: #9b59b6;
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: #9b59b6;
+            border-color: #9b59b6;
+        }
+
+        .form-check-label {
+            color: #e0e0e0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .mode-selector {
+            background: rgba(54, 54, 54, 0.5);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #9b59b6;
         }
         
         #results {
@@ -401,6 +444,25 @@
                                 <input type="number" id="totalMaterial" class="form-control form-control-lg" value="100" min="1">
                             </div>
                         </div>
+
+                        <!-- Режим расчёта -->
+                        <div class="mode-selector">
+                            <label class="form-label fw-bold mb-3">Режим расчёта:</label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMax" value="max" checked>
+                                    <label class="form-check-label" for="modeMax">
+                                        <i class="bi bi-arrow-up-circle-fill text-success me-1"></i> Максимизация прибыли
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMin" value="min">
+                                    <label class="form-check-label" for="modeMin">
+                                        <i class="bi bi-arrow-down-circle-fill text-danger me-1"></i> Минимизация прибыли
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- Продукты -->
                         <h3 class="mb-3"><i class="bi bi-box-seam me-2"></i>Продукты</h3>
@@ -432,14 +494,19 @@
                             <div class="result-card mb-4">
                                 <div class="row align-items-center">
                                     <div class="col-md-8">
+                                        <div class="mb-3">
+                                            <span class="badge bg-success" id="modeBadge">
+                                                <i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль
+                                            </span>
+                                        </div>
                                         <div id="resultProducts" class="result-item"></div>
                                     </div>
                                     <div class="col-md-4 text-center">
                                         <div class="profit-badge">
                                             <i class="bi bi-currency-ruble me-1"></i>
-                                            <span id="maxProfit">0</span>
+                                            <span id="optimalProfit">0</span>
                                         </div>
-                                        <div class="mt-2">максимальная прибыль</div>
+                                        <div class="mt-2" id="profitLabel">максимальная прибыль</div>
                                     </div>
                                 </div>
                             </div>
@@ -551,6 +618,7 @@
         function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
+            const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
             
             if (totalHours <= 0 || totalMaterial <= 0) {
                 showError('Ресурсы должны быть положительными числами');
@@ -587,7 +655,7 @@
             // Перебор
             let best = new Array(productCount).fill(0);
             let current = new Array(productCount).fill(0);
-            let maxProfit = 0;
+            let optimalProfit = (mode === 'max') ? 0 : Infinity;
             let checks = 0;
             
             function bruteForce(index) {
@@ -601,9 +669,18 @@
                         profit += current[i] * products[i].profit;
                     }
                     
-                    if (hours <= totalHours && material <= totalMaterial && profit > maxProfit) {
-                        maxProfit = profit;
-                        best = [...current];
+                    if (hours <= totalHours && material <= totalMaterial) {
+                        if (mode === 'max') {
+                            if (profit > optimalProfit) {
+                                optimalProfit = profit;
+                                best = [...current];
+                            }
+                        } else {
+                            if (profit < optimalProfit) {
+                                optimalProfit = profit;
+                                best = [...current];
+                            }
+                        }
                     }
                     return;
                 }
@@ -622,7 +699,19 @@
             // Отображение результатов
             document.getElementById('results').style.display = 'block';
             document.getElementById('error').style.display = 'none';
-            document.getElementById('maxProfit').innerText = maxProfit;
+            
+            // Обновление UI в зависимости от режима
+            if (mode === 'max') {
+                document.getElementById('modeBadge').innerHTML = '<i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль';
+                document.getElementById('modeBadge').className = 'badge bg-success mb-3';
+                document.getElementById('profitLabel').innerText = 'максимальная прибыль';
+            } else {
+                document.getElementById('modeBadge').innerHTML = '<i class="bi bi-arrow-down-circle-fill me-1"></i>Минимальная прибыль';
+                document.getElementById('modeBadge').className = 'badge bg-danger mb-3';
+                document.getElementById('profitLabel').innerText = 'минимальная прибыль';
+            }
+            
+            document.getElementById('optimalProfit').innerText = optimalProfit;
             document.getElementById('checksCount').innerText = checks;
             document.getElementById('calcTime').innerText = calcTimeMs;
             
@@ -636,13 +725,14 @@
             // Таблица деталей
             let tableHtml = '';
             for (let i = 0; i < productCount; i++) {
+                const rowClass = (mode === 'max') ? 'table-success' : 'table-danger';
                 tableHtml += `
                     <tr>
                         <td><strong>${products[i].name}</strong></td>
                         <td>${products[i].labor}</td>
                         <td>${products[i].material}</td>
                         <td>${products[i].profit}</td>
-                        <td class="table-success fw-bold">${best[i]}</td>
+                        <td class="${rowClass} fw-bold">${best[i]}</td>
                     </tr>
                 `;
             }
