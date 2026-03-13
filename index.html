@@ -269,7 +269,7 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            color: #e0e0e0;
+            color: #ffffff;
             border: 1px solid #9b59b6;
         }
         
@@ -285,13 +285,27 @@
         
         .table-result td {
             background: rgba(54, 54, 54, 0.9);
-            color: #e0e0e0;
+            color: #ffffff;
             border-color: #9b59b6;
             padding: 12px;
+            font-weight: 500;
         }
         
         .table-result tr:hover td {
-            background: rgba(64, 64, 64, 0.95);
+            background: rgba(155, 89, 182, 0.3) !important;
+            color: #ffffff !important;
+        }
+        
+        .table-result .table-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .table-result .table-danger {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;
+            color: white !important;
+            font-weight: bold;
         }
         
         .form-label {
@@ -429,11 +443,16 @@
             padding: 20px;
             margin: 15px 0;
             border: 1px solid #9b59b6;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
         }
-
-        canvas {
-            max-height: 300px;
+        
+        .chart-container canvas {
+            flex: 1;
             width: 100% !important;
+            height: 100% !important;
+            max-height: none;
         }
 
         .complexity-info {
@@ -453,11 +472,12 @@
             margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.3s;
+            color: #ffffff;
         }
 
         .history-item:hover {
             transform: translateX(5px);
-            background: rgba(74, 74, 74, 0.9);
+            background: rgba(155, 89, 182, 0.3);
             border-color: #b07cc6;
         }
 
@@ -468,6 +488,7 @@
             padding: 10px;
             background: rgba(0,0,0,0.2);
             border-radius: 10px;
+            color: #ffffff;
         }
 
         .resource-bar {
@@ -482,6 +503,17 @@
             height: 100%;
             background: linear-gradient(90deg, #9b59b6, #8e44ad);
             transition: width 0.5s;
+        }
+        
+        /* Фикс для подсказок Chart.js */
+        .chart-container canvas {
+            display: block;
+        }
+        
+        /* Стили для чисел в таблице */
+        .table-result td {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
     </style>
 </head>
@@ -635,7 +667,7 @@
                                 </button>
                             </div>
 
-                            <!-- Графики -->
+                            <!-- Графики (равные по размеру) -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="chart-container">
@@ -656,12 +688,12 @@
                                     <table class="table table-bordered table-hover table-result" id="detailsTable">
                                         <thead>
                                             <tr>
-                                                <th>Продукт</th>
-                                                <th>Труд (ч/ед)</th>
-                                                <th>Материал (кг/ед)</th>
-                                                <th>Прибыль (₽/ед)</th>
-                                                <th>Эффективность</th>
-                                                <th>Оптимум (ед)</th>
+                                                <th>ПРОДУКТ</th>
+                                                <th>ТРУД (Ч/ЕД)</th>
+                                                <th>МАТЕРИАЛ (КГ/ЕД)</th>
+                                                <th>ПРИБЫЛЬ (₽/ЕД)</th>
+                                                <th>ЭФФЕКТИВНОСТЬ</th>
+                                                <th>ОПТИМУМ (ЕД)</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tableBody">
@@ -776,30 +808,24 @@
         
         // Загрузка примера
         function loadExample() {
-            document.getElementById('totalHours').value = 200;
-            document.getElementById('totalMaterial').value = 150;
+            document.getElementById('totalHours').value = 60;
+            document.getElementById('totalMaterial').value = 50;
             
-            productCount = 3;
+            productCount = 2;
             renderProducts();
             
             setTimeout(() => {
-                // Столы
-                document.getElementById('name0').value = 'Стол';
-                document.getElementById('labor0').value = 5;
-                document.getElementById('material0').value = 8;
-                document.getElementById('profit0').value = 120;
+                // Продукт 1 (P1)
+                document.getElementById('name0').value = 'P1';
+                document.getElementById('labor0').value = 1;
+                document.getElementById('material0').value = 4;
+                document.getElementById('profit0').value = 48;
                 
-                // Стулья
-                document.getElementById('name1').value = 'Стул';
-                document.getElementById('labor1').value = 2;
-                document.getElementById('material1').value = 3;
-                document.getElementById('profit1').value = 45;
-                
-                // Шкафы
-                document.getElementById('name2').value = 'Шкаф';
-                document.getElementById('labor2').value = 10;
-                document.getElementById('material2').value = 15;
-                document.getElementById('profit2').value = 250;
+                // Продукт 2 (P2)
+                document.getElementById('name1').value = 'P2';
+                document.getElementById('labor1').value = 5;
+                document.getElementById('material1').value = 2;
+                document.getElementById('profit1').value = 28;
                 
                 updateComplexity();
             }, 100);
@@ -1040,12 +1066,14 @@
                         label: 'Использовано',
                         data: [usedHours, usedMaterial],
                         backgroundColor: ['rgba(155, 89, 182, 0.8)', 'rgba(46, 204, 113, 0.8)'],
-                        borderRadius: 10
+                        borderRadius: 10,
+                        barPercentage: 0.6
                     }, {
                         label: 'Остаток',
                         data: [totalHours - usedHours, totalMaterial - usedMaterial],
                         backgroundColor: ['rgba(155, 89, 182, 0.3)', 'rgba(46, 204, 113, 0.3)'],
-                        borderRadius: 10
+                        borderRadius: 10,
+                        barPercentage: 0.6
                     }]
                 },
                 options: {
@@ -1053,17 +1081,22 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { 
-                            labels: { color: '#e0e0e0' }
+                            labels: { color: '#ffffff', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            bodyColor: '#ffffff',
+                            backgroundColor: 'rgba(0,0,0,0.8)'
                         }
                     },
                     scales: {
                         y: {
                             grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#e0e0e0' }
+                            ticks: { color: '#ffffff', font: { size: 11 } },
+                            beginAtZero: true
                         },
                         x: {
                             grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#e0e0e0' }
+                            ticks: { color: '#ffffff', font: { size: 11 } }
                         }
                     }
                 }
@@ -1083,8 +1116,10 @@
                         data: efficiencyData,
                         backgroundColor: [
                             '#9b59b6', '#3498db', '#e74c3c', '#f1c40f', 
-                            '#2ecc71', '#e67e22', '#1abc9c', '#c0392b'
-                        ]
+                            '#2ecc71', '#e67e22', '#1abc9c', '#c0392b',
+                            '#95a5a6', '#34495e'
+                        ],
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -1093,24 +1128,32 @@
                     plugins: {
                         legend: { 
                             position: 'right',
-                            labels: { color: '#e0e0e0' }
+                            labels: { color: '#ffffff', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            bodyColor: '#ffffff',
+                            backgroundColor: 'rgba(0,0,0,0.8)'
                         }
                     }
                 }
             });
         }
         
-        // Экспорт в CSV
+        // Экспорт в CSV (исправленная версия без BOM)
         function exportToCSV() {
             const products = getProductsData();
             const best = getCurrentBest();
+            
+            // Добавляем BOM для правильного отображения кириллицы в Excel
+            const BOM = '\uFEFF';
             
             let csv = 'Продукт,Труд,Материал,Прибыль,Оптимум\n';
             products.forEach((p, i) => {
                 csv += `${p.name},${p.labor},${p.material},${p.profit},${best[i]}\n`;
             });
             
-            downloadFile(csv, 'optimization_result.csv', 'text/csv;charset=utf-8;');
+            // Добавляем BOM в начало файла
+            downloadFile(BOM + csv, 'optimization_result.csv', 'text/csv;charset=utf-8;');
         }
         
         // Экспорт в JSON
