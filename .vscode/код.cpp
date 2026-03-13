@@ -179,7 +179,7 @@ int main() {
                 return;
             }
             
-            // Для максимизации пробуем сначала большие значения
+            // Для максимизации сначала большие значения
             for (int count = maxCount[index]; count >= 0; count--) {
                 current[index] = count;
                 bruteForce(index + 1, 
@@ -188,7 +188,7 @@ int main() {
                           profit + (long long)count * p[index].profit);
             }
         } else {
-            // Для минимизации - стандартный порядок
+            // Для минимизации стандартный порядок
             for (int count = 0; count <= maxCount[index]; count++) {
                 current[index] = count;
                 bruteForce(index + 1,
@@ -258,7 +258,7 @@ int main() {
     }
     cout << "]\n";
     
-    // Статистика алгоритма (как на веб-странице)
+    // Статистика алгоритма
     cout << "\n";
     printLine('=', 60);
     cout << "                     СТАТИСТИКА РАСЧЁТА                    \n";
@@ -272,7 +272,7 @@ int main() {
     cout << "║  ПРОВЕРЕНО КОМБИНАЦИЙ: ";
     cout << left << setw(36) << checks << "║\n";
     
-    // Время расчёта (в C++ сложно измерить точно, но можно оценить)
+    // Время расчёта
     cout << "║  ВРЕМЯ РАСЧЁТА:         ";
     cout << left << setw(36) << "≈ 10-50 мс (C++)" << "║\n";
     
@@ -290,7 +290,7 @@ int main() {
     printLine('=', 60);
     cout << "\n";
     
-    // Таблица детального расчёта (как на веб-странице)
+    // Таблица детального расчёта
     cout << left 
          << setw(12) << "ПРОДУКТ"
          << setw(15) << "ТРУД (Ч/ЕД)"
@@ -310,11 +310,11 @@ int main() {
              << setw(15) << p[i].profit
              << setw(15) << fixed << setprecision(2) << efficiency;
         
-        // Подсветка оптимума (как на веб-странице)
+        // Подсветка оптимума
         if (mode == 1) {
-            cout << "\033[1;32m" << best[i] << "\033[0m\n"; // Зелёный для максимума
+            cout << "\033[1;32m" << best[i] << "\033[0m\n"; // максимум
         } else {
-            cout << "\033[1;31m" << best[i] << "\033[0m\n"; // Красный для минимума
+            cout << "\033[1;31m" << best[i] << "\033[0m\n"; // минимум
         }
     }
     
@@ -324,7 +324,7 @@ int main() {
     for (int i = 0; i < N; i++) {
         double efficiency = (double)p[i].profit / (p[i].labor + p[i].material);
         string bar;
-        int barLength = (int)(efficiency * 2); // Для визуализации
+        int barLength = (int)(efficiency * 2); // Визуализация
         if (barLength > 20) barLength = 20;
         for (int j = 0; j < barLength; j++) bar += "█";
         
