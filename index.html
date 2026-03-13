@@ -10,8 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Excel Export Library -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- SheetJS для экспорта в XLSX -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         body {
             background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 50%, #16213e 100%);
@@ -254,16 +254,76 @@
             box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
         }
         
+        /* Выровненные блоки статистики */
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stats-container .col-md-4 {
+            flex: 1;
+            padding: 0;
+        }
+        
         .checks-info {
             background: linear-gradient(135deg, #363636 0%, #404040 100%);
             border-radius: 15px;
-            padding: 18px;
+            padding: 20px 15px;
             text-align: center;
             font-size: 1.1rem;
             color: #e0e0e0;
             border: 1px solid #9b59b6;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             backdrop-filter: blur(5px);
+            height: 130px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .checks-info:hover {
+            border-color: #9b59b6;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.3);
+        }
+        
+        .checks-info i {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: #9b59b6;
+        }
+        
+        .checks-info strong {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .checks-info .value-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 2px;
+        }
+        
+        .checks-info .value-container span {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            text-shadow: 0 2px 10px rgba(155, 89, 182, 0.5);
+            line-height: 1.2;
+        }
+        
+        .checks-info .value-container small {
+            font-size: 1rem;
+            color: #b0b0b0;
+            margin-left: 2px;
         }
         
         .table-result {
@@ -271,7 +331,7 @@
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            color: #e0e0e0;
+            color: #ffffff;
             border: 1px solid #9b59b6;
         }
         
@@ -287,25 +347,22 @@
         
         .table-result td {
             background: rgba(54, 54, 54, 0.9);
-            color: #e0e0e0;
+            color: #ffffff;
             border-color: #9b59b6;
             padding: 12px;
+            font-weight: 500;
         }
         
+        /* Убираем подсветку при наведении */
         .table-result tr:hover td {
-            background: rgba(64, 64, 64, 0.95);
+            background: rgba(54, 54, 54, 0.9);
+            color: #ffffff;
         }
         
-        .table-result .table-success {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
-            color: white !important;
+        /* Стиль для ячейки оптимума (без подсветки, просто текст) */
+        .table-result .optimum-cell {
             font-weight: bold;
-        }
-
-        .table-result .table-danger {
-            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;
-            color: white !important;
-            font-weight: bold;
+            color: #ffffff;
         }
         
         .form-label {
@@ -419,38 +476,25 @@
         .bi {
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
         }
-        
-        .col-md-6:hover .checks-info {
-            border-color: #9b59b6;
-            transform: translateY(-2px);
-        }
 
         .export-buttons {
             display: flex;
             gap: 10px;
-            margin: 15px 0;
+            margin: 20px 0;
         }
 
         .export-buttons .btn {
             flex: 1;
             font-size: 1rem;
             padding: 12px;
-        }
-
-        .btn-excel {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 60px;
+            border-radius: 10px;
             font-weight: 600;
             transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
         }
-
-        .btn-excel:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5);
+        
+        .export-buttons .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
         .chart-container {
@@ -459,11 +503,16 @@
             padding: 20px;
             margin: 15px 0;
             border: 1px solid #9b59b6;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
         }
-
-        canvas {
-            max-height: 300px;
+        
+        .chart-container canvas {
+            flex: 1;
             width: 100% !important;
+            height: 100% !important;
+            max-height: none;
         }
 
         .complexity-info {
@@ -473,6 +522,7 @@
             padding: 10px;
             margin-bottom: 15px;
             font-size: 1rem;
+            color: #ffffff;
         }
 
         .history-item {
@@ -483,11 +533,12 @@
             margin-bottom: 10px;
             cursor: pointer;
             transition: all 0.3s;
+            color: #ffffff;
         }
 
         .history-item:hover {
             transform: translateX(5px);
-            background: rgba(74, 74, 74, 0.9);
+            background: rgba(155, 89, 182, 0.3);
             border-color: #b07cc6;
         }
 
@@ -498,6 +549,7 @@
             padding: 10px;
             background: rgba(0,0,0,0.2);
             border-radius: 10px;
+            color: #ffffff;
         }
 
         .resource-bar {
@@ -512,6 +564,33 @@
             height: 100%;
             background: linear-gradient(90deg, #9b59b6, #8e44ad);
             transition: width 0.5s;
+        }
+        
+        /* Фикс для подсказок Chart.js */
+        .chart-container canvas {
+            display: block;
+        }
+        
+        /* Стили для чисел в таблице */
+        .table-result td {
+            color: #ffffff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        /* Убираем подчеркивание у ссылок */
+        a {
+            text-decoration: none;
+        }
+        
+        /* Дополнительное выравнивание для мобильных */
+        @media (max-width: 768px) {
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            .checks-info {
+                height: 110px;
+            }
         }
     </style>
 </head>
@@ -530,11 +609,11 @@
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Общее количество часов:</label>
-                                <input type="number" id="totalHours" class="form-control form-control-lg" value="200" min="1" onchange="updateComplexity()">
+                                <input type="number" id="totalHours" class="form-control form-control-lg" value="60" min="1" onchange="updateComplexity()">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-bold">Общее количество материала (кг):</label>
-                                <input type="number" id="totalMaterial" class="form-control form-control-lg" value="150" min="1" onchange="updateComplexity()">
+                                <input type="number" id="totalMaterial" class="form-control form-control-lg" value="50" min="1" onchange="updateComplexity()">
                             </div>
                         </div>
 
@@ -561,21 +640,16 @@
                         <h3 class="mb-3"><i class="bi bi-box-seam me-2"></i>Продукты</h3>
                         <div id="productsContainer"></div>
                         
-                        <!-- Кнопки управления -->
+                        <!-- Кнопки управления (без кнопки "Загрузить пример") -->
                         <div class="row mb-4">
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <button class="btn btn-add w-100" onclick="addProduct()">
                                     <i class="bi bi-plus-circle me-2"></i>Добавить продукт
                                 </button>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-6">
                                 <button class="btn btn-remove w-100" onclick="removeProduct()">
                                     <i class="bi bi-dash-circle me-2"></i>Удалить последний
-                                </button>
-                            </div>
-                            <div class="col-md-4">
-                                <button class="btn btn-info w-100" onclick="loadExample()">
-                                    <i class="bi bi-lightbulb me-2"></i>Загрузить пример
                                 </button>
                             </div>
                         </div>
@@ -618,48 +692,66 @@
                             <!-- Использование ресурсов -->
                             <div class="resource-usage">
                                 <div style="flex: 1;">
-                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">200</span></div>
+                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">60</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="hoursBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                                 <div style="flex: 1; margin-left: 15px;">
-                                    <div>Материалы: <span id="usedMaterial">0</span> / <span id="totalMaterialDisplay">150</span></div>
+                                    <div>Материалы: <span id="usedMaterial">0</span> / <span id="totalMaterialDisplay">50</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="materialBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div class="row">
+                            <!-- Выровненные блоки статистики -->
+                            <div class="stats-container">
                                 <div class="col-md-4">
                                     <div class="checks-info">
-                                        <i class="bi bi-diagram-3 me-2"></i>
-                                        <strong>Проверено комбинаций:</strong> <span id="checksCount">0</span>
+                                        <i class="bi bi-diagram-3"></i>
+                                        <strong>ПРОВЕРЕНО КОМБИНАЦИЙ</strong>
+                                        <div class="value-container">
+                                            <span id="checksCount">0</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="checks-info">
-                                        <i class="bi bi-hourglass-split me-2"></i>
-                                        <strong>Время расчёта:</strong> <span id="calcTime">0</span> мс
+                                        <i class="bi bi-hourglass-split"></i>
+                                        <strong>ВРЕМЯ РАСЧЁТА</strong>
+                                        <div class="value-container">
+                                            <span id="calcTime">0</span>
+                                            <small>мс</small>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="checks-info">
-                                        <i class="bi bi-lightning-charge me-2"></i>
-                                        <strong>Ускорение:</strong> <span id="speedup">0</span>x
+                                        <i class="bi bi-lightning-charge"></i>
+                                        <strong>УСКОРЕНИЕ</strong>
+                                        <div class="value-container">
+                                            <span id="speedup">0</span>
+                                            <small>x</small>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Кнопка экспорта в Excel -->
+                            <!-- Кнопки экспорта -->
                             <div class="export-buttons">
-                                <button class="btn-excel w-100" onclick="exportToExcel()">
-                                    <i class="bi bi-file-earmark-excel me-2"></i>Экспорт в Excel (.xlsx)
+                                <button class="btn btn-success" onclick="exportToXLSX()">
+                                    <i class="bi bi-file-earmark-spreadsheet"></i> XLSX
+                                </button>
+                                <button class="btn btn-info" onclick="exportToJSON()">
+                                    <i class="bi bi-file-earmark-code"></i> JSON
+                                </button>
+                                <button class="btn btn-warning" onclick="exportToTXT()">
+                                    <i class="bi bi-file-earmark-text"></i> TXT
                                 </button>
                             </div>
 
-                            <!-- Графики -->
+                            <!-- Графики (равные по размеру) -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="chart-container">
@@ -673,19 +765,19 @@
                                 </div>
                             </div>
                             
-                            <!-- Таблица -->
+                            <!-- Таблица без подсветки -->
                             <div class="mt-4">
                                 <h5><i class="bi bi-table me-2"></i>Детальный расчёт</h5>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover table-result" id="detailsTable">
+                                    <table class="table table-bordered table-result" id="detailsTable">
                                         <thead>
                                             <tr>
-                                                <th>Продукт</th>
-                                                <th>Труд (ч/ед)</th>
-                                                <th>Материал (кг/ед)</th>
-                                                <th>Прибыль (₽/ед)</th>
-                                                <th>Эффективность</th>
-                                                <th>Оптимум (ед)</th>
+                                                <th>ПРОДУКТ</th>
+                                                <th>ТРУД (Ч/ЕД)</th>
+                                                <th>МАТЕРИАЛ (КГ/ЕД)</th>
+                                                <th>ПРИБЫЛЬ (₽/ЕД)</th>
+                                                <th>ЭФФЕКТИВНОСТЬ</th>
+                                                <th>ОПТИМУМ (ЕД)</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tableBody">
@@ -712,7 +804,7 @@
     </div>
     
     <script>
-        let productCount = 3;
+        let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null;
         let efficiencyChart = null;
@@ -720,9 +812,21 @@
         // Инициализация
         window.onload = function() {
             renderProducts();
-            loadExample();
+            // Устанавливаем начальные значения для P1 и P2
+            setTimeout(() => {
+                document.getElementById('name0').value = 'P1';
+                document.getElementById('labor0').value = 1;
+                document.getElementById('material0').value = 4;
+                document.getElementById('profit0').value = 48;
+                
+                document.getElementById('name1').value = 'P2';
+                document.getElementById('labor1').value = 5;
+                document.getElementById('material1').value = 2;
+                document.getElementById('profit1').value = 28;
+                
+                updateComplexity();
+            }, 100);
             displayHistory();
-            updateComplexity();
         };
         
         // Поля для продуктов
@@ -731,6 +835,11 @@
             container.innerHTML = '';
             
             for (let i = 0; i < productCount; i++) {
+                // Генерируем случайные значения для новых продуктов
+                const randomLabor = Math.floor(Math.random() * 8) + 1;
+                const randomMaterial = Math.floor(Math.random() * 8) + 1;
+                const randomProfit = Math.floor(Math.random() * 80) + 20;
+                
                 container.innerHTML += `
                     <div class="product-row" id="product${i}">
                         <div class="row g-3">
@@ -738,20 +847,17 @@
                                 <label class="form-label">Название</label>
                                 <input type="text" class="form-control" id="name${i}" value="P${i+1}" placeholder="P${i+1}">
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="form-label">Труд (ч)</label>
-                                <input type="number" class="form-control" id="labor${i}" value="1" min="1" step="1" onchange="updateComplexity()">
+                                <input type="number" class="form-control" id="labor${i}" value="${randomLabor}" min="1" step="1" onchange="updateComplexity()">
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="form-label">Материал (кг)</label>
-                                <input type="number" class="form-control" id="material${i}" value="1" min="1" step="1" onchange="updateComplexity()">
+                                <input type="number" class="form-control" id="material${i}" value="${randomMaterial}" min="1" step="1" onchange="updateComplexity()">
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-3">
                                 <label class="form-label">Прибыль</label>
-                                <input type="number" class="form-control" id="profit${i}" value="10" min="1" step="1">
-                            </div>
-                            <div class="col-md-3 d-flex align-items-end">
-                                <span class="badge bg-secondary p-3 w-100">Продукт ${i+1}</span>
+                                <input type="number" class="form-control" id="profit${i}" value="${randomProfit}" min="1" step="1">
                             </div>
                         </div>
                     </div>
@@ -796,37 +902,6 @@
                 productCount--;
                 renderProducts();
             }
-        }
-        
-        // Загрузка примера
-        function loadExample() {
-            document.getElementById('totalHours').value = 200;
-            document.getElementById('totalMaterial').value = 150;
-            
-            productCount = 3;
-            renderProducts();
-            
-            setTimeout(() => {
-                // Столы
-                document.getElementById('name0').value = 'Стол';
-                document.getElementById('labor0').value = 5;
-                document.getElementById('material0').value = 8;
-                document.getElementById('profit0').value = 120;
-                
-                // Стулья
-                document.getElementById('name1').value = 'Стул';
-                document.getElementById('labor1').value = 2;
-                document.getElementById('material1').value = 3;
-                document.getElementById('profit1').value = 45;
-                
-                // Шкафы
-                document.getElementById('name2').value = 'Шкаф';
-                document.getElementById('labor2').value = 10;
-                document.getElementById('material2').value = 15;
-                document.getElementById('profit2').value = 250;
-                
-                updateComplexity();
-            }, 100);
         }
         
         // Получение данных о продуктах
@@ -988,6 +1063,8 @@
             }
             
             document.getElementById('optimalProfit').innerText = optimalProfit;
+            
+            // Обновляем значения в блоках статистики
             document.getElementById('checksCount').innerText = checks;
             document.getElementById('calcTime').innerText = calcTimeMs;
             
@@ -1024,11 +1101,10 @@
             }
             document.getElementById('resultProducts').innerHTML = resultHtml;
             
-            // Таблица деталей
+            // Таблица деталей (без подсветки)
             let tableHtml = '';
             for (let i = 0; i < productCount; i++) {
                 const efficiency = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
-                const rowClass = (mode === 'max') ? 'table-success' : 'table-danger';
                 tableHtml += `
                     <tr>
                         <td><strong>${products[i].name}</strong></td>
@@ -1036,7 +1112,7 @@
                         <td>${products[i].material}</td>
                         <td>${products[i].profit}</td>
                         <td>${efficiency}</td>
-                        <td class="${rowClass} fw-bold">${best[i]}</td>
+                        <td class="optimum-cell">${best[i]}</td>
                     </tr>
                 `;
             }
@@ -1064,12 +1140,14 @@
                         label: 'Использовано',
                         data: [usedHours, usedMaterial],
                         backgroundColor: ['rgba(155, 89, 182, 0.8)', 'rgba(46, 204, 113, 0.8)'],
-                        borderRadius: 10
+                        borderRadius: 10,
+                        barPercentage: 0.6
                     }, {
                         label: 'Остаток',
                         data: [totalHours - usedHours, totalMaterial - usedMaterial],
                         backgroundColor: ['rgba(155, 89, 182, 0.3)', 'rgba(46, 204, 113, 0.3)'],
-                        borderRadius: 10
+                        borderRadius: 10,
+                        barPercentage: 0.6
                     }]
                 },
                 options: {
@@ -1077,17 +1155,22 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: { 
-                            labels: { color: '#e0e0e0' }
+                            labels: { color: '#ffffff', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            bodyColor: '#ffffff',
+                            backgroundColor: 'rgba(0,0,0,0.8)'
                         }
                     },
                     scales: {
                         y: {
                             grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#e0e0e0' }
+                            ticks: { color: '#ffffff', font: { size: 11 } },
+                            beginAtZero: true
                         },
                         x: {
                             grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#e0e0e0' }
+                            ticks: { color: '#ffffff', font: { size: 11 } }
                         }
                     }
                 }
@@ -1107,8 +1190,10 @@
                         data: efficiencyData,
                         backgroundColor: [
                             '#9b59b6', '#3498db', '#e74c3c', '#f1c40f', 
-                            '#2ecc71', '#e67e22', '#1abc9c', '#c0392b'
-                        ]
+                            '#2ecc71', '#e67e22', '#1abc9c', '#c0392b',
+                            '#95a5a6', '#34495e'
+                        ],
+                        borderWidth: 0
                     }]
                 },
                 options: {
@@ -1117,182 +1202,150 @@
                     plugins: {
                         legend: { 
                             position: 'right',
-                            labels: { color: '#e0e0e0' }
+                            labels: { color: '#ffffff', font: { size: 12 } }
+                        },
+                        tooltip: {
+                            bodyColor: '#ffffff',
+                            backgroundColor: 'rgba(0,0,0,0.8)'
                         }
                     }
                 }
             });
         }
         
-        // Экспорт в Excel
-        function exportToExcel() {
+        // Экспорт в XLSX (Excel)
+        function exportToXLSX() {
+            const products = getProductsData();
+            const best = getCurrentBest();
+            
+            // Создаем массив данных для Excel
+            const data = [
+                ['Продукт', 'Труд (ч/ед)', 'Материал (кг/ед)', 'Прибыль (₽/ед)', 'Оптимум (ед)']
+            ];
+            
+            // Добавляем данные продуктов
+            products.forEach((p, i) => {
+                data.push([
+                    p.name,
+                    p.labor,
+                    p.material,
+                    p.profit,
+                    best[i]
+                ]);
+            });
+            
+            // Добавляем информацию о ресурсах
+            data.push([]);
+            data.push(['Информация о расчёте']);
+            data.push(['Режим', document.querySelector('input[name="optimizationMode"]:checked').value === 'max' ? 'Максимизация' : 'Минимизация']);
+            data.push(['Прибыль', document.getElementById('optimalProfit').innerText]);
+            data.push(['Проверено комбинаций', document.getElementById('checksCount').innerText]);
+            data.push(['Время расчёта', document.getElementById('calcTime').innerText + ' мс']);
+            data.push(['Ускорение', document.getElementById('speedup').innerText + 'x']);
+            
+            // Создаем рабочий лист
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            
+            // Настраиваем ширину колонок
+            ws['!cols'] = [
+                { wch: 15 }, // Продукт
+                { wch: 15 }, // Труд
+                { wch: 18 }, // Материал
+                { wch: 18 }, // Прибыль
+                { wch: 15 }  // Оптимум
+            ];
+            
+            // Создаем книгу
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Оптимальный план');
+            
+            // Сохраняем файл
+            XLSX.writeFile(wb, 'optimization_result.xlsx');
+        }
+        
+        // Экспорт в JSON
+        function exportToJSON() {
+            const products = getProductsData();
+            const best = getCurrentBest();
+            const totalHours = parseInt(document.getElementById('totalHours').value);
+            const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
+            const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
+            
+            const data = {
+                timestamp: new Date().toISOString(),
+                resources: {
+                    hours: totalHours,
+                    material: totalMaterial
+                },
+                mode: mode,
+                products: products,
+                optimalPlan: best.map((count, i) => ({
+                    name: products[i].name,
+                    quantity: count
+                })),
+                profit: parseInt(document.getElementById('optimalProfit').innerText),
+                checks: parseInt(document.getElementById('checksCount').innerText),
+                time: parseFloat(document.getElementById('calcTime').innerText)
+            };
+            
+            downloadFile(JSON.stringify(data, null, 2), 'optimization_result.json', 'application/json');
+        }
+        
+        // Экспорт в TXT
+        function exportToTXT() {
             const products = getProductsData();
             const best = getCurrentBest();
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
             const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
             const profit = document.getElementById('optimalProfit').innerText;
-            const checks = document.getElementById('checksCount').innerText;
-            const time = document.getElementById('calcTime').innerText;
             
-            // Вычисляем использованные ресурсы
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
                 usedHours += best[i] * p.labor;
                 usedMaterial += best[i] * p.material;
             });
             
-            // Создаём рабочую книгу
-            const wb = XLSX.utils.book_new();
+            let text = 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n';
+            text += '='.repeat(50) + '\n\n';
+            text += `Дата: ${new Date().toLocaleString()}\n`;
+            text += `Режим: ${mode === 'max' ? 'Максимизация' : 'Минимизация'} прибыли\n`;
+            text += `Ресурсы: ${totalHours} часов, ${totalMaterial} кг материалов\n\n`;
+            text += 'ОПТИМАЛЬНЫЙ ПЛАН:\n';
+            text += '-' .repeat(30) + '\n';
             
-            // ========== ЛИСТ 1: РЕЗУЛЬТАТЫ ==========
-            const resultData = [
-                ['ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ'],
-                [],
-                ['Дата расчёта:', new Date().toLocaleString()],
-                ['Режим оптимизации:', mode === 'max' ? 'Максимизация прибыли' : 'Минимизация прибыли'],
-                ['Доступно часов:', totalHours],
-                ['Доступно материалов (кг):', totalMaterial],
-                [],
-                ['ОПТИМАЛЬНЫЙ ПЛАН ПРОИЗВОДСТВА:'],
-                []
-            ];
-            
-            // Заголовки таблицы
-            resultData.push(['Продукт', 'Труд (ч/ед)', 'Материал (кг/ед)', 'Прибыль (₽/ед)', 'Оптимум (ед)', 'Эффективность']);
-            
-            // Данные продуктов
             products.forEach((p, i) => {
-                const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                resultData.push([p.name, p.labor, p.material, p.profit, best[i], efficiency]);
+                text += `${p.name}: ${best[i]} ед.\n`;
             });
             
-            // Итоги
-            resultData.push(
-                [],
-                ['ИТОГОВАЯ ИНФОРМАЦИЯ:'],
-                ['Общая прибыль:', profit + ' ₽'],
-                ['Использовано часов:', usedHours + ' из ' + totalHours, `(${(usedHours/totalHours*100).toFixed(1)}%)`],
-                ['Использовано материалов:', usedMaterial + ' из ' + totalMaterial, `(${(usedMaterial/totalMaterial*100).toFixed(1)}%)`],
-                ['Проверено комбинаций:', checks],
-                ['Время расчёта:', time + ' мс']
-            );
+            text += '\n' + '=' .repeat(50) + '\n';
+            text += `ПРИБЫЛЬ: ${profit}\n\n`;
+            text += `Использовано часов: ${usedHours} из ${totalHours} (${(usedHours/totalHours*100).toFixed(1)}%)\n`;
+            text += `Использовано материалов: ${usedMaterial} из ${totalMaterial} (${(usedMaterial/totalMaterial*100).toFixed(1)}%)\n`;
+            text += `\nВремя расчёта: ${document.getElementById('calcTime').innerText} мс\n`;
+            text += `Проверено комбинаций: ${document.getElementById('checksCount').innerText}\n`;
+            text += `Ускорение: ${document.getElementById('speedup').innerText}x\n`;
             
-            const ws = XLSX.utils.aoa_to_sheet(resultData);
-            
-            // Настройка ширины колонок
-            ws['!cols'] = [
-                { wch: 20 }, // Продукт
-                { wch: 15 }, // Труд
-                { wch: 20 }, // Материал
-                { wch: 15 }, // Прибыль
-                { wch: 15 }, // Оптимум
-                { wch: 15 }  // Эффективность
-            ];
-            
-            XLSX.utils.book_append_sheet(wb, ws, 'Результаты');
-            
-            // ========== ЛИСТ 2: ДЕТАЛЬНЫЙ РАСЧЁТ ==========
-            const detailData = [
-                ['ДЕТАЛЬНЫЙ РАСЧЁТ ОПТИМИЗАЦИИ'],
-                [],
-                ['Параметры продуктов:'],
-                []
-            ];
-            
-            detailData.push(['Продукт', 'Труд', 'Материал', 'Прибыль', 'Макс. количество', 'Оптимум']);
-            
-            // Вычисляем максимальные количества
-            const maxCount = [];
-            for (let i = 0; i < productCount; i++) {
-                const byHours = Math.floor(totalHours / products[i].labor);
-                const byMaterial = Math.floor(totalMaterial / products[i].material);
-                maxCount.push(Math.min(byHours, byMaterial));
-                detailData.push([products[i].name, products[i].labor, products[i].material, products[i].profit, maxCount[i], best[i]]);
-            }
-            
-            detailData.push(
-                [],
-                ['ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:'],
-                ['Ресурс', 'Всего', 'Использовано', 'Остаток', 'Процент']
-            );
-            
-            detailData.push(
-                ['Труд (часы)', totalHours, usedHours, totalHours - usedHours, (usedHours/totalHours*100).toFixed(1) + '%'],
-                ['Материалы (кг)', totalMaterial, usedMaterial, totalMaterial - usedMaterial, (usedMaterial/totalMaterial*100).toFixed(1) + '%']
-            );
-            
-            const ws2 = XLSX.utils.aoa_to_sheet(detailData);
-            ws2['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 }];
-            XLSX.utils.book_append_sheet(wb, ws2, 'Детали');
-            
-            // ========== ЛИСТ 3: ЭФФЕКТИВНОСТЬ ==========
-            const efficiencyData = [
-                ['АНАЛИЗ ЭФФЕКТИВНОСТИ ПРОДУКТОВ'],
-                [],
-                ['Продукт', 'Прибыль на ед.', 'Труд + Материалы', 'Эффективность', 'Рейтинг']
-            ];
-            
-            // Сортировка по эффективности
-            const productsWithEff = products.map((p, i) => ({
-                ...p,
-                efficiency: p.profit / (p.labor + p.material),
-                index: i
-            })).sort((a, b) => b.efficiency - a.efficiency);
-            
-            productsWithEff.forEach((p, idx) => {
-                efficiencyData.push([
-                    p.name,
-                    p.profit,
-                    p.labor + p.material,
-                    p.efficiency.toFixed(2),
-                    idx + 1
-                ]);
-            });
-            
-            const ws3 = XLSX.utils.aoa_to_sheet(efficiencyData);
-            ws3['!cols'] = [{ wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 10 }];
-            XLSX.utils.book_append_sheet(wb, ws3, 'Эффективность');
-            
-            // ========== ЛИСТ 4: ИНФОРМАЦИЯ О РАСЧЁТЕ ==========
-            const infoData = [
-                ['ИНФОРМАЦИЯ О РАСЧЁТЕ'],
-                [],
-                ['Параметр', 'Значение'],
-                ['Дата и время', new Date().toLocaleString()],
-                ['Режим оптимизации', mode === 'max' ? 'Максимизация прибыли' : 'Минимизация прибыли'],
-                ['Количество продуктов', productCount],
-                ['Всего часов', totalHours],
-                ['Всего материалов (кг)', totalMaterial],
-                ['Оптимальная прибыль', profit + ' ₽'],
-                ['Проверено комбинаций', checks],
-                ['Время расчёта', time + ' мс'],
-                ['Ускорение', document.getElementById('speedup').innerText + 'x'],
-                [],
-                ['Алгоритм:', 'Branch and Bound с отсечениями'],
-                ['Сортировка:', mode === 'max' ? 'По эффективности' : 'Стандартная'],
-                ['Отсечение по ресурсам:', 'Да'],
-                ['Отсечение по прибыли:', mode === 'max' ? 'Да' : 'Нет']
-            ];
-            
-            const ws4 = XLSX.utils.aoa_to_sheet(infoData);
-            ws4['!cols'] = [{ wch: 30 }, { wch: 30 }];
-            XLSX.utils.book_append_sheet(wb, ws4, 'Информация');
-            
-            // Сохраняем файл
-            const fileName = `optimization_result_${new Date().toISOString().slice(0,10)}.xlsx`;
-            XLSX.writeFile(wb, fileName);
+            downloadFile(text, 'optimization_result.txt', 'text/plain;charset=utf-8;');
+        }
+        
+        function downloadFile(content, fileName, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = fileName;
+            link.click();
         }
         
         function getCurrentBest() {
             const best = [];
-            const resultDiv = document.getElementById('resultProducts');
-            const items = resultDiv.getElementsByTagName('div');
+            const tableBody = document.getElementById('tableBody');
+            const rows = tableBody.getElementsByTagName('tr');
             
-            for (let item of items) {
-                const match = item.innerText.match(/: (\d+)/);
-                if (match) {
-                    best.push(parseInt(match[1]));
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                if (cells.length >= 6) {
+                    best.push(parseInt(cells[5].innerText));
                 }
             }
             
