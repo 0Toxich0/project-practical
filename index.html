@@ -96,7 +96,7 @@
         }
         
         .product-field {
-            min-width: 0; /* Предотвращает переполнение */
+            min-width: 0;
             width: 100%;
         }
         
@@ -259,7 +259,7 @@
             color: #ffffff;
             border: 1px solid #9b59b6;
             width: 100%;
-            min-width: 600px; /* Минимальная ширина для таблицы */
+            min-width: 600px;
         }
         
         .table-result th {
@@ -759,7 +759,6 @@
     </div>
     
     <script>
-        // [Весь ваш JavaScript код остается без изменений]
         let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null;
@@ -772,28 +771,46 @@
         let currentTime = 0;
         let currentSpeedup = 0;
         
+        // Хранилище для данных продуктов
+        let productsData = [];
+        
         // Инициализация
         window.onload = function() {
+            // Инициализируем массив с данными по умолчанию
+            productsData = [
+                { name: 'P1', labor: 1, material: 1, profit: 1000 },
+                { name: 'P2', labor: 1, material: 1, profit: 1 }
+            ];
             renderProducts();
-            // Устанавливаем пример для минимизации (не ноль)
-            setTimeout(() => {
-                document.getElementById('name0').value = 'P1';
-                document.getElementById('labor0').value = 1;
-                document.getElementById('material0').value = 1;
-                document.getElementById('profit0').value = 1000;
-                
-                document.getElementById('name1').value = 'P2';
-                document.getElementById('labor1').value = 1;
-                document.getElementById('material1').value = 1;
-                document.getElementById('profit1').value = 1;
-                
-                document.getElementById('totalHours').value = 100;
-                document.getElementById('totalMaterial').value = 100;
-                
-                updateComplexity();
-            }, 100);
+            
+            document.getElementById('totalHours').value = 100;
+            document.getElementById('totalMaterial').value = 100;
+            
+            updateComplexity();
             displayHistory();
         };
+        
+        // Сохранение текущих значений продуктов
+        function saveCurrentProducts() {
+            for (let i = 0; i < productCount; i++) {
+                const nameInput = document.getElementById(`name${i}`);
+                const laborInput = document.getElementById(`labor${i}`);
+                const materialInput = document.getElementById(`material${i}`);
+                const profitInput = document.getElementById(`profit${i}`);
+                
+                if (nameInput && laborInput && materialInput && profitInput) {
+                    if (!productsData[i]) {
+                        productsData[i] = {};
+                    }
+                    productsData[i] = {
+                        name: nameInput.value,
+                        labor: laborInput.value,
+                        material: materialInput.value,
+                        profit: profitInput.value
+                    };
+                }
+            }
+        }
         
         // Поля для продуктов
         function renderProducts() {
@@ -801,34 +818,55 @@
             container.innerHTML = '';
             
             for (let i = 0; i < productCount; i++) {
-                const randomLabor = Math.floor(Math.random() * 8) + 1;
-                const randomMaterial = Math.floor(Math.random() * 8) + 1;
-                const randomProfit = Math.floor(Math.random() * 80) + 20;
+                // Получаем сохраненные данные или используем значения по умолчанию
+                const savedData = productsData[i] || { 
+                    name: `P${i+1}`,
+                    labor: Math.floor(Math.random() * 8) + 1,
+                    material: Math.floor(Math.random() * 8) + 1,
+                    profit: Math.floor(Math.random() * 80) + 20
+                };
                 
                 container.innerHTML += `
                     <div class="product-row" id="product${i}">
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">Название</label>
-                                <input type="text" class="form-control" id="name${i}" value="P${i+1}">
+                                <input type="text" class="form-control" id="name${i}" value="${savedData.name}" onchange="updateProductData(${i})">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Труд (ч)</label>
-                                <input type="number" class="form-control" id="labor${i}" value="${randomLabor}" min="1" onchange="updateComplexity()">
+                                <input type="number" class="form-control" id="labor${i}" value="${savedData.labor}" min="1" onchange="updateProductData(${i}); updateComplexity()">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Материал (кг)</label>
-                                <input type="number" class="form-control" id="material${i}" value="${randomMaterial}" min="1" onchange="updateComplexity()">
+                                <input type="number" class="form-control" id="material${i}" value="${savedData.material}" min="1" onchange="updateProductData(${i}); updateComplexity()">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Прибыль</label>
-                                <input type="number" class="form-control" id="profit${i}" value="${randomProfit}" min="1">
+                                <input type="number" class="form-control" id="profit${i}" value="${savedData.profit}" min="1" onchange="updateProductData(${i})">
                             </div>
                         </div>
                     </div>
                 `;
             }
             updateComplexity();
+        }
+        
+        // Обновление данных продукта в хранилище
+        function updateProductData(index) {
+            const nameInput = document.getElementById(`name${index}`);
+            const laborInput = document.getElementById(`labor${index}`);
+            const materialInput = document.getElementById(`material${index}`);
+            const profitInput = document.getElementById(`profit${index}`);
+            
+            if (nameInput && laborInput && materialInput && profitInput) {
+                productsData[index] = {
+                    name: nameInput.value,
+                    labor: laborInput.value,
+                    material: materialInput.value,
+                    profit: profitInput.value
+                };
+            }
         }
         
         // Обновление информации о сложности
@@ -854,7 +892,18 @@
         // Добавить продукт
         function addProduct() {
             if (productCount < maxProducts) {
+                // Сохраняем текущие значения перед добавлением
+                saveCurrentProducts();
                 productCount++;
+                
+                // Добавляем новый продукт со случайными значениями в хранилище
+                productsData[productCount - 1] = {
+                    name: `P${productCount}`,
+                    labor: Math.floor(Math.random() * 8) + 1,
+                    material: Math.floor(Math.random() * 8) + 1,
+                    profit: Math.floor(Math.random() * 80) + 20
+                };
+                
                 renderProducts();
             } else {
                 alert(`Максимум ${maxProducts} продуктов`);
@@ -864,7 +913,13 @@
         // Удалить продукт
         function removeProduct() {
             if (productCount > 1) {
+                // Сохраняем текущие значения перед удалением
+                saveCurrentProducts();
                 productCount--;
+                
+                // Удаляем последний продукт из хранилища
+                productsData.pop();
+                
                 renderProducts();
             }
         }
