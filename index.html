@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Оптимальные решения в условиях ограниченных ресурсов</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,13 +13,30 @@
     <!-- SheetJS для экспорта в XLSX -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
+        /* Базовые стили */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
         body {
             background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 50%, #16213e 100%);
             min-height: 100vh;
-            padding: 30px 0;
             font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
         }
         
+        /* Адаптивный контейнер */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+        
+        /* Карточка калькулятора */
         .calculator-card {
             background: rgba(45, 45, 45, 0.95);
             backdrop-filter: blur(10px);
@@ -27,128 +44,185 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             border: 1px solid rgba(155, 89, 182, 0.3);
+            width: 100%;
         }
         
+        /* Шапка */
         .card-header {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
-            padding: 35px 25px;
+            padding: clamp(20px, 5vw, 35px);
             text-align: center;
         }
         
         .card-header h1 {
             margin: 0;
-            font-size: 2rem;
+            font-size: clamp(1.2rem, 4vw, 2rem);
             font-weight: 700;
+            line-height: 1.3;
+            word-wrap: break-word;
         }
         
+        .card-header p {
+            margin: 10px 0 0;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.95;
+            word-wrap: break-word;
+        }
+        
+        /* Тело карточки */
         .card-body {
-            padding: 35px;
+            padding: clamp(15px, 4vw, 35px);
             background: rgba(45, 45, 45, 0.98);
             color: #e0e0e0;
         }
         
+        /* Строка продукта */
         .product-row {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
-            padding: 20px;
+            padding: clamp(12px, 3vw, 20px);
             margin-bottom: 15px;
             border-left: 5px solid #9b59b6;
+            width: 100%;
         }
         
+        /* Адаптивные сетки для продуктов */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+        }
+        
+        .product-field {
+            min-width: 0; /* Предотвращает переполнение */
+            width: 100%;
+        }
+        
+        /* Результат */
         .result-card {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             border-radius: 20px;
-            padding: 25px;
+            padding: clamp(15px, 4vw, 25px);
             margin-top: 20px;
+            width: 100%;
+        }
+        
+        .result-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .result-info {
+            flex: 1 1 300px;
+            min-width: 250px;
+        }
+        
+        .result-profit {
+            flex: 0 1 auto;
+            text-align: center;
+            margin: 0 auto;
         }
         
         .profit-badge {
             background: rgba(255,255,255,0.2);
-            padding: 15px 25px;
+            padding: clamp(10px, 3vw, 15px) clamp(15px, 4vw, 25px);
             border-radius: 60px;
-            font-size: 2rem;
+            font-size: clamp(1.2rem, 5vw, 2rem);
             font-weight: bold;
             display: inline-block;
+            white-space: nowrap;
         }
         
+        /* Кнопки */
         .btn-calculate {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             border: none;
-            padding: 18px 35px;
-            font-size: 1.3rem;
+            padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 35px);
+            font-size: clamp(1rem, 3vw, 1.3rem);
             border-radius: 60px;
             width: 100%;
             font-weight: 700;
             margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.5);
+        }
+        
+        .btn-add, .btn-remove, .btn-export {
+            color: white;
+            border: none;
+            padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 25px);
+            border-radius: 60px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
         
         .btn-add {
             background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 60px;
-            font-weight: 600;
-            width: 100%;
         }
         
         .btn-remove {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 60px;
-            font-weight: 600;
-            width: 100%;
         }
         
         .btn-export {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 60px;
-            font-weight: 600;
-            width: 100%;
         }
         
+        .btn-add:hover, .btn-remove:hover, .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* Блоки статистики */
         .stats-container {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin: 20px 0;
-        }
-        
-        .stats-container .col-md-4 {
-            flex: 1;
+            width: 100%;
         }
         
         .checks-info {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
-            padding: 20px 15px;
+            padding: 15px 10px;
             text-align: center;
             border: 1px solid #9b59b6;
-            height: 130px;
+            height: auto;
+            min-height: 120px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            width: 100%;
         }
         
         .checks-info i {
-            font-size: 1.5rem;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
             margin-bottom: 8px;
             color: #9b59b6;
         }
         
         .checks-info strong {
-            font-size: 0.85rem;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
             text-transform: uppercase;
             color: #b0b0b0;
             margin-bottom: 5px;
+            word-wrap: break-word;
         }
         
         .checks-info .value-container {
@@ -156,17 +230,26 @@
             align-items: baseline;
             justify-content: center;
             gap: 2px;
+            flex-wrap: wrap;
         }
         
         .checks-info .value-container span {
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
             font-weight: 700;
             color: white;
         }
         
         .checks-info .value-container small {
-            font-size: 1rem;
+            font-size: clamp(0.8rem, 2.5vw, 1rem);
             color: #b0b0b0;
+        }
+        
+        /* Таблица */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin: 15px 0;
         }
         
         .table-result {
@@ -176,26 +259,34 @@
             color: #ffffff;
             border: 1px solid #9b59b6;
             width: 100%;
+            min-width: 600px; /* Минимальная ширина для таблицы */
         }
         
         .table-result th {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
-            padding: 15px;
+            padding: 12px 8px;
             font-weight: 600;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            white-space: nowrap;
         }
         
         .table-result td {
             background: rgba(54, 54, 54, 0.9);
             color: #ffffff;
             border-color: #9b59b6;
-            padding: 12px;
+            padding: 10px 8px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
         }
         
+        /* Формы */
         .form-label {
             color: #e0e0e0;
             font-weight: 600;
             margin-bottom: 8px;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            display: block;
+            word-wrap: break-word;
         }
         
         .form-control {
@@ -203,42 +294,56 @@
             border: 2px solid #4a4a4a;
             color: #e0e0e0;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
+            width: 100%;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            transition: all 0.3s;
         }
         
         .form-control:focus {
             background: rgba(74, 74, 74, 0.9);
             border-color: #9b59b6;
             color: white;
+            outline: none;
         }
         
-        .badge.bg-success {
-            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
-            font-size: 1.1rem;
-            padding: 10px 20px !important;
-        }
-        
-        .badge.bg-danger {
-            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;
-            font-size: 1.1rem;
-            padding: 10px 20px !important;
-        }
-        
+        /* Режимы */
         .mode-selector {
             background: rgba(54, 54, 54, 0.5);
             border-radius: 15px;
             padding: 15px;
             margin-bottom: 20px;
             border: 1px solid #9b59b6;
+            width: 100%;
         }
         
+        .mode-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .mode-option {
+            flex: 1 1 auto;
+            min-width: 150px;
+        }
+        
+        /* Использование ресурсов */
         .resource-usage {
             display: flex;
-            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
             margin: 10px 0;
             padding: 10px;
             background: rgba(0,0,0,0.2);
             border-radius: 10px;
+            width: 100%;
+        }
+        
+        .resource-item {
+            flex: 1 1 200px;
+            min-width: 150px;
         }
         
         .resource-bar {
@@ -247,6 +352,7 @@
             border-radius: 5px;
             overflow: hidden;
             margin: 5px 0;
+            width: 100%;
         }
         
         .resource-bar-fill {
@@ -255,33 +361,54 @@
             transition: width 0.5s;
         }
         
+        /* Кнопки экспорта */
         .export-buttons {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
             gap: 10px;
             margin: 20px 0;
+            width: 100%;
         }
         
-        .export-buttons .btn {
-            flex: 1;
-            font-size: 1rem;
-            padding: 12px;
+        /* Графики */
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+            width: 100%;
         }
         
         .chart-container {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
+            padding: 15px;
             border: 1px solid #9b59b6;
-            height: 400px;
+            height: 300px;
+            width: 100%;
         }
         
+        .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* Информация о сложности */
         .complexity-info {
             background: rgba(155, 89, 182, 0.1);
             border: 1px solid #9b59b6;
             border-radius: 10px;
             padding: 10px;
             margin-bottom: 15px;
+            width: 100%;
+            word-wrap: break-word;
+        }
+        
+        /* История */
+        .history-list {
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
         }
         
         .history-item {
@@ -291,17 +418,151 @@
             padding: 10px;
             margin-bottom: 10px;
             cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            word-wrap: break-word;
         }
         
         .history-item:hover {
             background: rgba(155, 89, 182, 0.3);
+        }
+        
+        /* Ошибки */
+        .alert-danger {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            margin-top: 15px;
+            width: 100%;
+            word-wrap: break-word;
+        }
+        
+        /* Бейджи */
+        .badge {
+            font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+            padding: 8px 15px !important;
+            white-space: normal;
+            word-wrap: break-word;
+            display: inline-block;
+        }
+        
+        /* Адаптация для маленьких экранов */
+        @media (max-width: 576px) {
+            body {
+                padding: 10px;
+            }
+            
+            .card-header h1 {
+                font-size: 1.2rem;
+            }
+            
+            .product-row .row {
+                flex-direction: column;
+            }
+            
+            .product-row [class*="col-"] {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .mode-options {
+                flex-direction: column;
+            }
+            
+            .mode-option {
+                width: 100%;
+            }
+            
+            .profit-badge {
+                font-size: 1.2rem;
+                white-space: normal;
+            }
+            
+            .export-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+        
+        /* Адаптация для средних экранов */
+        @media (min-width: 577px) and (max-width: 768px) {
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .export-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Адаптация для больших экранов */
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 1140px;
+            }
+        }
+        
+        /* Утилиты */
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-3 { margin-top: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+        .me-1 { margin-right: 0.25rem; }
+        .me-2 { margin-right: 0.5rem; }
+        .gap-4 { gap: 1.5rem; }
+        
+        /* Flexbox утилиты */
+        .d-flex { display: flex; }
+        .flex-wrap { flex-wrap: wrap; }
+        .align-items-center { align-items: center; }
+        .justify-content-center { justify-content: center; }
+        .justify-content-between { justify-content: space-between; }
+        
+        /* Сетка Bootstrap для обратной совместимости */
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: -10px;
+            width: calc(100% + 20px);
+        }
+        
+        .col-md-3, .col-md-4, .col-md-6, .col-md-8, .col-md-12 {
+            padding: 10px;
+            width: 100%;
+        }
+        
+        @media (min-width: 768px) {
+            .col-md-3 { width: 25%; }
+            .col-md-4 { width: 33.333%; }
+            .col-md-6 { width: 50%; }
+            .col-md-8 { width: 66.667%; }
+            .col-md-12 { width: 100%; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-10">
+            <div class="col-lg-10 col-md-12">
                 <div class="calculator-card">
                     <div class="card-header">
                         <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения в условиях ограниченных ресурсов</h1>
@@ -324,14 +585,14 @@
                         <!-- Режим расчёта -->
                         <div class="mode-selector">
                             <label class="form-label mb-3">Режим расчёта:</label>
-                            <div class="d-flex gap-4">
-                                <div class="form-check">
+                            <div class="mode-options">
+                                <div class="form-check mode-option">
                                     <input class="form-check-input" type="radio" name="optimizationMode" id="modeMax" value="max" checked>
                                     <label class="form-check-label" for="modeMax">
                                         <i class="bi bi-arrow-up-circle-fill text-success"></i> Максимизация прибыли
                                     </label>
                                 </div>
-                                <div class="form-check">
+                                <div class="form-check mode-option">
                                     <input class="form-check-input" type="radio" name="optimizationMode" id="modeMin" value="min">
                                     <label class="form-check-label" for="modeMin">
                                         <i class="bi bi-arrow-down-circle-fill text-danger"></i> Минимизация прибыли
@@ -347,12 +608,12 @@
                         <!-- Кнопки управления -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <button class="btn btn-add" onclick="addProduct()">
+                                <button class="btn-add" onclick="addProduct()">
                                     <i class="bi bi-plus-circle me-2"></i>Добавить продукт
                                 </button>
                             </div>
                             <div class="col-md-6">
-                                <button class="btn btn-remove" onclick="removeProduct()">
+                                <button class="btn-remove" onclick="removeProduct()">
                                     <i class="bi bi-dash-circle me-2"></i>Удалить последний
                                 </button>
                             </div>
@@ -374,8 +635,8 @@
                             <h3 class="mb-3">Результат оптимизации</h3>
                             
                             <div class="result-card mb-4">
-                                <div class="row align-items-center">
-                                    <div class="col-md-8">
+                                <div class="result-content">
+                                    <div class="result-info">
                                         <div class="mb-3">
                                             <span class="badge bg-success" id="modeBadge">
                                                 <i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль
@@ -383,7 +644,7 @@
                                         </div>
                                         <div id="resultProducts" class="result-item"></div>
                                     </div>
-                                    <div class="col-md-4 text-center">
+                                    <div class="result-profit">
                                         <div class="profit-badge">
                                             <i class="bi bi-currency-ruble me-1"></i>
                                             <span id="optimalProfit">0</span>
@@ -395,13 +656,13 @@
                             
                             <!-- Использование ресурсов -->
                             <div class="resource-usage">
-                                <div style="flex: 1;">
+                                <div class="resource-item">
                                     <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">100</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="hoursBar" style="width: 0%"></div>
                                     </div>
                                 </div>
-                                <div style="flex: 1; margin-left: 15px;">
+                                <div class="resource-item">
                                     <div>Материалы: <span id="usedMaterial">0</span> / <span id="totalMaterialDisplay">100</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="materialBar" style="width: 0%"></div>
@@ -411,61 +672,51 @@
                             
                             <!-- Статистика -->
                             <div class="stats-container">
-                                <div class="col-md-4">
-                                    <div class="checks-info">
-                                        <i class="bi bi-diagram-3"></i>
-                                        <strong>ПРОВЕРЕНО КОМБИНАЦИЙ</strong>
-                                        <div class="value-container">
-                                            <span id="checksCount">0</span>
-                                        </div>
+                                <div class="checks-info">
+                                    <i class="bi bi-diagram-3"></i>
+                                    <strong>ПРОВЕРЕНО КОМБИНАЦИЙ</strong>
+                                    <div class="value-container">
+                                        <span id="checksCount">0</span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="checks-info">
-                                        <i class="bi bi-hourglass-split"></i>
-                                        <strong>ВРЕМЯ РАСЧЁТА</strong>
-                                        <div class="value-container">
-                                            <span id="calcTime">0</span>
-                                            <small>мс</small>
-                                        </div>
+                                <div class="checks-info">
+                                    <i class="bi bi-hourglass-split"></i>
+                                    <strong>ВРЕМЯ РАСЧЁТА</strong>
+                                    <div class="value-container">
+                                        <span id="calcTime">0</span>
+                                        <small>мс</small>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="checks-info">
-                                        <i class="bi bi-lightning-charge"></i>
-                                        <strong>УСКОРЕНИЕ</strong>
-                                        <div class="value-container">
-                                            <span id="speedup">0</span>
-                                            <small>x</small>
-                                        </div>
+                                <div class="checks-info">
+                                    <i class="bi bi-lightning-charge"></i>
+                                    <strong>УСКОРЕНИЕ</strong>
+                                    <div class="value-container">
+                                        <span id="speedup">0</span>
+                                        <small>x</small>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Кнопки экспорта -->
                             <div class="export-buttons">
-                                <button class="btn btn-success" onclick="exportToXLSX()">
+                                <button class="btn-export" onclick="exportToXLSX()">
                                     <i class="bi bi-file-earmark-spreadsheet"></i> XLSX
                                 </button>
-                                <button class="btn btn-info" onclick="exportToJSON()">
+                                <button class="btn-export" onclick="exportToJSON()">
                                     <i class="bi bi-file-earmark-code"></i> JSON
                                 </button>
-                                <button class="btn btn-warning" onclick="exportToTXT()">
+                                <button class="btn-export" onclick="exportToTXT()">
                                     <i class="bi bi-file-earmark-text"></i> TXT
                                 </button>
                             </div>
 
                             <!-- Графики -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="chart-container">
-                                        <canvas id="resourceChart"></canvas>
-                                    </div>
+                            <div class="charts-container">
+                                <div class="chart-container">
+                                    <canvas id="resourceChart"></canvas>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="chart-container">
-                                        <canvas id="efficiencyChart"></canvas>
-                                    </div>
+                                <div class="chart-container">
+                                    <canvas id="efficiencyChart"></canvas>
                                 </div>
                             </div>
                             
@@ -473,15 +724,15 @@
                             <div class="mt-4">
                                 <h5>Детальный расчёт</h5>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-result">
+                                    <table class="table-result">
                                         <thead>
                                             <tr>
                                                 <th>ПРОДУКТ</th>
-                                                <th>ТРУД (Ч/ЕД)</th>
-                                                <th>МАТЕРИАЛ (КГ/ЕД)</th>
-                                                <th>ПРИБЫЛЬ (₽/ЕД)</th>
-                                                <th>ЭФФЕКТИВНОСТЬ</th>
-                                                <th>ОПТИМУМ (ЕД)</th>
+                                                <th>ТРУД</th>
+                                                <th>МАТЕРИАЛ</th>
+                                                <th>ПРИБЫЛЬ</th>
+                                                <th>ЭФФЕКТИВН.</th>
+                                                <th>ОПТИМУМ</th>
                                             </tr>
                                         </thead>
                                         <tbody id="tableBody">
@@ -494,13 +745,13 @@
                         <!-- История расчётов -->
                         <div class="mt-4">
                             <h5>История расчётов</h5>
-                            <div id="historyList"></div>
-                            <button class="btn btn-sm btn-secondary mt-2" onclick="clearHistory()">
+                            <div class="history-list" id="historyList"></div>
+                            <button class="btn-remove mt-2" onclick="clearHistory()" style="width: auto;">
                                 <i class="bi bi-trash me-2"></i>Очистить историю
                             </button>
                         </div>
 
-                        <div id="error" class="alert alert-danger mt-3" style="display: none;"></div>
+                        <div id="error" class="alert-danger mt-3" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -508,6 +759,7 @@
     </div>
     
     <script>
+        // [Весь ваш JavaScript код остается без изменений]
         let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null;

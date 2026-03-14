@@ -9,6 +9,7 @@
 #include <fstream>
 #include <ctime>
 #include <sstream>
+#include <climits>  // Добавить для LLONG_MAX
 
 using namespace std;
 
@@ -348,9 +349,13 @@ int main() {
              << ", по материалам: " << byMaterial << ")\n";
     }
 
-    // Теоретическое число комбинаций
+    // Теоретическое число комбинаций (с защитой от переполнения)
     long long theoreticalCombinations = 1;
     for (int i = 0; i < N; i++) {
+        if (theoreticalCombinations > LLONG_MAX / (maxCount[i] + 1)) {
+            theoreticalCombinations = LLONG_MAX;
+            break;
+        }
         theoreticalCombinations *= (maxCount[i] + 1);
     }
     cout << "\nТЕОРЕТИЧЕСКОЕ ЧИСЛО КОМБИНАЦИЙ: " << theoreticalCombinations << "\n";
@@ -362,6 +367,7 @@ int main() {
 
     // Рекурсивный перебор с отсечениями
     function<void(int, int, int, int)> bruteForce = [&](int index, int hours, int material, int profit) {
+        // Отсечение по ресурсам
         if (hours > totalHours || material > totalMaterial) {
             return;
         }
