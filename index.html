@@ -18,116 +18,42 @@
             min-height: 100vh;
             padding: 30px 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            position: relative;
-        }
-        
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(155, 89, 182, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 80% 70%, rgba(52, 152, 219, 0.15) 0%, transparent 30%),
-                radial-gradient(circle at 40% 80%, rgba(142, 68, 173, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 90% 20%, rgba(155, 89, 182, 0.1) 0%, transparent 35%);
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .container {
-            position: relative;
-            z-index: 1;
         }
         
         .calculator-card {
             background: rgba(45, 45, 45, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 30px;
-            box-shadow: 
-                0 20px 60px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(155, 89, 182, 0.3),
-                0 0 20px rgba(155, 89, 182, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             overflow: hidden;
             border: 1px solid rgba(155, 89, 182, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .calculator-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 
-                0 30px 70px rgba(0, 0, 0, 0.6),
-                0 0 0 2px rgba(155, 89, 182, 0.4),
-                0 0 30px rgba(155, 89, 182, 0.3);
         }
         
         .card-header {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 50%, #8e44ad 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             padding: 35px 25px;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+            text-align: center;
         }
         
         .card-header h1 {
             margin: 0;
             font-size: 2rem;
             font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .card-header p {
-            margin: 10px 0 0;
-            opacity: 0.95;
-            font-size: 1.1rem;
-            position: relative;
-            z-index: 1;
         }
         
         .card-body {
             padding: 35px;
             background: rgba(45, 45, 45, 0.98);
             color: #e0e0e0;
-            backdrop-filter: blur(5px);
         }
         
         .product-row {
-            background: linear-gradient(135deg, rgba(54, 54, 54, 0.9) 0%, rgba(64, 64, 64, 0.9) 100%);
+            background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 15px;
             border-left: 5px solid #9b59b6;
-            color: #e0e0e0;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-        }
-        
-        .product-row:hover {
-            transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.3);
-            border-left-width: 8px;
         }
         
         .result-card {
@@ -136,40 +62,6 @@
             border-radius: 20px;
             padding: 25px;
             margin-top: 20px;
-            box-shadow: 
-                0 10px 30px rgba(0,0,0,0.3),
-                0 0 0 1px rgba(255,255,255,0.1),
-                inset 0 2px 10px rgba(255,255,255,0.2);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .result-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-            animation: shine 10s linear infinite;
-        }
-        
-        @keyframes shine {
-            from { transform: rotate(0deg) translate(0, 0); }
-            to { transform: rotate(360deg) translate(10px, 10px); }
-        }
-        
-        .result-item {
-            font-size: 1.2rem;
-            padding: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            color: white;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        .result-item:last-child {
-            border-bottom: none;
         }
         
         .profit-badge {
@@ -178,15 +70,11 @@
             border-radius: 60px;
             font-size: 2rem;
             font-weight: bold;
-            color: white;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.3);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             display: inline-block;
         }
         
         .btn-calculate {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 50%, #8e44ad 100%);
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             border: none;
             padding: 18px 35px;
@@ -194,31 +82,7 @@
             border-radius: 60px;
             width: 100%;
             font-weight: 700;
-            letter-spacing: 1px;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(155, 89, 182, 0.3);
-        }
-        
-        .btn-calculate::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn-calculate:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(155, 89, 182, 0.5);
-        }
-        
-        .btn-calculate:hover::before {
-            left: 100%;
+            margin: 20px 0;
         }
         
         .btn-add {
@@ -228,33 +92,29 @@
             padding: 12px 25px;
             border-radius: 60px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
-        }
-        
-        .btn-add:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5);
+            width: 100%;
         }
         
         .btn-remove {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
             color: white;
             border: none;
-            padding: 8px 20px;
+            padding: 12px 25px;
             border-radius: 60px;
             font-weight: 600;
-            transition: all 0.3s;
-            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+            width: 100%;
         }
         
-        .btn-remove:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+        .btn-export {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 60px;
+            font-weight: 600;
+            width: 100%;
         }
         
-        /* Выровненные блоки статистики */
         .stats-container {
             display: flex;
             gap: 15px;
@@ -263,31 +123,19 @@
         
         .stats-container .col-md-4 {
             flex: 1;
-            padding: 0;
         }
         
         .checks-info {
-            background: linear-gradient(135deg, #363636 0%, #404040 100%);
+            background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
             padding: 20px 15px;
             text-align: center;
-            font-size: 1.1rem;
-            color: #e0e0e0;
             border: 1px solid #9b59b6;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            backdrop-filter: blur(5px);
             height: 130px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: all 0.3s;
-        }
-        
-        .checks-info:hover {
-            border-color: #9b59b6;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(155, 89, 182, 0.3);
         }
         
         .checks-info i {
@@ -299,10 +147,8 @@
         .checks-info strong {
             font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
             color: #b0b0b0;
             margin-bottom: 5px;
-            font-weight: 600;
         }
         
         .checks-info .value-container {
@@ -316,33 +162,27 @@
             font-size: 1.8rem;
             font-weight: 700;
             color: white;
-            text-shadow: 0 2px 10px rgba(155, 89, 182, 0.5);
-            line-height: 1.2;
         }
         
         .checks-info .value-container small {
             font-size: 1rem;
             color: #b0b0b0;
-            margin-left: 2px;
         }
         
         .table-result {
             background: transparent;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
             color: #ffffff;
             border: 1px solid #9b59b6;
+            width: 100%;
         }
         
         .table-result th {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
-            border: none;
             padding: 15px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         
         .table-result td {
@@ -350,27 +190,11 @@
             color: #ffffff;
             border-color: #9b59b6;
             padding: 12px;
-            font-weight: 500;
-        }
-        
-        /* Убираем подсветку при наведении */
-        .table-result tr:hover td {
-            background: rgba(54, 54, 54, 0.9);
-            color: #ffffff;
-        }
-        
-        /* Стиль для ячейки оптимума (без подсветки, просто текст) */
-        .table-result .optimum-cell {
-            font-weight: bold;
-            color: #ffffff;
         }
         
         .form-label {
             color: #e0e0e0;
             font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 0.5px;
             margin-bottom: 8px;
         }
         
@@ -380,76 +204,26 @@
             color: #e0e0e0;
             border-radius: 12px;
             padding: 12px;
-            font-size: 1rem;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
         }
         
         .form-control:focus {
             background: rgba(74, 74, 74, 0.9);
             border-color: #9b59b6;
             color: white;
-            box-shadow: 0 0 0 0.3rem rgba(155, 89, 182, 0.25);
-            transform: scale(1.02);
         }
         
-        .badge.bg-secondary {
-            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%) !important;
-            color: white;
-            font-size: 1.1rem;
-            padding: 15px !important;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
-        }
-
         .badge.bg-success {
             background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%) !important;
             font-size: 1.1rem;
             padding: 10px 20px !important;
         }
-
+        
         .badge.bg-danger {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%) !important;
             font-size: 1.1rem;
             padding: 10px 20px !important;
         }
         
-        h3, h5 {
-            color: #e0e0e0;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(155, 89, 182, 0.3);
-        }
-        
-        .text-warning {
-            color: #f1c40f !important;
-            filter: drop-shadow(0 2px 5px rgba(241, 196, 15, 0.3));
-        }
-        
-        .alert-danger {
-            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);
-        }
-
-        .form-check-input {
-            background-color: rgba(64, 64, 64, 0.8);
-            border-color: #9b59b6;
-            cursor: pointer;
-        }
-
-        .form-check-input:checked {
-            background-color: #9b59b6;
-            border-color: #9b59b6;
-        }
-
-        .form-check-label {
-            color: #e0e0e0;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
         .mode-selector {
             background: rgba(54, 54, 54, 0.5);
             border-radius: 15px;
@@ -458,90 +232,6 @@
             border: 1px solid #9b59b6;
         }
         
-        #results {
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .bi {
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.2));
-        }
-
-        .export-buttons {
-            display: flex;
-            gap: 10px;
-            margin: 20px 0;
-        }
-
-        .export-buttons .btn {
-            flex: 1;
-            font-size: 1rem;
-            padding: 12px;
-            border-radius: 10px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .export-buttons .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-
-        .chart-container {
-            background: rgba(54, 54, 54, 0.9);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 1px solid #9b59b6;
-            height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .chart-container canvas {
-            flex: 1;
-            width: 100% !important;
-            height: 100% !important;
-            max-height: none;
-        }
-
-        .complexity-info {
-            background: rgba(155, 89, 182, 0.1);
-            border: 1px solid #9b59b6;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 15px;
-            font-size: 1rem;
-            color: #ffffff;
-        }
-
-        .history-item {
-            background: rgba(54, 54, 54, 0.9);
-            border: 1px solid #9b59b6;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            color: #ffffff;
-        }
-
-        .history-item:hover {
-            transform: translateX(5px);
-            background: rgba(155, 89, 182, 0.3);
-            border-color: #b07cc6;
-        }
-
         .resource-usage {
             display: flex;
             justify-content: space-between;
@@ -549,9 +239,8 @@
             padding: 10px;
             background: rgba(0,0,0,0.2);
             border-radius: 10px;
-            color: #ffffff;
         }
-
+        
         .resource-bar {
             height: 10px;
             background: rgba(255,255,255,0.1);
@@ -559,38 +248,53 @@
             overflow: hidden;
             margin: 5px 0;
         }
-
+        
         .resource-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #9b59b6, #8e44ad);
             transition: width 0.5s;
         }
         
-        /* Фикс для подсказок Chart.js */
-        .chart-container canvas {
-            display: block;
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
         }
         
-        /* Стили для чисел в таблице */
-        .table-result td {
-            color: #ffffff;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        .export-buttons .btn {
+            flex: 1;
+            font-size: 1rem;
+            padding: 12px;
         }
         
-        /* Убираем подчеркивание у ссылок */
-        a {
-            text-decoration: none;
+        .chart-container {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            border: 1px solid #9b59b6;
+            height: 400px;
         }
         
-        /* Дополнительное выравнивание для мобильных */
-        @media (max-width: 768px) {
-            .stats-container {
-                flex-direction: column;
-            }
-            
-            .checks-info {
-                height: 110px;
-            }
+        .complexity-info {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid #9b59b6;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .history-item {
+            background: rgba(54, 54, 54, 0.9);
+            border: 1px solid #9b59b6;
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        
+        .history-item:hover {
+            background: rgba(155, 89, 182, 0.3);
         }
     </style>
 </head>
@@ -599,56 +303,56 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <div class="calculator-card">
-                    <div class="card-header text-center">
+                    <div class="card-header">
                         <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения в условиях ограниченных ресурсов</h1>
                         <p>Введите данные о продуктах и ресурсах — программа найдёт оптимальный план производства</p>
                     </div>
                     
                     <div class="card-body">
-                        <!-- Настройки -->
+                        <!-- Настройки ресурсов -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Общее количество часов:</label>
-                                <input type="number" id="totalHours" class="form-control form-control-lg" value="60" min="1" onchange="updateComplexity()">
+                                <label class="form-label">Общее количество часов:</label>
+                                <input type="number" id="totalHours" class="form-control" value="100" min="1" onchange="updateComplexity()">
                             </div>
                             <div class="col-md-6">
-                                <label class="form-label fw-bold">Общее количество материала (кг):</label>
-                                <input type="number" id="totalMaterial" class="form-control form-control-lg" value="50" min="1" onchange="updateComplexity()">
+                                <label class="form-label">Общее количество материала (кг):</label>
+                                <input type="number" id="totalMaterial" class="form-control" value="100" min="1" onchange="updateComplexity()">
                             </div>
                         </div>
 
                         <!-- Режим расчёта -->
                         <div class="mode-selector">
-                            <label class="form-label fw-bold mb-3">Режим расчёта:</label>
+                            <label class="form-label mb-3">Режим расчёта:</label>
                             <div class="d-flex gap-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="optimizationMode" id="modeMax" value="max" checked>
                                     <label class="form-check-label" for="modeMax">
-                                        <i class="bi bi-arrow-up-circle-fill text-success me-1"></i> Максимизация прибыли
+                                        <i class="bi bi-arrow-up-circle-fill text-success"></i> Максимизация прибыли
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="optimizationMode" id="modeMin" value="min">
                                     <label class="form-check-label" for="modeMin">
-                                        <i class="bi bi-arrow-down-circle-fill text-danger me-1"></i> Минимизация прибыли
+                                        <i class="bi bi-arrow-down-circle-fill text-danger"></i> Минимизация прибыли
                                     </label>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Продукты -->
-                        <h3 class="mb-3"><i class="bi bi-box-seam me-2"></i>Продукты</h3>
+                        <h3 class="mb-3">Продукты</h3>
                         <div id="productsContainer"></div>
                         
                         <!-- Кнопки управления -->
                         <div class="row mb-4">
                             <div class="col-md-6">
-                                <button class="btn btn-add w-100" onclick="addProduct()">
+                                <button class="btn btn-add" onclick="addProduct()">
                                     <i class="bi bi-plus-circle me-2"></i>Добавить продукт
                                 </button>
                             </div>
                             <div class="col-md-6">
-                                <button class="btn btn-remove w-100" onclick="removeProduct()">
+                                <button class="btn btn-remove" onclick="removeProduct()">
                                     <i class="bi bi-dash-circle me-2"></i>Удалить последний
                                 </button>
                             </div>
@@ -661,13 +365,13 @@
                         </div>
                         
                         <!-- Кнопка расчёта -->
-                        <button class="btn-calculate mb-4" onclick="calculateOptimum()">
+                        <button class="btn-calculate" onclick="calculateOptimum()">
                             <i class="bi bi-search me-2"></i>Найти оптимальное решение
                         </button>
                         
                         <!-- Результаты -->
                         <div id="results" style="display: none;">
-                            <h3 class="mb-3"><i class="bi bi-trophy-fill me-2 text-warning"></i>Результат оптимизации</h3>
+                            <h3 class="mb-3">Результат оптимизации</h3>
                             
                             <div class="result-card mb-4">
                                 <div class="row align-items-center">
@@ -692,20 +396,20 @@
                             <!-- Использование ресурсов -->
                             <div class="resource-usage">
                                 <div style="flex: 1;">
-                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">60</span></div>
+                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">100</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="hoursBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                                 <div style="flex: 1; margin-left: 15px;">
-                                    <div>Материалы: <span id="usedMaterial">0</span> / <span id="totalMaterialDisplay">50</span></div>
+                                    <div>Материалы: <span id="usedMaterial">0</span> / <span id="totalMaterialDisplay">100</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="materialBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
                             
-                            <!-- Выровненные блоки статистики -->
+                            <!-- Статистика -->
                             <div class="stats-container">
                                 <div class="col-md-4">
                                     <div class="checks-info">
@@ -751,7 +455,7 @@
                                 </button>
                             </div>
 
-                            <!-- Графики (равные по размеру) -->
+                            <!-- Графики -->
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="chart-container">
@@ -765,11 +469,11 @@
                                 </div>
                             </div>
                             
-                            <!-- Таблица без подсветки -->
+                            <!-- Таблица детального расчёта -->
                             <div class="mt-4">
-                                <h5><i class="bi bi-table me-2"></i>Детальный расчёт</h5>
+                                <h5>Детальный расчёт</h5>
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-result" id="detailsTable">
+                                    <table class="table table-bordered table-result">
                                         <thead>
                                             <tr>
                                                 <th>ПРОДУКТ</th>
@@ -789,7 +493,7 @@
 
                         <!-- История расчётов -->
                         <div class="mt-4">
-                            <h5><i class="bi bi-clock-history me-2"></i>История расчётов</h5>
+                            <h5>История расчётов</h5>
                             <div id="historyList"></div>
                             <button class="btn btn-sm btn-secondary mt-2" onclick="clearHistory()">
                                 <i class="bi bi-trash me-2"></i>Очистить историю
@@ -804,30 +508,35 @@
     </div>
     
     <script>
-        let productCount = 3;
+        let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null;
         let efficiencyChart = null;
+        let currentBest = [];
+        let currentProducts = [];
+        let currentMode = 'max';
+        let currentProfit = 0;
+        let currentChecks = 0;
+        let currentTime = 0;
+        let currentSpeedup = 0;
         
         // Инициализация
         window.onload = function() {
             renderProducts();
-            // Устанавливаем начальные значения для P1, P2, P3
+            // Устанавливаем пример для минимизации (не ноль)
             setTimeout(() => {
-                document.getElementById('name0').value = 'P1';
-                document.getElementById('labor0').value = 4;
-                document.getElementById('material0').value = 2;
-                document.getElementById('profit0').value = 81;
+                document.getElementById('name0').value = 'P1 (дорогой)';
+                document.getElementById('labor0').value = 1;
+                document.getElementById('material0').value = 1;
+                document.getElementById('profit0').value = 1000;
                 
-                document.getElementById('name1').value = 'P2';
-                document.getElementById('labor1').value = 2;
-                document.getElementById('material1').value = 3;
-                document.getElementById('profit1').value = 59;
+                document.getElementById('name1').value = 'P2 (дешевый)';
+                document.getElementById('labor1').value = 1;
+                document.getElementById('material1').value = 1;
+                document.getElementById('profit1').value = 1;
                 
-                document.getElementById('name2').value = 'P3';
-                document.getElementById('labor2').value = 3;
-                document.getElementById('material2').value = 2;
-                document.getElementById('profit2').value = 94;
+                document.getElementById('totalHours').value = 100;
+                document.getElementById('totalMaterial').value = 100;
                 
                 updateComplexity();
             }, 100);
@@ -840,7 +549,6 @@
             container.innerHTML = '';
             
             for (let i = 0; i < productCount; i++) {
-                // Генерируем случайные значения для новых продуктов
                 const randomLabor = Math.floor(Math.random() * 8) + 1;
                 const randomMaterial = Math.floor(Math.random() * 8) + 1;
                 const randomProfit = Math.floor(Math.random() * 80) + 20;
@@ -850,19 +558,19 @@
                         <div class="row g-3">
                             <div class="col-md-3">
                                 <label class="form-label">Название</label>
-                                <input type="text" class="form-control" id="name${i}" value="P${i+1}" placeholder="P${i+1}">
+                                <input type="text" class="form-control" id="name${i}" value="P${i+1}">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Труд (ч)</label>
-                                <input type="number" class="form-control" id="labor${i}" value="${randomLabor}" min="1" step="1" onchange="updateComplexity()">
+                                <input type="number" class="form-control" id="labor${i}" value="${randomLabor}" min="1" onchange="updateComplexity()">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Материал (кг)</label>
-                                <input type="number" class="form-control" id="material${i}" value="${randomMaterial}" min="1" step="1" onchange="updateComplexity()">
+                                <input type="number" class="form-control" id="material${i}" value="${randomMaterial}" min="1" onchange="updateComplexity()">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Прибыль</label>
-                                <input type="number" class="form-control" id="profit${i}" value="${randomProfit}" min="1" step="1">
+                                <input type="number" class="form-control" id="profit${i}" value="${randomProfit}" min="1">
                             </div>
                         </div>
                     </div>
@@ -923,7 +631,7 @@
             return products;
         }
         
-        // Основной алгоритм с Branch and Bound
+        // Основной алгоритм
         function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
@@ -934,7 +642,6 @@
                 return;
             }
             
-            // Сбор данных о продуктах
             const products = getProductsData();
             
             for (let i = 0; i < productCount; i++) {
@@ -944,6 +651,10 @@
                 }
             }
             
+            // Сохраняем текущие данные для экспорта
+            currentProducts = products;
+            currentMode = mode;
+            
             // Вычисление максимальных количеств
             const maxCount = [];
             for (let i = 0; i < productCount; i++) {
@@ -952,111 +663,69 @@
                 maxCount.push(Math.min(byHours, byMaterial));
             }
             
-            // Время
             const startTime = performance.now();
             
-            // Branch and Bound алгоритм
+            // Полный перебор
             let best = new Array(productCount).fill(0);
             let current = new Array(productCount).fill(0);
             let optimalProfit = (mode === 'max') ? -1 : Infinity;
             let checks = 0;
-            let pruned = 0;
             
-            // Сортировка по эффективности для максимизации
-            let indices = Array.from({length: productCount}, (_, i) => i);
-            if (mode === 'max') {
-                indices.sort((a, b) => {
-                    const effA = products[a].profit / (products[a].labor + products[a].material);
-                    const effB = products[b].profit / (products[b].labor + products[b].material);
-                    return effB - effA;
-                });
-            }
-            
-            function estimateMaxProfit(index, currentProfit) {
-                let maxPossible = currentProfit;
-                for (let i = index; i < productCount; i++) {
-                    maxPossible += maxCount[indices[i]] * products[indices[i]].profit;
-                }
-                return maxPossible;
-            }
-            
-            function bruteForce(index, hours, material, profit) {
-                // Отсечение по ресурсам
-                if (hours > totalHours || material > totalMaterial) {
-                    pruned++;
-                    return;
-                }
-                
+            function bruteForce(index) {
                 if (index === productCount) {
                     checks++;
                     
-                    if (mode === 'max') {
-                        if (profit > optimalProfit) {
-                            optimalProfit = profit;
-                            best = [...current];
-                        }
-                    } else {
-                        if (profit < optimalProfit) {
-                            optimalProfit = profit;
-                            best = [...current];
+                    let hours = 0, material = 0, profit = 0;
+                    for (let i = 0; i < productCount; i++) {
+                        hours += current[i] * products[i].labor;
+                        material += current[i] * products[i].material;
+                        profit += current[i] * products[i].profit;
+                    }
+                    
+                    if (hours <= totalHours && material <= totalMaterial) {
+                        if (mode === 'max') {
+                            if (profit > optimalProfit) {
+                                optimalProfit = profit;
+                                best = [...current];
+                            }
+                        } else {
+                            if (profit < optimalProfit) {
+                                optimalProfit = profit;
+                                best = [...current];
+                            }
                         }
                     }
                     return;
                 }
                 
-                const productIdx = indices[index];
-                
-                // Оптимизация: верхняя граница для максимизации
-                if (mode === 'max') {
-                    const maxPossibleProfit = estimateMaxProfit(index, profit);
-                    if (maxPossibleProfit <= optimalProfit) {
-                        pruned += (maxCount[productIdx] + 1);
-                        return;
-                    }
-                    
-                    // Для максимизации пробуем сначала большие значения
-                    for (let count = maxCount[productIdx]; count >= 0; count--) {
-                        current[productIdx] = count;
-                        bruteForce(
-                            index + 1,
-                            hours + count * products[productIdx].labor,
-                            material + count * products[productIdx].material,
-                            profit + count * products[productIdx].profit
-                        );
-                    }
-                } else {
-                    // Для минимизации - стандартный порядок
-                    for (let count = 0; count <= maxCount[productIdx]; count++) {
-                        current[productIdx] = count;
-                        bruteForce(
-                            index + 1,
-                            hours + count * products[productIdx].labor,
-                            material + count * products[productIdx].material,
-                            profit + count * products[productIdx].profit
-                        );
-                    }
+                for (let count = 0; count <= maxCount[index]; count++) {
+                    current[index] = count;
+                    bruteForce(index + 1);
                 }
             }
             
-            bruteForce(0, 0, 0, 0);
+            bruteForce(0);
             
             const endTime = performance.now();
             const calcTimeMs = (endTime - startTime).toFixed(2);
             
-            // Восстановление порядка продуктов
-            if (mode === 'max') {
-                const unsortedBest = new Array(productCount);
-                for (let i = 0; i < productCount; i++) {
-                    unsortedBest[indices[i]] = best[indices[i]];
-                }
-                best = unsortedBest;
+            // Сохраняем результаты
+            currentBest = best;
+            currentProfit = optimalProfit;
+            currentChecks = checks;
+            currentTime = calcTimeMs;
+            
+            // Вычисление ускорения
+            let totalCombinations = 1;
+            for (let i = 0; i < productCount; i++) {
+                totalCombinations *= (maxCount[i] + 1);
             }
+            currentSpeedup = (totalCombinations / checks).toFixed(2);
             
             // Отображение результатов
             document.getElementById('results').style.display = 'block';
             document.getElementById('error').style.display = 'none';
             
-            // Обновление UI в зависимости от режима
             if (mode === 'max') {
                 document.getElementById('modeBadge').innerHTML = '<i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль';
                 document.getElementById('modeBadge').className = 'badge bg-success mb-3';
@@ -1068,18 +737,9 @@
             }
             
             document.getElementById('optimalProfit').innerText = optimalProfit;
-            
-            // Обновляем значения в блоках статистики
             document.getElementById('checksCount').innerText = checks;
             document.getElementById('calcTime').innerText = calcTimeMs;
-            
-            // Вычисление ускорения
-            let totalCombinations = 1;
-            for (let i = 0; i < productCount; i++) {
-                totalCombinations *= (maxCount[i] + 1);
-            }
-            const speedup = (totalCombinations / checks).toFixed(2);
-            document.getElementById('speedup').innerText = speedup;
+            document.getElementById('speedup').innerText = currentSpeedup;
             
             // Использование ресурсов
             let usedHours = 0, usedMaterial = 0;
@@ -1106,7 +766,7 @@
             }
             document.getElementById('resultProducts').innerHTML = resultHtml;
             
-            // Таблица деталей (без подсветки)
+            // Таблица деталей
             let tableHtml = '';
             for (let i = 0; i < productCount; i++) {
                 const efficiency = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
@@ -1117,7 +777,7 @@
                         <td>${products[i].material}</td>
                         <td>${products[i].profit}</td>
                         <td>${efficiency}</td>
-                        <td class="optimum-cell">${best[i]}</td>
+                        <td class="fw-bold">${best[i]}</td>
                     </tr>
                 `;
             }
@@ -1131,11 +791,9 @@
         }
         
         function renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial) {
-            // Уничтожаем старые графики если есть
             if (resourceChart) resourceChart.destroy();
             if (efficiencyChart) efficiencyChart.destroy();
             
-            // График использования ресурсов
             const resourceCtx = document.getElementById('resourceChart').getContext('2d');
             resourceChart = new Chart(resourceCtx, {
                 type: 'bar',
@@ -1145,43 +803,25 @@
                         label: 'Использовано',
                         data: [usedHours, usedMaterial],
                         backgroundColor: ['rgba(155, 89, 182, 0.8)', 'rgba(46, 204, 113, 0.8)'],
-                        borderRadius: 10,
-                        barPercentage: 0.6
                     }, {
                         label: 'Остаток',
                         data: [totalHours - usedHours, totalMaterial - usedMaterial],
                         backgroundColor: ['rgba(155, 89, 182, 0.3)', 'rgba(46, 204, 113, 0.3)'],
-                        borderRadius: 10,
-                        barPercentage: 0.6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
-                            labels: { color: '#ffffff', font: { size: 12 } }
-                        },
-                        tooltip: {
-                            bodyColor: '#ffffff',
-                            backgroundColor: 'rgba(0,0,0,0.8)'
-                        }
+                        legend: { labels: { color: '#ffffff' } }
                     },
                     scales: {
-                        y: {
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#ffffff', font: { size: 11 } },
-                            beginAtZero: true
-                        },
-                        x: {
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: '#ffffff', font: { size: 11 } }
-                        }
+                        y: { ticks: { color: '#ffffff' } },
+                        x: { ticks: { color: '#ffffff' } }
                     }
                 }
             });
             
-            // График эффективности
             const efficiencyData = products.map(p => 
                 (p.profit / (p.labor + p.material)).toFixed(2)
             );
@@ -1193,42 +833,30 @@
                     labels: products.map(p => p.name),
                     datasets: [{
                         data: efficiencyData,
-                        backgroundColor: [
-                            '#9b59b6', '#3498db', '#e74c3c', '#f1c40f', 
-                            '#2ecc71', '#e67e22', '#1abc9c', '#c0392b',
-                            '#95a5a6', '#34495e'
-                        ],
-                        borderWidth: 0
+                        backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71']
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
-                            position: 'right',
-                            labels: { color: '#ffffff', font: { size: 12 } }
-                        },
-                        tooltip: {
-                            bodyColor: '#ffffff',
-                            backgroundColor: 'rgba(0,0,0,0.8)'
-                        }
+                        legend: { labels: { color: '#ffffff' } }
                     }
                 }
             });
         }
         
-        // Экспорт в XLSX (Excel) - в формате как на скриншоте
+        // Экспорт в XLSX
         function exportToXLSX() {
-            const products = getProductsData();
-            const best = getCurrentBest();
+            const products = currentProducts;
+            const best = currentBest;
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-            const checks = document.getElementById('checksCount').innerText;
-            const calcTime = document.getElementById('calcTime').innerText;
-            const speedup = document.getElementById('speedup').innerText;
-            const optimalProfit = document.getElementById('optimalProfit').innerText;
+            const mode = currentMode;
+            const profit = currentProfit;
+            const checks = currentChecks;
+            const time = currentTime;
+            const speedup = currentSpeedup;
             
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
@@ -1236,10 +864,6 @@
                 usedMaterial += best[i] * p.material;
             });
             
-            const hoursPercent = (usedHours / totalHours * 100).toFixed(1);
-            const materialPercent = (usedMaterial / totalMaterial * 100).toFixed(1);
-            
-            // Создаем массив данных для Excel в формате как на скриншоте
             const data = [
                 ['ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ'],
                 ['==================================================='],
@@ -1252,75 +876,48 @@
                 ['---'],
             ];
             
-            // Добавляем данные продуктов
             products.forEach((p, i) => {
                 data.push([`${p.name}: ${best[i]} ед.`]);
             });
             
             data.push([]);
             data.push(['===================================================']);
-            data.push([]);
-            data.push([`ПРИБЫЛЬ: ${optimalProfit}`]);
+            data.push([`ПРИБЫЛЬ: ${profit}`]);
             data.push([]);
             data.push(['ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:']);
-            data.push(['---']);
-            data.push([`Часы: ${usedHours} из ${totalHours} (${hoursPercent}%)`]);
-            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${materialPercent}%)`]);
+            data.push([`Часы: ${usedHours} из ${totalHours} (${(usedHours/totalHours*100).toFixed(1)}%)`]);
+            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial/totalMaterial*100).toFixed(1)}%)`]);
             data.push([]);
-            data.push(['Статистика РАСЧЁТА:']);
-            data.push(['---']);
+            data.push(['СТАТИСТИКА РАСЧЁТА:']);
             data.push([`Проверено комбинаций: ${checks}`]);
-            data.push([`Время расчёта: ${calcTime} мс`]);
+            data.push([`Время расчёта: ${time} мс`]);
             data.push([`Ускорение: ${speedup}x`]);
             data.push([]);
             data.push(['ДЕТАЛЬНЫЙ РАСЧЁТ:']);
-            data.push(['---']);
-            data.push(['ПРОДУКТ    ТРУД (Ч/ЕД)   МАТЕРИАЛ (КГ/ЕД)   ПРИБЫЛЬ   ЭФФЕКТИВН.   ОПТИМУМ']);
-            data.push(['---']);
-            
-            // Добавляем детальный расчёт с эффективностью
-            products.forEach((p, i) => {
-                const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                data.push([`${p.name}    ${p.labor}    ${p.material}    ${p.profit}    ${efficiency}    ${best[i]}`]);
-            });
-            
-            data.push([]);
-            data.push(['ЭФФЕКТИВНОСТЬ ПРОДУКТОВ (прибыль на единицу ресурсов):']);
-            data.push(['---']);
+            data.push(['ПРОДУКТ', 'ТРУД', 'МАТЕРИАЛ', 'ПРИБЫЛЬ', 'ЭФФЕКТИВН.', 'ОПТИМУМ']);
             
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                data.push([`${p.name}    : ${efficiency}`]);
+                data.push([p.name, p.labor, p.material, p.profit, efficiency, best[i]]);
             });
             
-            data.push([]);
-            data.push(['РАСЧЁТ ЗАВЕРШЁН']);
-            
-            // Создаем рабочий лист
             const ws = XLSX.utils.aoa_to_sheet(data);
-            
-            // Настраиваем ширину колонок
-            ws['!cols'] = [{ wch: 60 }];
-            
-            // Создаем книгу
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Оптимальный план');
-            
-            // Сохраняем файл
             XLSX.writeFile(wb, 'optimization_result.xlsx');
         }
         
         // Экспорт в JSON
         function exportToJSON() {
-            const products = getProductsData();
-            const best = getCurrentBest();
+            const products = currentProducts;
+            const best = currentBest;
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-            const optimalProfit = parseInt(document.getElementById('optimalProfit').innerText);
-            const checks = parseInt(document.getElementById('checksCount').innerText);
-            const calcTime = parseFloat(document.getElementById('calcTime').innerText);
-            const speedup = parseFloat(document.getElementById('speedup').innerText);
+            const mode = currentMode;
+            const profit = currentProfit;
+            const checks = currentChecks;
+            const time = currentTime;
+            const speedup = currentSpeedup;
             
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
@@ -1333,29 +930,17 @@
                 date: new Date().toLocaleString(),
                 mode: mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ',
                 resources: {
-                    hours: totalHours,
-                    material: totalMaterial
+                    hours: { total: totalHours, used: usedHours, percent: (usedHours/totalHours*100).toFixed(1) },
+                    material: { total: totalMaterial, used: usedMaterial, percent: (usedMaterial/totalMaterial*100).toFixed(1) }
                 },
                 optimalPlan: products.map((p, i) => ({
                     name: p.name,
                     quantity: best[i]
                 })),
-                profit: optimalProfit,
-                resourceUsage: {
-                    hours: {
-                        used: usedHours,
-                        total: totalHours,
-                        percent: (usedHours / totalHours * 100).toFixed(1)
-                    },
-                    material: {
-                        used: usedMaterial,
-                        total: totalMaterial,
-                        percent: (usedMaterial / totalMaterial * 100).toFixed(1)
-                    }
-                },
+                profit: profit,
                 statistics: {
                     checks: checks,
-                    time: calcTime,
+                    time: time,
                     speedup: speedup
                 },
                 detailedCalculation: products.map((p, i) => ({
@@ -1368,20 +953,24 @@
                 }))
             };
             
-            downloadFile(JSON.stringify(data, null, 2), 'optimization_result.json', 'application/json');
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'optimization_result.json';
+            link.click();
         }
         
-        // Экспорт в TXT - точно как на скриншоте
+        // Экспорт в TXT
         function exportToTXT() {
-            const products = getProductsData();
-            const best = getCurrentBest();
+            const products = currentProducts;
+            const best = currentBest;
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-            const optimalProfit = document.getElementById('optimalProfit').innerText;
-            const checks = document.getElementById('checksCount').innerText;
-            const calcTime = document.getElementById('calcTime').innerText;
-            const speedup = document.getElementById('speedup').innerText;
+            const mode = currentMode;
+            const profit = currentProfit;
+            const checks = currentChecks;
+            const time = currentTime;
+            const speedup = currentSpeedup;
             
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
@@ -1389,89 +978,48 @@
                 usedMaterial += best[i] * p.material;
             });
             
-            const hoursPercent = (usedHours / totalHours * 100).toFixed(1);
-            const materialPercent = (usedMaterial / totalMaterial * 100).toFixed(1);
-            
-            let text = '';
-            
-            // Заголовок
-            text += 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n';
+            let text = 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n';
             text += '===================================================\n\n';
-            
-            // Основная информация
             text += `Дата расчёта: ${new Date().toLocaleString()}\n`;
             text += `Режим: ${mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ'} прибыли\n`;
             text += `Ресурсы: ${totalHours} часов, ${totalMaterial} кг материалов\n\n`;
-            
-            // Оптимальный план
             text += 'ОПТИМАЛЬНЫЙ ПЛАН:\n';
             text += '---\n';
+            
             products.forEach((p, i) => {
                 text += `${p.name}: ${best[i]} ед.\n`;
             });
             
             text += '\n===================================================\n\n';
-            text += `ПРИБЫЛЬ: ${optimalProfit}\n\n`;
-            
-            // Использование ресурсов
+            text += `ПРИБЫЛЬ: ${profit}\n\n`;
             text += 'ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n';
-            text += '---\n';
-            text += `Часы: ${usedHours} из ${totalHours} (${hoursPercent}%)\n`;
-            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${materialPercent}%)\n\n`;
-            
-            // Статистика
-            text += 'Статистика РАСЧЁТА:\n';
-            text += '---\n';
+            text += `Часы: ${usedHours} из ${totalHours} (${(usedHours/totalHours*100).toFixed(1)}%)\n`;
+            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial/totalMaterial*100).toFixed(1)}%)\n\n`;
+            text += 'СТАТИСТИКА РАСЧЁТА:\n';
             text += `Проверено комбинаций: ${checks}\n`;
-            text += `Время расчёта: ${calcTime} мс\n`;
+            text += `Время расчёта: ${time} мс\n`;
             text += `Ускорение: ${speedup}x\n\n`;
-            
-            // Детальный расчёт
             text += 'ДЕТАЛЬНЫЙ РАСЧЁТ:\n';
-            text += '---\n';
-            text += 'ПРОДУКТ    ТРУД (Ч/ЕД)   МАТЕРИАЛ (КГ/ЕД)   ПРИБЫЛЬ   ЭФФЕКТИВН.   ОПТИМУМ\n';
-            text += '---\n';
+            text += 'ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n';
             
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                text += `${p.name.padEnd(10)} ${p.labor.toString().padEnd(14)} ${p.material.toString().padEnd(18)} ${p.profit.toString().padEnd(10)} ${efficiency.toString().padEnd(12)} ${best[i]}\n`;
+                text += `${p.name.padEnd(10)} ${p.labor.toString().padEnd(7)} ${p.material.toString().padEnd(10)} ${p.profit.toString().padEnd(9)} ${efficiency.toString().padEnd(12)} ${best[i]}\n`;
             });
             
-            text += '\n';
-            text += 'ЭФФЕКТИВНОСТЬ ПРОДУКТОВ (прибыль на единицу ресурсов):\n';
-            text += '---\n';
-            
+            text += '\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n';
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                text += `${p.name.padEnd(6)} : ${efficiency}\n`;
+                text += `${p.name}: ${efficiency}\n`;
             });
             
             text += '\nРАСЧЁТ ЗАВЕРШЁН\n';
             
-            downloadFile(text, 'optimization_result.txt', 'text/plain;charset=utf-8;');
-        }
-        
-        function downloadFile(content, fileName, mimeType) {
-            const blob = new Blob([content], { type: mimeType });
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = fileName;
+            link.download = 'optimization_result.txt';
             link.click();
-        }
-        
-        function getCurrentBest() {
-            const best = [];
-            const tableBody = document.getElementById('tableBody');
-            const rows = tableBody.getElementsByTagName('tr');
-            
-            for (let row of rows) {
-                const cells = row.getElementsByTagName('td');
-                if (cells.length >= 6) {
-                    best.push(parseInt(cells[5].innerText));
-                }
-            }
-            
-            return best;
         }
         
         // История расчётов
@@ -1511,13 +1059,8 @@
                             ${item.mode === 'max' ? 'MAX' : 'MIN'}
                         </span>
                     </div>
-                    <div class="mt-2">
-                        <strong>Прибыль: ${item.profit}</strong>
-                    </div>
+                    <div><strong>Прибыль: ${item.profit}</strong></div>
                     <small>Продукты: ${item.products.join(', ')}</small>
-                    <div class="mt-1">
-                        <small class="text-secondary">Проверено: ${item.checks} за ${item.time} мс</small>
-                    </div>
                 </div>
             `).join('');
         }
@@ -1525,24 +1068,21 @@
         function loadHistoryItem(index) {
             const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
             const item = history[index];
-            
             if (item) {
-                alert(`Загружен расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПродукты: ${item.products.join(', ')}\nПлан: ${item.plan.join(', ')} ед.`);
+                alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПлан: ${item.plan.join(', ')} ед.`);
             }
         }
         
         function clearHistory() {
-            if (confirm('Очистить всю историю расчётов?')) {
+            if (confirm('Очистить историю?')) {
                 localStorage.removeItem('calcHistory');
                 displayHistory();
             }
         }
         
         function showError(message) {
-            const errorDiv = document.getElementById('error');
-            errorDiv.style.display = 'block';
-            errorDiv.innerText = message;
-            document.getElementById('results').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error').innerText = message;
         }
     </script>
 </body>

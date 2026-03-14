@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <iomanip>
 #include <cmath>
+#include <fstream>
+#include <ctime>
+#include <sstream>
 
 using namespace std;
 
@@ -29,22 +32,240 @@ void printLine(char c, int length) {
     cout << endl;
 }
 
-// Функция для вывода линии и возврата строки (для использования в cout)
-string getLine(char c, int length) {
-    string line;
-    for (int i = 0; i < length; i++) line += c;
-    return line;
+// Функция для получения текущей даты и времени
+string getCurrentDateTime() {
+    time_t now = time(0);
+    tm* ltm = localtime(&now);
+    
+    stringstream ss;
+    ss << setfill('0') 
+       << setw(2) << ltm->tm_mday << "."
+       << setw(2) << 1 + ltm->tm_mon << "."
+       << 1900 + ltm->tm_year << ", "
+       << setw(2) << ltm->tm_hour << ":"
+       << setw(2) << ltm->tm_min << ":"
+       << setw(2) << ltm->tm_sec;
+    
+    return ss.str();
 }
 
-// Функция для центрирования текста
-void printCentered(const string& text, int width) {
-    int padding = width - text.length();
-    int leftPadding = padding / 2;
-    int rightPadding = padding - leftPadding;
+// Экспорт в TXT
+void exportToTXT(const vector<Product>& products, const vector<int>& best, 
+                 int totalHours, int totalMaterial, int mode, int optimalProfit,
+                 long long checks, double calcTime, double speedup) {
     
-    for (int i = 0; i < leftPadding; i++) cout << " ";
-    cout << text;
-    for (int i = 0; i < rightPadding; i++) cout << " ";
+    string filename = "optimization_result.txt";
+    ofstream file(filename);
+    
+    if (!file.is_open()) {
+        cout << "Ошибка создания файла " << filename << endl;
+        return;
+    }
+    
+    int usedHours = 0, usedMaterial = 0;
+    for (size_t i = 0; i < products.size(); i++) {
+        usedHours += best[i] * products[i].labor;
+        usedMaterial += best[i] * products[i].material;
+    }
+    
+    file << "ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n";
+    file << "===================================================\n\n";
+    file << "Дата расчёта: " << getCurrentDateTime() << "\n";
+    file << "Режим: " << (mode == 1 ? "МАКСИМИЗАЦИЯ" : "МИНИМИЗАЦИЯ") << " прибыли\n";
+    file << "Ресурсы: " << totalHours << " часов, " << totalMaterial << " кг материалов\n\n";
+    file << "ОПТИМАЛЬНЫЙ ПЛАН:\n";
+    file << "---\n";
+    
+    for (size_t i = 0; i < products.size(); i++) {
+        file << products[i].name << ": " << best[i] << " ед.\n";
+    }
+    
+    file << "\n===================================================\n\n";
+    file << "ПРИБЫЛЬ: " << optimalProfit << "\n\n";
+    file << "ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n";
+    file << "Часы: " << usedHours << " из " << totalHours << " ("
+         << fixed << setprecision(1) << (usedHours * 100.0 / totalHours) << "%)\n";
+    file << "Материалы: " << usedMaterial << " из " << totalMaterial << " ("
+         << (usedMaterial * 100.0 / totalMaterial) << "%)\n\n";
+    file << "СТАТИСТИКА РАСЧЁТА:\n";
+    file << "Проверено комбинаций: " << checks << "\n";
+    file << "Время расчёта: " << fixed << setprecision(2) << calcTime << " мс\n";
+    file << "Ускорение: " << speedup << "x\n\n";
+    file << "ДЕТАЛЬНЫЙ РАСЧЁТ:\n";
+    file << "ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n";
+    
+    for (size_t i = 0; i < products.size(); i++) {
+        double efficiency = (double)products[i].profit / (products[i].labor + products[i].material);
+        file << left << setw(10) << products[i].name
+             << setw(7) << products[i].labor
+             << setw(10) << products[i].material
+             << setw(9) << products[i].profit
+             << setw(12) << fixed << setprecision(2) << efficiency
+             << best[i] << "\n";
+    }
+    
+    file << "\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n";
+    for (size_t i = 0; i < products.size(); i++) {
+        double efficiency = (double)products[i].profit / (products[i].labor + products[i].material);
+        file << products[i].name << ": " << fixed << setprecision(2) << efficiency << "\n";
+    }
+    
+    file << "\nРАСЧЁТ ЗАВЕРШЁН\n";
+    file.close();
+    
+    cout << "✓ Результаты экспортированы в файл: " << filename << "\n";
+}
+
+// Экспорт в JSON
+void exportToJSON(const vector<Product>& products, const vector<int>& best,
+                  int totalHours, int totalMaterial, int mode, int optimalProfit,
+                  long long checks, double calcTime, double speedup) {
+    
+    string filename = "optimization_result.json";
+    ofstream file(filename);
+    
+    if (!file.is_open()) {
+        cout << "Ошибка создания файла " << filename << endl;
+        return;
+    }
+    
+    int usedHours = 0, usedMaterial = 0;
+    for (size_t i = 0; i < products.size(); i++) {
+        usedHours += best[i] * products[i].labor;
+        usedMaterial += best[i] * products[i].material;
+    }
+    
+    file << "{\n";
+    file << "  \"title\": \"ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\",\n";
+    file << "  \"date\": \"" << getCurrentDateTime() << "\",\n";
+    file << "  \"mode\": \"" << (mode == 1 ? "МАКСИМИЗАЦИЯ" : "МИНИМИЗАЦИЯ") << "\",\n";
+    file << "  \"resources\": {\n";
+    file << "    \"hours\": {\n";
+    file << "      \"total\": " << totalHours << ",\n";
+    file << "      \"used\": " << usedHours << ",\n";
+    file << "      \"percent\": \"" << fixed << setprecision(1) << (usedHours * 100.0 / totalHours) << "\"\n";
+    file << "    },\n";
+    file << "    \"material\": {\n";
+    file << "      \"total\": " << totalMaterial << ",\n";
+    file << "      \"used\": " << usedMaterial << ",\n";
+    file << "      \"percent\": \"" << (usedMaterial * 100.0 / totalMaterial) << "\"\n";
+    file << "    }\n";
+    file << "  },\n";
+    file << "  \"optimalPlan\": [\n";
+    
+    for (size_t i = 0; i < products.size(); i++) {
+        file << "    {\n";
+        file << "      \"name\": \"" << products[i].name << "\",\n";
+        file << "      \"quantity\": " << best[i] << "\n";
+        file << "    }" << (i < products.size() - 1 ? "," : "") << "\n";
+    }
+    
+    file << "  ],\n";
+    file << "  \"profit\": " << optimalProfit << ",\n";
+    file << "  \"statistics\": {\n";
+    file << "    \"checks\": " << checks << ",\n";
+    file << "    \"time\": " << fixed << setprecision(2) << calcTime << ",\n";
+    file << "    \"speedup\": " << speedup << "\n";
+    file << "  },\n";
+    file << "  \"detailedCalculation\": [\n";
+    
+    for (size_t i = 0; i < products.size(); i++) {
+        double efficiency = (double)products[i].profit / (products[i].labor + products[i].material);
+        file << "    {\n";
+        file << "      \"name\": \"" << products[i].name << "\",\n";
+        file << "      \"labor\": " << products[i].labor << ",\n";
+        file << "      \"material\": " << products[i].material << ",\n";
+        file << "      \"profit\": " << products[i].profit << ",\n";
+        file << "      \"efficiency\": " << fixed << setprecision(2) << efficiency << ",\n";
+        file << "      \"optimum\": " << best[i] << "\n";
+        file << "    }" << (i < products.size() - 1 ? "," : "") << "\n";
+    }
+    
+    file << "  ]\n";
+    file << "}\n";
+    file.close();
+    
+    cout << "✓ Результаты экспортированы в файл: " << filename << "\n";
+}
+
+// Экспорт в XLSX (CSV формат для простоты, можно открыть в Excel)
+void exportToXLSX(const vector<Product>& products, const vector<int>& best,
+                  int totalHours, int totalMaterial, int mode, int optimalProfit,
+                  long long checks, double calcTime, double speedup) {
+    
+    string filename = "optimization_result.csv";
+    ofstream file(filename);
+    
+    if (!file.is_open()) {
+        cout << "Ошибка создания файла " << filename << endl;
+        return;
+    }
+    
+    int usedHours = 0, usedMaterial = 0;
+    for (size_t i = 0; i < products.size(); i++) {
+        usedHours += best[i] * products[i].labor;
+        usedMaterial += best[i] * products[i].material;
+    }
+    
+    // UTF-8 BOM для корректного отображения кириллицы в Excel
+    unsigned char bom[] = {0xEF, 0xBB, 0xBF};
+    file.write((char*)bom, sizeof(bom));
+    
+    file << "ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n";
+    file << "===================================================\n";
+    file << "\n";
+    file << "Дата расчёта:," << getCurrentDateTime() << "\n";
+    file << "Режим:," << (mode == 1 ? "МАКСИМИЗАЦИЯ" : "МИНИМИЗАЦИЯ") << " прибыли\n";
+    file << "Ресурсы:," << totalHours << " часов, " << totalMaterial << " кг материалов\n";
+    file << "\n";
+    file << "ОПТИМАЛЬНЫЙ ПЛАН:\n";
+    file << "---\n";
+    
+    for (size_t i = 0; i < products.size(); i++) {
+        file << products[i].name << "," << best[i] << " ед.\n";
+    }
+    
+    file << "\n";
+    file << "===================================================\n";
+    file << "\n";
+    file << "ПРИБЫЛЬ:," << optimalProfit << "\n";
+    file << "\n";
+    file << "ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n";
+    file << "Часы:," << usedHours << " из " << totalHours << "," 
+         << fixed << setprecision(1) << (usedHours * 100.0 / totalHours) << "%\n";
+    file << "Материалы:," << usedMaterial << " из " << totalMaterial << ","
+         << (usedMaterial * 100.0 / totalMaterial) << "%\n";
+    file << "\n";
+    file << "СТАТИСТИКА РАСЧЁТА:\n";
+    file << "Проверено комбинаций:," << checks << "\n";
+    file << "Время расчёта:," << fixed << setprecision(2) << calcTime << " мс\n";
+    file << "Ускорение:," << speedup << "x\n";
+    file << "\n";
+    file << "ДЕТАЛЬНЫЙ РАСЧЁТ:\n";
+    file << "ПРОДУКТ,ТРУД,МАТЕРИАЛ,ПРИБЫЛЬ,ЭФФЕКТИВН.,ОПТИМУМ\n";
+    
+    for (size_t i = 0; i < products.size(); i++) {
+        double efficiency = (double)products[i].profit / (products[i].labor + products[i].material);
+        file << products[i].name << ","
+             << products[i].labor << ","
+             << products[i].material << ","
+             << products[i].profit << ","
+             << fixed << setprecision(2) << efficiency << ","
+             << best[i] << "\n";
+    }
+    
+    file << "\n";
+    file << "ЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n";
+    for (size_t i = 0; i < products.size(); i++) {
+        double efficiency = (double)products[i].profit / (products[i].labor + products[i].material);
+        file << products[i].name << "," << fixed << setprecision(2) << efficiency << "\n";
+    }
+    
+    file << "\n";
+    file << "РАСЧЁТ ЗАВЕРШЁН\n";
+    file.close();
+    
+    cout << "✓ Результаты экспортированы в файл: " << filename << " (можно открыть в Excel)\n";
 }
 
 int main() {
@@ -102,25 +323,17 @@ int main() {
     printLine('=', 60);
     cout << "\n";
 
-    // Сортировка для максимизации
-    vector<Product> sortedProducts = p;
-    if (mode == 1) {
-        sort(sortedProducts.begin(), sortedProducts.end(), compareByEfficiency);
-        cout << "✓ Продукты отсортированы по эффективности (прибыль/ресурсы)\n\n";
-    }
-
     vector<int> best(N, 0);
     vector<int> current(N, 0);
     
     int optimalProfit;
     if (mode == 1) {
-        optimalProfit = -1; // Для максимума
+        optimalProfit = -1;
     } else {
-        optimalProfit = numeric_limits<int>::max(); // Для минимума
+        optimalProfit = numeric_limits<int>::max();
     }
     
     long long checks = 0;
-    long long pruned = 0;
 
     // Вычисление максимальных количеств
     vector<int> maxCount(N);
@@ -142,22 +355,14 @@ int main() {
     }
     cout << "\nТЕОРЕТИЧЕСКОЕ ЧИСЛО КОМБИНАЦИЙ: " << theoreticalCombinations << "\n";
 
-    // Функция оценки максимальной прибыли для отсечения
-    function<long long(int, long long)> estimateMaxProfit = [&](int startIndex, long long currentProfit) {
-        long long maxPossible = currentProfit;
-        for (int i = startIndex; i < N; i++) {
-            maxPossible += (long long)maxCount[i] * p[i].profit;
-        }
-        return maxPossible;
-    };
-
     cout << "\nНАЧАЛО РАСЧЁТА (Branch and Bound)...\n";
 
+    // Засекаем время
+    clock_t start = clock();
+
     // Рекурсивный перебор с отсечениями
-    function<void(int, int, int, long long)> bruteForce = [&](int index, int hours, int material, long long profit) {
-        // Отсечение по ресурсам
+    function<void(int, int, int, int)> bruteForce = [&](int index, int hours, int material, int profit) {
         if (hours > totalHours || material > totalMaterial) {
-            pruned++;
             return;
         }
         
@@ -180,35 +385,20 @@ int main() {
             return;
         }
         
-        // Оптимизация для максимизации
-        if (mode == 1) {
-            long long maxPossibleProfit = estimateMaxProfit(index, profit);
-            if (maxPossibleProfit <= optimalProfit) {
-                pruned += (maxCount[index] + 1);
-                return;
-            }
-            
-            // Для максимизации пробуем сначала большие значения
-            for (int count = maxCount[index]; count >= 0; count--) {
-                current[index] = count;
-                bruteForce(index + 1, 
-                          hours + count * p[index].labor,
-                          material + count * p[index].material,
-                          profit + (long long)count * p[index].profit);
-            }
-        } else {
-            // Для минимизации - стандартный порядок
-            for (int count = 0; count <= maxCount[index]; count++) {
-                current[index] = count;
-                bruteForce(index + 1,
-                          hours + count * p[index].labor,
-                          material + count * p[index].material,
-                          profit + (long long)count * p[index].profit);
-            }
+        for (int count = 0; count <= maxCount[index]; count++) {
+            current[index] = count;
+            bruteForce(index + 1, 
+                      hours + count * p[index].labor,
+                      material + count * p[index].material,
+                      profit + count * p[index].profit);
         }
     };
 
     bruteForce(0, 0, 0, 0);
+
+    clock_t end = clock();
+    double calcTimeMs = (double)(end - start) * 1000.0 / CLOCKS_PER_SEC;
+    double speedup = (double)theoreticalCombinations / checks;
 
     cout << "✓ Расчёт завершён\n\n";
     
@@ -242,7 +432,6 @@ int main() {
     cout << "\nИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n";
     printLine('-', 50);
     
-    // Часы
     double hoursPercent = (double)usedHours / totalHours * 100;
     cout << "Часы: " << usedHours << " из " << totalHours;
     cout << " (" << fixed << setprecision(1) << hoursPercent << "%)\n";
@@ -255,7 +444,6 @@ int main() {
     }
     cout << "]\n";
     
-    // Материалы
     double materialPercent = (double)usedMaterial / totalMaterial * 100;
     cout << "Материалы: " << usedMaterial << " из " << totalMaterial;
     cout << " (" << fixed << setprecision(1) << materialPercent << "%)\n";
@@ -267,31 +455,15 @@ int main() {
     }
     cout << "]\n";
     
-    // Статистика алгоритма (как на веб-странице)
     cout << "\n";
     printLine('=', 60);
     cout << "                     СТАТИСТИКА РАСЧЁТА                    \n";
     printLine('=', 60);
     cout << "\n";
     
-    cout << "╔══════════════════════════════════════════════════════════╗\n";
-    cout << "║                                                          ║\n";
-    
-    // Проверено комбинаций
-    cout << "║  ПРОВЕРЕНО КОМБИНАЦИЙ: ";
-    cout << left << setw(36) << checks << "║\n";
-    
-    // Время расчёта
-    cout << "║  ВРЕМЯ РАСЧЁТА:         ";
-    cout << left << setw(36) << "≈ 10-50 мс (C++)" << "║\n";
-    
-    // Ускорение
-    double speedup = (double)theoreticalCombinations / checks;
-    cout << "║  УСКОРЕНИЕ:             ";
-    cout << left << setw(36) << (to_string(speedup) + "x") << "║\n";
-    
-    cout << "║                                                          ║\n";
-    cout << "╚══════════════════════════════════════════════════════════╝\n";
+    cout << "Проверено комбинаций: " << checks << "\n";
+    cout << "Время расчёта: " << fixed << setprecision(2) << calcTimeMs << " мс\n";
+    cout << "Ускорение: " << fixed << setprecision(2) << speedup << "x\n";
     
     cout << "\n";
     printLine('=', 60);
@@ -299,70 +471,40 @@ int main() {
     printLine('=', 60);
     cout << "\n";
     
-    // Таблица детального расчёта (как на веб-странице)
+    // Таблица детального расчёта
     cout << left 
          << setw(12) << "ПРОДУКТ"
-         << setw(15) << "ТРУД (Ч/ЕД)"
-         << setw(18) << "МАТЕРИАЛ (КГ/ЕД)"
-         << setw(15) << "ПРИБЫЛЬ"
-         << setw(15) << "ЭФФЕКТИВН."
+         << setw(8) << "ТРУД"
+         << setw(10) << "МАТЕРИАЛ"
+         << setw(10) << "ПРИБЫЛЬ"
+         << setw(12) << "ЭФФЕКТИВН."
          << "ОПТИМУМ\n";
-    printLine('-', 85);
+    printLine('-', 62);
     
     for (int i = 0; i < N; i++) {
         double efficiency = (double)p[i].profit / (p[i].labor + p[i].material);
         
         cout << left
              << setw(12) << p[i].name
-             << setw(15) << p[i].labor
-             << setw(18) << p[i].material
-             << setw(15) << p[i].profit
-             << setw(15) << fixed << setprecision(2) << efficiency
+             << setw(8) << p[i].labor
+             << setw(10) << p[i].material
+             << setw(10) << p[i].profit
+             << setw(12) << fixed << setprecision(2) << efficiency
              << best[i] << "\n";
     }
     
-    // Эффективность продуктов
-    cout << "\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ (прибыль на единицу ресурсов):\n";
-    printLine('-', 50);
-    for (int i = 0; i < N; i++) {
-        double efficiency = (double)p[i].profit / (p[i].labor + p[i].material);
-        string bar;
-        int barLength = (int)(efficiency * 2); // Для визуализации
-        if (barLength > 20) barLength = 20;
-        for (int j = 0; j < barLength; j++) bar += "█";
-        
-        cout << left << setw(10) << p[i].name 
-             << ": " << fixed << setprecision(2) << setw(6) << efficiency
-             << " " << bar << "\n";
-    }
-    
-    // Дополнительная информация
     cout << "\n";
     printLine('=', 60);
-    cout << "                    ИНФОРМАЦИЯ О РАСЧЁТЕ                   \n";
+    cout << "                    ЭКСПОРТ РЕЗУЛЬТАТОВ                    \n";
     printLine('=', 60);
     cout << "\n";
     
-    cout << "• Теоретическое число комбинаций: " << theoreticalCombinations << "\n";
-    cout << "• Проверено комбинаций: " << checks << "\n";
-    cout << "• Отсечено веток: " << pruned << "\n";
-    cout << "• Ускорение: " << fixed << setprecision(2) << speedup << "x\n";
-    cout << "• Эффективность отсечений: " << fixed << setprecision(1) 
-         << (double)pruned / (pruned + checks) * 100 << "%\n";
+    // Экспорт в файлы
+    exportToTXT(p, best, totalHours, totalMaterial, mode, optimalProfit, checks, calcTimeMs, speedup);
+    exportToJSON(p, best, totalHours, totalMaterial, mode, optimalProfit, checks, calcTimeMs, speedup);
+    exportToXLSX(p, best, totalHours, totalMaterial, mode, optimalProfit, checks, calcTimeMs, speedup);
     
-    // Продукты с нулевым выпуском
-    bool hasZeroProducts = false;
-    for (int i = 0; i < N; i++) {
-        if (best[i] == 0) {
-            if (!hasZeroProducts) {
-                cout << "\n• Продукты, не вошедшие в оптимальный план:\n  ";
-                hasZeroProducts = true;
-            }
-            cout << p[i].name << " ";
-        }
-    }
-    
-    cout << "\n\n";
+    cout << "\n";
     printLine('=', 60);
     cout << "                    РАСЧЁТ ЗАВЕРШЁН                    \n";
     printLine('=', 60);
