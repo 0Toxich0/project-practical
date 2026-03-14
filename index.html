@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS для экспорта в XLSX -->
+    <!-- SheetJS для экспорта XLSX -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
         /* Базовые стили */
@@ -448,7 +448,7 @@
             display: inline-block;
         }
         
-        /* Адаптация для маленьких экранов */
+        /* Адаптация */
         @media (max-width: 576px) {
             body {
                 padding: 10px;
@@ -497,7 +497,6 @@
             }
         }
         
-        /* Адаптация для средних экранов */
         @media (min-width: 577px) and (max-width: 768px) {
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
@@ -508,7 +507,6 @@
             }
         }
         
-        /* Адаптация для больших экранов */
         @media (min-width: 1200px) {
             .container {
                 max-width: 1140px;
@@ -776,7 +774,6 @@
         
         // Инициализация
         window.onload = function() {
-            // Инициализируем массив с данными по умолчанию
             productsData = [
                 { name: 'P1', labor: 1, material: 1, profit: 1000 },
                 { name: 'P2', labor: 1, material: 1, profit: 1 }
@@ -818,7 +815,7 @@
             container.innerHTML = '';
             
             for (let i = 0; i < productCount; i++) {
-                // Получаем сохраненные данные или используем значения по умолчанию
+                // Получение сохраненных данных или используемые значения по умолчанию
                 const savedData = productsData[i] || { 
                     name: `P${i+1}`,
                     labor: Math.floor(Math.random() * 8) + 1,
@@ -889,14 +886,11 @@
             document.getElementById('totalCombinations').innerText = combinations.toLocaleString();
         }
         
-        // Добавить продукт
         function addProduct() {
             if (productCount < maxProducts) {
-                // Сохраняем текущие значения перед добавлением
                 saveCurrentProducts();
                 productCount++;
                 
-                // Добавляем новый продукт со случайными значениями в хранилище
                 productsData[productCount - 1] = {
                     name: `P${productCount}`,
                     labor: Math.floor(Math.random() * 8) + 1,
@@ -913,11 +907,9 @@
         // Удалить продукт
         function removeProduct() {
             if (productCount > 1) {
-                // Сохраняем текущие значения перед удалением
                 saveCurrentProducts();
                 productCount--;
                 
-                // Удаляем последний продукт из хранилища
                 productsData.pop();
                 
                 renderProducts();
@@ -1093,7 +1085,7 @@
             // Графики
             renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial);
             
-            // Сохраняем в историю
+            // Сохранение в историю
             saveToHistory(products, best, optimalProfit, mode, checks, calcTimeMs);
         }
         
@@ -1153,7 +1145,7 @@
             });
         }
         
-        // Экспорт в XLSX
+        // Экспорт XLSX
         function exportToXLSX() {
             const products = currentProducts;
             const best = currentBest;
@@ -1214,7 +1206,7 @@
             XLSX.writeFile(wb, 'optimization_result.xlsx');
         }
         
-        // Экспорт в JSON
+        // Экспорт JSON
         function exportToJSON() {
             const products = currentProducts;
             const best = currentBest;
@@ -1267,7 +1259,7 @@
             link.click();
         }
         
-        // Экспорт в TXT
+        // Экспорт TXT
         function exportToTXT() {
             const products = currentProducts;
             const best = currentBest;
