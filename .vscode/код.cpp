@@ -29,6 +29,13 @@ void printLine(char c, int length) {
     cout << endl;
 }
 
+// Функция для вывода линии и возврата строки (для использования в cout)
+string getLine(char c, int length) {
+    string line;
+    for (int i = 0; i < length; i++) line += c;
+    return line;
+}
+
 // Функция для центрирования текста
 void printCentered(const string& text, int width) {
     int padding = width - text.length();
@@ -55,6 +62,7 @@ int main() {
 
     cout << "\n";
     printLine('-', 50);
+    
     for (int i = 0; i < N; i++) {
         cout << "\nПРОДУКТ " << i + 1 << "\n";
         cout << "Название: ";
@@ -72,7 +80,8 @@ int main() {
 
     int totalHours, totalMaterial;
 
-    cout << "\n" << printLine('-', 50);
+    cout << "\n";
+    printLine('-', 50);
     cout << "\nОбщее количество часов: ";
     cin >> totalHours;
 
@@ -179,7 +188,7 @@ int main() {
                 return;
             }
             
-            // Для максимизации сначала большие значения
+            // Для максимизации пробуем сначала большие значения
             for (int count = maxCount[index]; count >= 0; count--) {
                 current[index] = count;
                 bruteForce(index + 1, 
@@ -188,7 +197,7 @@ int main() {
                           profit + (long long)count * p[index].profit);
             }
         } else {
-            // Для минимизации стандартный порядок
+            // Для минимизации - стандартный порядок
             for (int count = 0; count <= maxCount[index]; count++) {
                 current[index] = count;
                 bruteForce(index + 1,
@@ -258,7 +267,7 @@ int main() {
     }
     cout << "]\n";
     
-    // Статистика алгоритма
+    // Статистика алгоритма (как на веб-странице)
     cout << "\n";
     printLine('=', 60);
     cout << "                     СТАТИСТИКА РАСЧЁТА                    \n";
@@ -290,7 +299,7 @@ int main() {
     printLine('=', 60);
     cout << "\n";
     
-    // Таблица детального расчёта
+    // Таблица детального расчёта (как на веб-странице)
     cout << left 
          << setw(12) << "ПРОДУКТ"
          << setw(15) << "ТРУД (Ч/ЕД)"
@@ -308,14 +317,8 @@ int main() {
              << setw(15) << p[i].labor
              << setw(18) << p[i].material
              << setw(15) << p[i].profit
-             << setw(15) << fixed << setprecision(2) << efficiency;
-        
-        // Подсветка оптимума
-        if (mode == 1) {
-            cout << "\033[1;32m" << best[i] << "\033[0m\n"; // максимум
-        } else {
-            cout << "\033[1;31m" << best[i] << "\033[0m\n"; // минимум
-        }
+             << setw(15) << fixed << setprecision(2) << efficiency
+             << best[i] << "\n";
     }
     
     // Эффективность продуктов
@@ -324,7 +327,7 @@ int main() {
     for (int i = 0; i < N; i++) {
         double efficiency = (double)p[i].profit / (p[i].labor + p[i].material);
         string bar;
-        int barLength = (int)(efficiency * 2); // Визуализация
+        int barLength = (int)(efficiency * 2); // Для визуализации
         if (barLength > 20) barLength = 20;
         for (int j = 0; j < barLength; j++) bar += "█";
         

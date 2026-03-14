@@ -804,7 +804,7 @@
     </div>
     
     <script>
-        let productCount = 2;
+        let productCount = 3;
         const maxProducts = 10;
         let resourceChart = null;
         let efficiencyChart = null;
@@ -812,17 +812,22 @@
         // Инициализация
         window.onload = function() {
             renderProducts();
-            // Устанавливаем начальные значения для P1 и P2
+            // Устанавливаем начальные значения для P1, P2, P3
             setTimeout(() => {
                 document.getElementById('name0').value = 'P1';
-                document.getElementById('labor0').value = 1;
-                document.getElementById('material0').value = 4;
-                document.getElementById('profit0').value = 48;
+                document.getElementById('labor0').value = 4;
+                document.getElementById('material0').value = 2;
+                document.getElementById('profit0').value = 81;
                 
                 document.getElementById('name1').value = 'P2';
-                document.getElementById('labor1').value = 5;
-                document.getElementById('material1').value = 2;
-                document.getElementById('profit1').value = 28;
+                document.getElementById('labor1').value = 2;
+                document.getElementById('material1').value = 3;
+                document.getElementById('profit1').value = 59;
+                
+                document.getElementById('name2').value = 'P3';
+                document.getElementById('labor2').value = 3;
+                document.getElementById('material2').value = 2;
+                document.getElementById('profit2').value = 94;
                 
                 updateComplexity();
             }, 100);
@@ -1213,7 +1218,7 @@
             });
         }
         
-        // Экспорт в XLSX (Excel) - полная версия как в C++
+        // Экспорт в XLSX (Excel) - в формате как на скриншоте
         function exportToXLSX() {
             const products = getProductsData();
             const best = getCurrentBest();
@@ -1231,60 +1236,71 @@
                 usedMaterial += best[i] * p.material;
             });
             
-            // Создаем массив данных для Excel
+            const hoursPercent = (usedHours / totalHours * 100).toFixed(1);
+            const materialPercent = (usedMaterial / totalMaterial * 100).toFixed(1);
+            
+            // Создаем массив данных для Excel в формате как на скриншоте
             const data = [
                 ['ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ'],
-                ['='.repeat(50)],
+                ['==================================================='],
                 [],
-                ['Дата расчёта:', new Date().toLocaleString()],
-                ['Режим:', mode === 'max' ? 'Максимизация прибыли' : 'Минимизация прибыли'],
-                ['Ресурсы:', `${totalHours} часов, ${totalMaterial} кг материалов`],
+                [`Дата расчёта: ${new Date().toLocaleString()}`],
+                [`Режим: ${mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ'} прибыли`],
+                [`Ресурсы: ${totalHours} часов, ${totalMaterial} кг материалов`],
                 [],
                 ['ОПТИМАЛЬНЫЙ ПЛАН:'],
-                ['-'.repeat(30)],
-                ['Продукт', 'Труд (ч/ед)', 'Материал (кг/ед)', 'Прибыль (₽/ед)', 'Оптимум (ед)']
+                ['---'],
             ];
             
             // Добавляем данные продуктов
             products.forEach((p, i) => {
-                data.push([p.name, p.labor, p.material, p.profit, best[i]]);
+                data.push([`${p.name}: ${best[i]} ед.`]);
             });
             
-            // Добавляем информацию о ресурсах
             data.push([]);
-            data.push(['='.repeat(50)]);
+            data.push(['===================================================']);
+            data.push([]);
             data.push([`ПРИБЫЛЬ: ${optimalProfit}`]);
             data.push([]);
             data.push(['ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:']);
-            data.push([`Часы: ${usedHours} из ${totalHours} (${(usedHours/totalHours*100).toFixed(1)}%)`]);
-            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial/totalMaterial*100).toFixed(1)}%)`]);
+            data.push(['---']);
+            data.push([`Часы: ${usedHours} из ${totalHours} (${hoursPercent}%)`]);
+            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${materialPercent}%)`]);
             data.push([]);
-            data.push(['СТАТИСТИКА РАСЧЁТА:']);
+            data.push(['Статистика РАСЧЁТА:']);
+            data.push(['---']);
             data.push([`Проверено комбинаций: ${checks}`]);
             data.push([`Время расчёта: ${calcTime} мс`]);
             data.push([`Ускорение: ${speedup}x`]);
             data.push([]);
             data.push(['ДЕТАЛЬНЫЙ РАСЧЁТ:']);
-            data.push(['Продукт', 'Труд', 'Материал', 'Прибыль', 'Эффективность', 'Оптимум']);
+            data.push(['---']);
+            data.push(['ПРОДУКТ    ТРУД (Ч/ЕД)   МАТЕРИАЛ (КГ/ЕД)   ПРИБЫЛЬ   ЭФФЕКТИВН.   ОПТИМУМ']);
+            data.push(['---']);
             
             // Добавляем детальный расчёт с эффективностью
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                data.push([p.name, p.labor, p.material, p.profit, efficiency, best[i]]);
+                data.push([`${p.name}    ${p.labor}    ${p.material}    ${p.profit}    ${efficiency}    ${best[i]}`]);
             });
+            
+            data.push([]);
+            data.push(['ЭФФЕКТИВНОСТЬ ПРОДУКТОВ (прибыль на единицу ресурсов):']);
+            data.push(['---']);
+            
+            products.forEach((p, i) => {
+                const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
+                data.push([`${p.name}    : ${efficiency}`]);
+            });
+            
+            data.push([]);
+            data.push(['РАСЧЁТ ЗАВЕРШЁН']);
             
             // Создаем рабочий лист
             const ws = XLSX.utils.aoa_to_sheet(data);
             
             // Настраиваем ширину колонок
-            ws['!cols'] = [
-                { wch: 20 }, // Продукт
-                { wch: 15 }, // Труд
-                { wch: 18 }, // Материал
-                { wch: 15 }, // Прибыль
-                { wch: 15 }, // Эффективность/Оптимум
-                { wch: 15 }  // Оптимум
-            ];
+            ws['!cols'] = [{ wch: 60 }];
             
             // Создаем книгу
             const wb = XLSX.utils.book_new();
@@ -1294,7 +1310,7 @@
             XLSX.writeFile(wb, 'optimization_result.xlsx');
         }
         
-        // Экспорт в JSON (полная версия как в C++)
+        // Экспорт в JSON
         function exportToJSON() {
             const products = getProductsData();
             const best = getCurrentBest();
@@ -1312,52 +1328,50 @@
                 usedMaterial += best[i] * p.material;
             });
             
-            // Создаем детальную информацию о продуктах с эффективностью
-            const productsWithEfficiency = products.map((p, i) => ({
-                name: p.name,
-                labor: p.labor,
-                material: p.material,
-                profit: p.profit,
-                efficiency: (p.profit / (p.labor + p.material)).toFixed(2),
-                optimum: best[i]
-            }));
-            
             const data = {
-                timestamp: new Date().toISOString(),
-                mode: mode === 'max' ? 'Максимизация' : 'Минимизация',
+                title: "ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ",
+                date: new Date().toLocaleString(),
+                mode: mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ',
                 resources: {
+                    hours: totalHours,
+                    material: totalMaterial
+                },
+                optimalPlan: products.map((p, i) => ({
+                    name: p.name,
+                    quantity: best[i]
+                })),
+                profit: optimalProfit,
+                resourceUsage: {
                     hours: {
-                        total: totalHours,
                         used: usedHours,
-                        remaining: totalHours - usedHours,
+                        total: totalHours,
                         percent: (usedHours / totalHours * 100).toFixed(1)
                     },
                     material: {
-                        total: totalMaterial,
                         used: usedMaterial,
-                        remaining: totalMaterial - usedMaterial,
+                        total: totalMaterial,
                         percent: (usedMaterial / totalMaterial * 100).toFixed(1)
                     }
                 },
-                products: productsWithEfficiency,
-                profit: optimalProfit,
                 statistics: {
-                    theoreticalCombinations: parseInt(document.getElementById('totalCombinations').innerText.replace(/,/g, '')),
-                    checkedCombinations: checks,
+                    checks: checks,
                     time: calcTime,
-                    speedup: speedup,
-                    pruned: checks // В C++ есть pruned, но в JS не сохраняем
+                    speedup: speedup
                 },
-                summary: {
-                    title: 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ',
-                    date: new Date().toLocaleString()
-                }
+                detailedCalculation: products.map((p, i) => ({
+                    name: p.name,
+                    labor: p.labor,
+                    material: p.material,
+                    profit: p.profit,
+                    efficiency: (p.profit / (p.labor + p.material)).toFixed(2),
+                    optimum: best[i]
+                }))
             };
             
             downloadFile(JSON.stringify(data, null, 2), 'optimization_result.json', 'application/json');
         }
         
-        // Экспорт в TXT (полная версия как в C++)
+        // Экспорт в TXT - точно как на скриншоте
         function exportToTXT() {
             const products = getProductsData();
             const best = getCurrentBest();
@@ -1382,7 +1396,7 @@
             
             // Заголовок
             text += 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n';
-            text += '='.repeat(60) + '\n\n';
+            text += '===================================================\n\n';
             
             // Основная информация
             text += `Дата расчёта: ${new Date().toLocaleString()}\n`;
@@ -1391,71 +1405,48 @@
             
             // Оптимальный план
             text += 'ОПТИМАЛЬНЫЙ ПЛАН:\n';
-            text += '-'.repeat(30) + '\n';
+            text += '---\n';
             products.forEach((p, i) => {
                 text += `${p.name}: ${best[i]} ед.\n`;
             });
             
-            text += '\n' + '='.repeat(50) + '\n';
+            text += '\n===================================================\n\n';
             text += `ПРИБЫЛЬ: ${optimalProfit}\n\n`;
             
-            // Использование ресурсов с прогресс-барами
+            // Использование ресурсов
             text += 'ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n';
-            text += '-'.repeat(50) + '\n';
-            
-            // Часы
+            text += '---\n';
             text += `Часы: ${usedHours} из ${totalHours} (${hoursPercent}%)\n`;
-            text += '[';
-            const hoursBarLength = 30;
-            const hoursFilled = Math.floor(hoursPercent / 100 * hoursBarLength);
-            for (let i = 0; i < hoursBarLength; i++) {
-                text += i < hoursFilled ? '█' : '░';
-            }
-            text += ']\n';
-            
-            // Материалы
-            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${materialPercent}%)\n`;
-            text += '[';
-            const materialBarLength = 30;
-            const materialFilled = Math.floor(materialPercent / 100 * materialBarLength);
-            for (let i = 0; i < materialBarLength; i++) {
-                text += i < materialFilled ? '█' : '░';
-            }
-            text += ']\n\n';
+            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${materialPercent}%)\n\n`;
             
             // Статистика
-            text += 'СТАТИСТИКА РАСЧЁТА:\n';
-            text += '-'.repeat(50) + '\n';
+            text += 'Статистика РАСЧЁТА:\n';
+            text += '---\n';
             text += `Проверено комбинаций: ${checks}\n`;
             text += `Время расчёта: ${calcTime} мс\n`;
             text += `Ускорение: ${speedup}x\n\n`;
             
-            // Детальный расчёт (таблица)
+            // Детальный расчёт
             text += 'ДЕТАЛЬНЫЙ РАСЧЁТ:\n';
-            text += '-'.repeat(85) + '\n';
-            text += 'ПРОДУКТ      ТРУД (Ч/ЕД)   МАТЕРИАЛ (КГ/ЕД)   ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n';
-            text += '-'.repeat(85) + '\n';
+            text += '---\n';
+            text += 'ПРОДУКТ    ТРУД (Ч/ЕД)   МАТЕРИАЛ (КГ/ЕД)   ПРИБЫЛЬ   ЭФФЕКТИВН.   ОПТИМУМ\n';
+            text += '---\n';
             
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                text += `${p.name.padEnd(12)} ${p.labor.toString().padEnd(14)} ${p.material.toString().padEnd(18)} ${p.profit.toString().padEnd(11)} ${efficiency.toString().padEnd(13)} ${best[i]}\n`;
+                text += `${p.name.padEnd(10)} ${p.labor.toString().padEnd(14)} ${p.material.toString().padEnd(18)} ${p.profit.toString().padEnd(10)} ${efficiency.toString().padEnd(12)} ${best[i]}\n`;
             });
             
-            text += '-'.repeat(85) + '\n\n';
-            
-            // Эффективность продуктов
+            text += '\n';
             text += 'ЭФФЕКТИВНОСТЬ ПРОДУКТОВ (прибыль на единицу ресурсов):\n';
-            text += '-'.repeat(50) + '\n';
+            text += '---\n';
+            
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                const barLength = Math.floor(parseFloat(efficiency) * 2);
-                const bar = '█'.repeat(Math.min(barLength, 20));
-                text += `${p.name.padEnd(10)}: ${efficiency.padEnd(6)} ${bar}\n`;
+                text += `${p.name.padEnd(6)} : ${efficiency}\n`;
             });
             
-            text += '\n' + '='.repeat(60) + '\n';
-            text += 'РАСЧЁТ ЗАВЕРШЁН\n';
-            text += '='.repeat(60) + '\n';
+            text += '\nРАСЧЁТ ЗАВЕРШЁН\n';
             
             downloadFile(text, 'optimization_result.txt', 'text/plain;charset=utf-8;');
         }
