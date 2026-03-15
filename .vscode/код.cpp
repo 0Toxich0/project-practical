@@ -20,7 +20,7 @@ struct Product
     int profit;
 };
 
-// Функция для вывода линии заданной длины
+// ФУНКЦИЯ ВЫВОДА
 void printLine(char c, int length)
 {
     for (int i = 0; i < length; i++)
@@ -28,7 +28,7 @@ void printLine(char c, int length)
     cout << endl;
 }
 
-// Функция для получения текущей даты и времени
+// ФУНКЦИЯ ПОЛУЧЕНИЯ ДАТЫ ВРЕМЕНИ
 string getCurrentDateTime()
 {
     time_t now = time(0);
@@ -48,14 +48,13 @@ string getCurrentDateTime()
 
 int main()
 {
-    // ЗАГОЛОВОК ПРОГРАММЫ
     cout << "\n";
     printLine('=', 45);
     cout << "ОПТИМАЛЬНЫЕ РЕШЕНИЯ В УСЛОВИЯХ ОГРАНИЧЕННЫХ РЕСУРСОВ\n";
     printLine('=', 45);
     cout << "\n";
 
-    // ВВОД КОЛИЧЕСТВА ПРОДУКТОВ
+    // ВВОД КОЛ-ВО ПРОДУКТОВ
     int N;
     cout << "Введите количество продуктов (1-10): ";
     cin >> N;
@@ -93,7 +92,7 @@ int main()
     cout << "Общее количество материала (кг): ";
     cin >> totalMaterial;
 
-    // ВЫБОР РЕЖИМА
+    // РЕЖИМ
     int mode;
     cout << "\nРЕЖИМ РАСЧЁТА:\n";
     cout << "1 - Максимизация прибыли\n";
@@ -153,7 +152,6 @@ int main()
     // НАЧАЛО РАСЧЁТА
     cout << "\nНАЧАЛО РАСЧЁТА (Branch and Bound)...\n";
 
-    // ЗАСЕКАЕМ ВРЕМЯ
     clock_t start = clock();
 
     // РЕКУРСИВНЫЙ ПЕРЕБОР
@@ -254,7 +252,7 @@ int main()
     cout << "  Ускорение: " << fixed << setprecision(2) << speedup << "x\n";
     cout << "  Теоретическое число комбинаций: " << theoreticalCombinations << "\n\n";
 
-    // ДЕТАЛЬНЫЙ РАСЧЁТ - С ПРАВИЛЬНЫМИ ОТСТУПАМИ
+    // ДЕТАЛЬНЫЙ РАСЧЁТ
     cout << "ДЕТАЛЬНЫЙ РАСЧЁТ:\n";
     printLine('-', 75);
     cout << "  ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n";
@@ -264,7 +262,6 @@ int main()
     {
         double efficiency = (double)p[i].profit / (p[i].labor + p[i].material);
 
-        // Форматированный вывод с правильными отступами
         cout << "  " << left;
         cout << setw(10) << p[i].name;
         cout << setw(8) << p[i].labor;

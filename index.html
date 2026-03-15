@@ -13,7 +13,6 @@
     <!-- SheetJS для экспорта XLSX -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        /* Базовые стили */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -28,7 +27,6 @@
             padding: 15px;
         }
         
-        /* Адаптивный контейнер */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -36,7 +34,6 @@
             width: 100%;
         }
         
-        /* Карточка калькулятора */
         .calculator-card {
             background: rgba(45, 45, 45, 0.95);
             backdrop-filter: blur(10px);
@@ -47,7 +44,6 @@
             width: 100%;
         }
         
-        /* Шапка */
         .card-header {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
@@ -70,14 +66,12 @@
             word-wrap: break-word;
         }
         
-        /* Тело карточки */
         .card-body {
             padding: clamp(15px, 4vw, 35px);
             background: rgba(45, 45, 45, 0.98);
             color: #e0e0e0;
         }
         
-        /* Строка продукта */
         .product-row {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
@@ -87,7 +81,6 @@
             width: 100%;
         }
         
-        /* Адаптивные сетки для продуктов */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -100,7 +93,6 @@
             width: 100%;
         }
         
-        /* Результат */
         .result-card {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
@@ -138,7 +130,6 @@
             white-space: nowrap;
         }
         
-        /* Кнопки */
         .btn-calculate {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
@@ -187,7 +178,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
-        /* Блоки статистики */
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -244,7 +234,6 @@
             color: #b0b0b0;
         }
         
-        /* Таблица */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -279,7 +268,6 @@
             font-size: clamp(0.8rem, 2vw, 0.9rem);
         }
         
-        /* Формы */
         .form-label {
             color: #e0e0e0;
             font-weight: 600;
@@ -307,7 +295,6 @@
             outline: none;
         }
         
-        /* Режимы */
         .mode-selector {
             background: rgba(54, 54, 54, 0.5);
             border-radius: 15px;
@@ -329,7 +316,6 @@
             min-width: 150px;
         }
         
-        /* Использование ресурсов */
         .resource-usage {
             display: flex;
             flex-wrap: wrap;
@@ -361,7 +347,6 @@
             transition: width 0.5s;
         }
         
-        /* Кнопки экспорта */
         .export-buttons {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -370,7 +355,6 @@
             width: 100%;
         }
         
-        /* Графики */
         .charts-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -393,7 +377,6 @@
             height: 100% !important;
         }
         
-        /* Информация о сложности */
         .complexity-info {
             background: rgba(155, 89, 182, 0.1);
             border: 1px solid #9b59b6;
@@ -404,7 +387,6 @@
             word-wrap: break-word;
         }
         
-        /* История */
         .history-list {
             width: 100%;
             max-height: 300px;
@@ -427,7 +409,6 @@
             background: rgba(155, 89, 182, 0.3);
         }
         
-        /* Ошибки */
         .alert-danger {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
             color: white;
@@ -439,7 +420,6 @@
             word-wrap: break-word;
         }
         
-        /* Бейджи */
         .badge {
             font-size: clamp(0.8rem, 2.5vw, 1.1rem);
             padding: 8px 15px !important;
@@ -448,7 +428,6 @@
             display: inline-block;
         }
         
-        /* Адаптация */
         @media (max-width: 576px) {
             body {
                 padding: 10px;
@@ -513,7 +492,6 @@
             }
         }
         
-        /* Утилиты */
         .text-center {
             text-align: center;
         }
@@ -528,14 +506,12 @@
         .me-2 { margin-right: 0.5rem; }
         .gap-4 { gap: 1.5rem; }
         
-        /* Flexbox утилиты */
         .d-flex { display: flex; }
         .flex-wrap { flex-wrap: wrap; }
         .align-items-center { align-items: center; }
         .justify-content-center { justify-content: center; }
         .justify-content-between { justify-content: space-between; }
         
-        /* Сетка Bootstrap для обратной совместимости */
         .row {
             display: flex;
             flex-wrap: wrap;
@@ -617,7 +593,6 @@
                             </div>
                         </div>
 
-                        <!-- Информация о сложности -->
                         <div class="complexity-info">
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Теоретическое число комбинаций:</strong> <span id="totalCombinations">0</span>
@@ -718,7 +693,7 @@
                                 </div>
                             </div>
                             
-                            <!-- Таблица детального расчёта -->
+                            <!-- Таблица расчёта -->
                             <div class="mt-4">
                                 <h5>Детальный расчёт</h5>
                                 <div class="table-responsive">
@@ -787,7 +762,6 @@
             displayHistory();
         };
         
-        // Сохранение текущих значений продуктов
         function saveCurrentProducts() {
             for (let i = 0; i < productCount; i++) {
                 const nameInput = document.getElementById(`name${i}`);
@@ -950,7 +924,7 @@
                 }
             }
             
-            // Сохраняем текущие данные для экспорта
+            // Сохранение данных для экспорта
             currentProducts = products;
             currentMode = mode;
             
@@ -1008,7 +982,7 @@
             const endTime = performance.now();
             const calcTimeMs = (endTime - startTime).toFixed(2);
             
-            // Сохраняем результаты
+            // Сохранение результатов
             currentBest = best;
             currentProfit = optimalProfit;
             currentChecks = checks;
