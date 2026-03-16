@@ -49,12 +49,11 @@ string getCurrentDateTime()
 int main()
 {
     cout << "\n";
-    printLine('=', 45);
+    printLine('=', 50);
     cout << "ОПТИМАЛЬНЫЕ РЕШЕНИЯ В УСЛОВИЯХ ОГРАНИЧЕННЫХ РЕСУРСОВ\n";
-    printLine('=', 45);
+    printLine('=', 50);
     cout << "\n";
 
-    // ВВОД КОЛ-ВО ПРОДУКТОВ
     int N;
     cout << "Введите количество продуктов (1-10): ";
     cin >> N;
@@ -92,7 +91,6 @@ int main()
     cout << "Общее количество материала (кг): ";
     cin >> totalMaterial;
 
-    // РЕЖИМ
     int mode;
     cout << "\nРЕЖИМ РАСЧЁТА:\n";
     cout << "1 - Максимизация прибыли\n";
@@ -100,7 +98,6 @@ int main()
     cout << "Ваш выбор: ";
     cin >> mode;
 
-    // РЕЗУЛЬТАТЫ РАСЧЁТА
     cout << "\n";
     printLine('=', 45);
     cout << "              РЕЗУЛЬТАТЫ РАСЧЁТА              \n";
@@ -122,7 +119,6 @@ int main()
 
     long long checks = 0;
 
-    // ВЫЧИСЛЕНИЕ МАКСИМАЛЬНЫХ КОЛИЧЕСТВ
     vector<int> maxCount(N);
     cout << "МАКСИМАЛЬНО ВОЗМОЖНОЕ КОЛИЧЕСТВО КАЖДОГО ПРОДУКТА:\n";
     printLine('-', 45);
@@ -136,7 +132,6 @@ int main()
              << ", по материалам: " << byMaterial << ")\n";
     }
 
-    // ТЕОРЕТИЧЕСКОЕ ЧИСЛО КОМБИНАЦИЙ
     long long theoreticalCombinations = 1;
     for (int i = 0; i < N; i++)
     {
@@ -149,7 +144,6 @@ int main()
     }
     cout << "\nТЕОРЕТИЧЕСКОЕ ЧИСЛО КОМБИНАЦИЙ: " << theoreticalCombinations << "\n";
 
-    // НАЧАЛО РАСЧЁТА
     cout << "\nНАЧАЛО РАСЧЁТА (Branch and Bound)...\n";
 
     clock_t start = clock();
@@ -206,7 +200,6 @@ int main()
 
     cout << "✓ Расчёт завершён\n\n";
 
-    // ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ
     int usedHours = 0, usedMaterial = 0;
     for (int i = 0; i < N; i++)
     {
@@ -223,7 +216,6 @@ int main()
     cout << "Режим: " << (mode == 1 ? "МАКСИМИЗАЦИЯ" : "МИНИМИЗАЦИЯ") << " прибыли\n";
     cout << "Ресурсы: " << totalHours << " часов, " << totalMaterial << " кг материалов\n\n";
 
-    // ОПТИМАЛЬНЫЙ ПЛАН
     cout << "ОПТИМАЛЬНЫЙ ПЛАН:\n";
     printLine('-', 20);
     for (int i = 0; i < N; i++)
@@ -236,7 +228,6 @@ int main()
     cout << "\n";
     cout << "ПРИБЫЛЬ: " << optimalProfit << "\n\n";
 
-    // ИСПОЛЬЗОВАНИЕ РЕСУРСОВ
     cout << "ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n";
     printLine('-', 25);
     cout << "  Часы: " << usedHours << " из " << totalHours << " ("
@@ -244,7 +235,6 @@ int main()
     cout << "  Материалы: " << usedMaterial << " из " << totalMaterial << " ("
          << (usedMaterial * 100.0 / totalMaterial) << "%)\n\n";
 
-    // СТАТИСТИКА
     cout << "СТАТИСТИКА РАСЧЁТА:\n";
     printLine('-', 20);
     cout << "  Проверено комбинаций: " << checks << "\n";
@@ -252,7 +242,6 @@ int main()
     cout << "  Ускорение: " << fixed << setprecision(2) << speedup << "x\n";
     cout << "  Теоретическое число комбинаций: " << theoreticalCombinations << "\n\n";
 
-    // ДЕТАЛЬНЫЙ РАСЧЁТ
     cout << "ДЕТАЛЬНЫЙ РАСЧЁТ:\n";
     printLine('-', 75);
     cout << "  ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n";
@@ -271,7 +260,6 @@ int main()
         cout << best[i] << "\n";
     }
 
-    // ЭФФЕКТИВНОСТЬ
     cout << "\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n";
     printLine('-', 25);
     for (int i = 0; i < N; i++)
@@ -280,7 +268,6 @@ int main()
         cout << "  " << p[i].name << ": " << fixed << setprecision(2) << efficiency << "\n";
     }
 
-    // ЗАВЕРШЕНИЕ
     cout << "\n";
     printLine('-', 30);
     cout << "\n";
