@@ -975,12 +975,11 @@
             return products;
         }
 
-        // Основной алгоритм
+        // Основной алгоритм 
         function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
             const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-            const modeCpp = mode === 'max' ? 1 : 2; // 1 - max, 2 - min как в C++
 
             if (totalHours <= 0 || totalMaterial <= 0) {
                 showError('Ресурсы должны быть положительными числами');
@@ -1000,7 +999,7 @@
             currentProducts = products;
             currentMode = mode;
 
-            // Вычисление максимальных количеств
+            // Вычисление максимальных количеств 
             const maxCount = [];
             console.log("МАКСИМАЛЬНО ВОЗМОЖНОЕ КОЛИЧЕСТВО КАЖДОГО ПРОДУКТА:");
             for (let i = 0; i < productCount; i++) {
@@ -1019,10 +1018,17 @@
 
             const startTime = performance.now();
 
-            // Полный перебор
+            // Полный перебор 
             let best = new Array(productCount).fill(0);
             let current = new Array(productCount).fill(0);
-            let optimalProfit = (modeCpp === 1) ? -1 : Infinity;
+
+            let optimalProfit;
+            if (mode === 'max') {
+                optimalProfit = -1;
+            } else {
+                optimalProfit = Number.MAX_SAFE_INTEGER;
+            }
+
             let checks = 0;
 
             // РЕКУРСИВНЫЙ ПЕРЕБОР КАК В C++
@@ -1035,7 +1041,7 @@
                     checks++;
 
                     if (hours <= totalHours && material <= totalMaterial) {
-                        if (modeCpp === 1) { // Максимизация
+                        if (mode === 'max') { // Максимизация
                             if (profit > optimalProfit) {
                                 optimalProfit = profit;
                                 best = [...current];
