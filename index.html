@@ -860,7 +860,6 @@
             container.innerHTML = '';
 
             for (let i = 0; i < productCount; i++) {
-                // Получение сохраненных данных или используемые значения по умолчанию
                 const savedData = productsData[i] || {
                     name: `P${i + 1}`,
                     labor: Math.floor(Math.random() * 8) + 1,
@@ -894,7 +893,6 @@
             updateComplexity();
         }
 
-        // Обновление данных продукта в хранилище
         function updateProductData(index) {
             const nameInput = document.getElementById(`name${index}`);
             const laborInput = document.getElementById(`labor${index}`);
@@ -911,7 +909,6 @@
             }
         }
 
-        // Обновление информации о сложности
         function updateComplexity() {
             const totalHours = parseInt(document.getElementById('totalHours').value) || 0;
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value) || 0;
@@ -949,19 +946,15 @@
             }
         }
 
-        // Удалить продукт
         function removeProduct() {
             if (productCount > 1) {
                 saveCurrentProducts();
                 productCount--;
-
                 productsData.pop();
-
                 renderProducts();
             }
         }
 
-        // Получение данных о продуктах
         function getProductsData() {
             const products = [];
             for (let i = 0; i < productCount; i++) {
@@ -975,7 +968,6 @@
             return products;
         }
 
-        // Основной алгоритм 
         function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
@@ -989,40 +981,28 @@
             const products = getProductsData();
 
             for (let i = 0; i < productCount; i++) {
-                if (products[i].labor <= 0 || products[i].material <= 0 || products[i].profit <= 0) {
+                if (products[i].labor < 1 || products[i].material < 1 || products[i].profit < 1) {
                     showError('Все значения должны быть положительными числами');
                     return;
                 }
             }
 
-            // Сохранение данных для экспорта
             currentProducts = products;
             currentMode = mode;
 
-            // Вычисление максимальных количеств 
             const maxCount = [];
-            console.log("МАКСИМАЛЬНО ВОЗМОЖНОЕ КОЛИЧЕСТВО КАЖДОГО ПРОДУКТА:");
             for (let i = 0; i < productCount; i++) {
                 const byHours = Math.floor(totalHours / products[i].labor);
                 const byMaterial = Math.floor(totalMaterial / products[i].material);
                 maxCount[i] = Math.min(byHours, byMaterial);
-                console.log(`  ${products[i].name}: ${maxCount[i]} ед. (по труду: ${byHours}, по материалам: ${byMaterial})`);
             }
-
-            // Теоретическое число комбинаций
-            let theoreticalCombinations = 1;
-            for (let i = 0; i < productCount; i++) {
-                theoreticalCombinations *= (maxCount[i] + 1);
-            }
-            console.log(`\nТЕОРЕТИЧЕСКОЕ ЧИСЛО КОМБИНАЦИЙ: ${theoreticalCombinations}`);
 
             const startTime = performance.now();
 
-            // Полный перебор 
             let best = new Array(productCount).fill(0);
             let current = new Array(productCount).fill(0);
-
             let optimalProfit;
+
             if (mode === 'max') {
                 optimalProfit = -1;
             } else {
@@ -1031,7 +1011,6 @@
 
             let checks = 0;
 
-            // РЕКУРСИВНЫЙ ПЕРЕБОР КАК В C++
             function bruteForce(index, hours, material, profit) {
                 if (hours > totalHours || material > totalMaterial) {
                     return;
@@ -1041,12 +1020,12 @@
                     checks++;
 
                     if (hours <= totalHours && material <= totalMaterial) {
-                        if (mode === 'max') { // Максимизация
+                        if (mode === 'max') {
                             if (profit > optimalProfit) {
                                 optimalProfit = profit;
                                 best = [...current];
                             }
-                        } else { // Минимизация
+                        } else {
                             if (profit < optimalProfit) {
                                 optimalProfit = profit;
                                 best = [...current];
@@ -1056,7 +1035,6 @@
                     return;
                 }
 
-                // Перебор всех количеств текущего продукта
                 for (let count = 0; count <= maxCount[index]; count++) {
                     current[index] = count;
                     bruteForce(index + 1,
@@ -1066,22 +1044,23 @@
                 }
             }
 
-            console.log("\nНАЧАЛО РАСЧЁТА (Branch and Bound)...");
             bruteForce(0, 0, 0, 0);
-            console.log("✓ Расчёт завершён");
 
             const endTime = performance.now();
             const calcTimeMs = (endTime - startTime).toFixed(2);
-            const speedup = (theoreticalCombinations / checks).toFixed(2);
 
-            // Сохранение результатов
+            let totalCombinations = 1;
+            for (let i = 0; i < productCount; i++) {
+                totalCombinations *= (maxCount[i] + 1);
+            }
+            const speedup = (totalCombinations / checks).toFixed(2);
+
             currentBest = best;
             currentProfit = optimalProfit;
             currentChecks = checks;
             currentTime = calcTimeMs;
             currentSpeedup = speedup;
 
-            // Отображение результатов
             document.getElementById('results').style.display = 'block';
             document.getElementById('error').style.display = 'none';
 
@@ -1100,7 +1079,6 @@
             document.getElementById('calcTime').innerText = calcTimeMs;
             document.getElementById('speedup').innerText = speedup;
 
-            // Использование ресурсов
             let usedHours = 0, usedMaterial = 0;
             for (let i = 0; i < productCount; i++) {
                 usedHours += best[i] * products[i].labor;
@@ -1118,14 +1096,12 @@
             document.getElementById('hoursBar').style.width = hoursPercent + '%';
             document.getElementById('materialBar').style.width = materialPercent + '%';
 
-            // Результаты по продуктам
             let resultHtml = '';
             for (let i = 0; i < productCount; i++) {
                 resultHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
             }
             document.getElementById('resultProducts').innerHTML = resultHtml;
 
-            // Таблица деталей
             let tableHtml = '';
             for (let i = 0; i < productCount; i++) {
                 const efficiency = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
@@ -1142,10 +1118,7 @@
             }
             document.getElementById('tableBody').innerHTML = tableHtml;
 
-            // Графики
             renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial);
-
-            // Сохранение в историю
             saveToHistory(products, best, optimalProfit, mode, checks, calcTimeMs);
         }
 
@@ -1205,7 +1178,6 @@
             });
         }
 
-        // Экспорт XLSX
         function exportToXLSX() {
             const products = currentProducts;
             const best = currentBest;
@@ -1266,7 +1238,6 @@
             XLSX.writeFile(wb, 'optimization_result.xlsx');
         }
 
-        // Экспорт JSON
         function exportToJSON() {
             const products = currentProducts;
             const best = currentBest;
@@ -1319,7 +1290,6 @@
             link.click();
         }
 
-        // Экспорт TXT
         function exportToTXT() {
             const products = currentProducts;
             const best = currentBest;
@@ -1381,10 +1351,8 @@
             link.click();
         }
 
-        // История расчётов
         function saveToHistory(products, best, profit, mode, checks, time) {
             const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-
             history.unshift({
                 timestamp: new Date().toLocaleString(),
                 products: products.map(p => p.name),
@@ -1394,9 +1362,7 @@
                 checks: checks,
                 time: time
             });
-
             if (history.length > 10) history.pop();
-
             localStorage.setItem('calcHistory', JSON.stringify(history));
             displayHistory();
         }
