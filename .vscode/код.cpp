@@ -20,7 +20,7 @@ struct Product
     int profit;
 };
 
-// ФУНКЦИЯ ВЫВОДА
+// ФУНКЦИЯ ВЫВОДА ЛИНИИ
 void printLine(char c, int length)
 {
     for (int i = 0; i < length; i++)
@@ -49,9 +49,9 @@ string getCurrentDateTime()
 int main()
 {
     cout << "\n";
-    printLine('=', 50);
+    printLine('=', 52);
     cout << "ОПТИМАЛЬНЫЕ РЕШЕНИЯ В УСЛОВИЯХ ОГРАНИЧЕННЫХ РЕСУРСОВ\n";
-    printLine('=', 50);
+    printLine('=', 52);
     cout << "\n";
 
     int N;
@@ -62,7 +62,7 @@ int main()
 
     // ВВОД ДАННЫХ О ПРОДУКТАХ
     cout << "\n";
-    printLine('-', 30);
+    printLine('-', 38);
 
     for (int i = 0; i < N; i++)
     {
@@ -84,7 +84,7 @@ int main()
     int totalHours, totalMaterial;
 
     cout << "\n";
-    printLine('-', 30);
+    printLine('-', 38);
     cout << "\nОбщее количество часов: ";
     cin >> totalHours;
 
@@ -99,9 +99,9 @@ int main()
     cin >> mode;
 
     cout << "\n";
-    printLine('=', 45);
+    printLine('=', 52);
     cout << "              РЕЗУЛЬТАТЫ РАСЧЁТА              \n";
-    printLine('=', 45);
+    printLine('=', 52);
     cout << "\n";
 
     vector<int> best(N, 0);
@@ -121,7 +121,7 @@ int main()
 
     vector<int> maxCount(N);
     cout << "МАКСИМАЛЬНО ВОЗМОЖНОЕ КОЛИЧЕСТВО КАЖДОГО ПРОДУКТА:\n";
-    printLine('-', 45);
+    printLine('-', 50);
     for (int i = 0; i < N; i++)
     {
         int byHours = totalHours / p[i].labor;
@@ -208,44 +208,42 @@ int main()
     }
 
     cout << "\n";
-    printLine('=', 45);
+    printLine('=', 52);
     cout << "      ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ      \n";
-    printLine('=', 45);
+    printLine('=', 52);
     cout << "\n";
     cout << "Дата расчёта: " << getCurrentDateTime() << "\n";
     cout << "Режим: " << (mode == 1 ? "МАКСИМИЗАЦИЯ" : "МИНИМИЗАЦИЯ") << " прибыли\n";
     cout << "Ресурсы: " << totalHours << " часов, " << totalMaterial << " кг материалов\n\n";
 
     cout << "ОПТИМАЛЬНЫЙ ПЛАН:\n";
-    printLine('-', 20);
+    printLine('-', 23);
     for (int i = 0; i < N; i++)
     {
         cout << "  " << p[i].name << ": " << best[i] << " ед.\n";
     }
 
     cout << "\n";
-    printLine('-', 30);
-    cout << "\n";
     cout << "ПРИБЫЛЬ: " << optimalProfit << "\n\n";
 
     cout << "ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n";
-    printLine('-', 25);
+    printLine('-', 23);
     cout << "  Часы: " << usedHours << " из " << totalHours << " ("
          << fixed << setprecision(1) << (usedHours * 100.0 / totalHours) << "%)\n";
     cout << "  Материалы: " << usedMaterial << " из " << totalMaterial << " ("
          << (usedMaterial * 100.0 / totalMaterial) << "%)\n\n";
 
     cout << "СТАТИСТИКА РАСЧЁТА:\n";
-    printLine('-', 20);
+    printLine('-', 23);
     cout << "  Проверено комбинаций: " << checks << "\n";
     cout << "  Время расчёта: " << fixed << setprecision(2) << calcTimeMs << " мс\n";
     cout << "  Ускорение: " << fixed << setprecision(2) << speedup << "x\n";
     cout << "  Теоретическое число комбинаций: " << theoreticalCombinations << "\n\n";
 
     cout << "ДЕТАЛЬНЫЙ РАСЧЁТ:\n";
-    printLine('-', 75);
+    printLine('-', 65);
     cout << "  ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n";
-    printLine('-', 75);
+    printLine('-', 65);
 
     for (int i = 0; i < N; i++)
     {
@@ -269,11 +267,9 @@ int main()
     }
 
     cout << "\n";
-    printLine('-', 30);
-    cout << "\n";
-    printLine('=', 45);
+    printLine('=', 52);
     cout << "                РАСЧЁТ ЗАВЕРШЁН                \n";
-    printLine('=', 45);
+    printLine('=', 52);
     cout << "\n";
 
     return 0;
