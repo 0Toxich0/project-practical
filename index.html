@@ -820,15 +820,14 @@
 
         // Инициализация
         window.onload = function () {
-            // Начальные данные с отрицательной прибылью для теста минимизации
             productsData = [
-                { name: 'P1', labor: 10, material: 15, profit: -50 },
-                { name: 'P2', labor: 12, material: 20, profit: -60 }
+                { name: 'P1', labor:1, material: 1, profit: 0 },
+                { name: 'P2', labor: 1, material: 1, profit: 0 }
             ];
             renderProducts();
 
-            document.getElementById('totalHours').value = 30;
-            document.getElementById('totalMaterial').value = 40;
+            document.getElementById('totalHours').value = 100;
+            document.getElementById('totalMaterial').value = 100;
 
             updateComplexity();
             displayHistory();
@@ -974,7 +973,7 @@
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
             const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
 
-            // Проверка только на положительные ресурсы (как в C++)
+            // Проверка на положительные ресурсы
             if (totalHours <= 0 || totalMaterial <= 0) {
                 showError('Ресурсы должны быть положительными числами');
                 return;
@@ -982,14 +981,11 @@
 
             const products = getProductsData();
 
-            // В C++ нет проверки на знак прибыли - можно вводить любые числа
-            // Проверяем только чтобы труд и материал были положительными
             for (let i = 0; i < productCount; i++) {
                 if (products[i].labor < 1 || products[i].material < 1) {
                     showError('Труд и материал должны быть положительными числами');
                     return;
                 }
-                // Прибыль может быть любой (положительной, отрицательной, нулевой)
             }
 
             currentProducts = products;
@@ -1008,11 +1004,10 @@
             let current = new Array(productCount).fill(0);
             let optimalProfit;
 
-            // ИСПРАВЛЕНИЕ: Используем Number.MIN_SAFE_INTEGER и Number.MAX_SAFE_INTEGER вместо -Infinity/Infinity
             if (mode === 'max') {
-                optimalProfit = Number.MIN_SAFE_INTEGER; // Для максимизации используем минимально возможное число
+                optimalProfit = Number.MIN_SAFE_INTEGER; // Для максимизации 
             } else {
-                optimalProfit = Number.MAX_SAFE_INTEGER; // Для минимизации используем максимально возможное число
+                optimalProfit = Number.MAX_SAFE_INTEGER; // Для минимизации
             }
 
             let checks = 0;
@@ -1052,7 +1047,6 @@
 
             bruteForce(0, 0, 0, 0);
 
-            // ИСПРАВЛЕНИЕ: Проверяем, было ли найдено решение
             if ((mode === 'max' && optimalProfit === Number.MIN_SAFE_INTEGER) ||
                 (mode === 'min' && optimalProfit === Number.MAX_SAFE_INTEGER)) {
                 showError('Не найдено допустимых решений');
