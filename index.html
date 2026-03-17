@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
@@ -18,7 +19,7 @@
             margin: 0;
             padding: 0;
         }
-        
+
         body {
             background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 50%, #16213e 100%);
             min-height: 100vh;
@@ -26,14 +27,14 @@
             margin: 0;
             padding: 15px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 15px;
             width: 100%;
         }
-        
+
         .calculator-card {
             background: rgba(45, 45, 45, 0.95);
             backdrop-filter: blur(10px);
@@ -43,14 +44,14 @@
             border: 1px solid rgba(155, 89, 182, 0.3);
             width: 100%;
         }
-        
+
         .card-header {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
             padding: clamp(20px, 5vw, 35px);
             text-align: center;
         }
-        
+
         .card-header h1 {
             margin: 0;
             font-size: clamp(1.2rem, 4vw, 2rem);
@@ -58,20 +59,20 @@
             line-height: 1.3;
             word-wrap: break-word;
         }
-        
+
         .card-header p {
             margin: 10px 0 0;
             font-size: clamp(0.9rem, 2vw, 1.1rem);
             opacity: 0.95;
             word-wrap: break-word;
         }
-        
+
         .card-body {
             padding: clamp(15px, 4vw, 35px);
             background: rgba(45, 45, 45, 0.98);
             color: #e0e0e0;
         }
-        
+
         .product-row {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
@@ -80,19 +81,19 @@
             border-left: 5px solid #9b59b6;
             width: 100%;
         }
-        
+
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
             width: 100%;
         }
-        
+
         .product-field {
             min-width: 0;
             width: 100%;
         }
-        
+
         .result-card {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
@@ -101,27 +102,27 @@
             margin-top: 20px;
             width: 100%;
         }
-        
+
         .result-content {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             align-items: center;
         }
-        
+
         .result-info {
             flex: 1 1 300px;
             min-width: 250px;
         }
-        
+
         .result-profit {
             flex: 0 1 auto;
             text-align: center;
             margin: 0 auto;
         }
-        
+
         .profit-badge {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             padding: clamp(10px, 3vw, 15px) clamp(15px, 4vw, 25px);
             border-radius: 60px;
             font-size: clamp(1.2rem, 5vw, 2rem);
@@ -129,7 +130,7 @@
             display: inline-block;
             white-space: nowrap;
         }
-        
+
         .btn-calculate {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
@@ -143,13 +144,15 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .btn-calculate:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 30px rgba(155, 89, 182, 0.5);
         }
-        
-        .btn-add, .btn-remove, .btn-export {
+
+        .btn-add,
+        .btn-remove,
+        .btn-export {
             color: white;
             border: none;
             padding: clamp(8px, 2vw, 12px) clamp(15px, 3vw, 25px);
@@ -160,24 +163,26 @@
             transition: all 0.3s;
             font-size: clamp(0.9rem, 2.5vw, 1rem);
         }
-        
+
         .btn-add {
             background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
         }
-        
+
         .btn-remove {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
         }
-        
+
         .btn-export {
             background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
         }
-        
-        .btn-add:hover, .btn-remove:hover, .btn-export:hover {
+
+        .btn-add:hover,
+        .btn-remove:hover,
+        .btn-export:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
-        
+
         .stats-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -185,7 +190,7 @@
             margin: 20px 0;
             width: 100%;
         }
-        
+
         .checks-info {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
@@ -200,13 +205,13 @@
             align-items: center;
             width: 100%;
         }
-        
+
         .checks-info i {
             font-size: clamp(1.2rem, 4vw, 1.5rem);
             margin-bottom: 8px;
             color: #9b59b6;
         }
-        
+
         .checks-info strong {
             font-size: clamp(0.7rem, 2vw, 0.85rem);
             text-transform: uppercase;
@@ -214,7 +219,7 @@
             margin-bottom: 5px;
             word-wrap: break-word;
         }
-        
+
         .checks-info .value-container {
             display: flex;
             align-items: baseline;
@@ -222,25 +227,25 @@
             gap: 2px;
             flex-wrap: wrap;
         }
-        
+
         .checks-info .value-container span {
             font-size: clamp(1.2rem, 4vw, 1.8rem);
             font-weight: 700;
             color: white;
         }
-        
+
         .checks-info .value-container small {
             font-size: clamp(0.8rem, 2.5vw, 1rem);
             color: #b0b0b0;
         }
-        
+
         .table-responsive {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             margin: 15px 0;
         }
-        
+
         .table-result {
             background: transparent;
             border-radius: 15px;
@@ -250,7 +255,7 @@
             width: 100%;
             min-width: 600px;
         }
-        
+
         .table-result th {
             background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
             color: white;
@@ -259,7 +264,7 @@
             font-size: clamp(0.8rem, 2vw, 0.9rem);
             white-space: nowrap;
         }
-        
+
         .table-result td {
             background: rgba(54, 54, 54, 0.9);
             color: #ffffff;
@@ -267,7 +272,7 @@
             padding: 10px 8px;
             font-size: clamp(0.8rem, 2vw, 0.9rem);
         }
-        
+
         .form-label {
             color: #e0e0e0;
             font-weight: 600;
@@ -276,7 +281,7 @@
             display: block;
             word-wrap: break-word;
         }
-        
+
         .form-control {
             background: rgba(64, 64, 64, 0.8);
             border: 2px solid #4a4a4a;
@@ -287,14 +292,14 @@
             font-size: clamp(0.9rem, 2.5vw, 1rem);
             transition: all 0.3s;
         }
-        
+
         .form-control:focus {
             background: rgba(74, 74, 74, 0.9);
             border-color: #9b59b6;
             color: white;
             outline: none;
         }
-        
+
         .mode-selector {
             background: rgba(54, 54, 54, 0.5);
             border-radius: 15px;
@@ -303,50 +308,50 @@
             border: 1px solid #9b59b6;
             width: 100%;
         }
-        
+
         .mode-options {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin-top: 10px;
         }
-        
+
         .mode-option {
             flex: 1 1 auto;
             min-width: 150px;
         }
-        
+
         .resource-usage {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin: 10px 0;
             padding: 10px;
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             width: 100%;
         }
-        
+
         .resource-item {
             flex: 1 1 200px;
             min-width: 150px;
         }
-        
+
         .resource-bar {
             height: 10px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
             overflow: hidden;
             margin: 5px 0;
             width: 100%;
         }
-        
+
         .resource-bar-fill {
             height: 100%;
             background: linear-gradient(90deg, #9b59b6, #8e44ad);
             transition: width 0.5s;
         }
-        
+
         .export-buttons {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -354,7 +359,7 @@
             margin: 20px 0;
             width: 100%;
         }
-        
+
         .charts-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -362,7 +367,7 @@
             margin: 15px 0;
             width: 100%;
         }
-        
+
         .chart-container {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
@@ -371,12 +376,12 @@
             height: 300px;
             width: 100%;
         }
-        
+
         .chart-container canvas {
             width: 100% !important;
             height: 100% !important;
         }
-        
+
         .complexity-info {
             background: rgba(155, 89, 182, 0.1);
             border: 1px solid #9b59b6;
@@ -386,13 +391,13 @@
             width: 100%;
             word-wrap: break-word;
         }
-        
+
         .history-list {
             width: 100%;
             max-height: 300px;
             overflow-y: auto;
         }
-        
+
         .history-item {
             background: rgba(54, 54, 54, 0.9);
             border: 1px solid #9b59b6;
@@ -404,11 +409,11 @@
             width: 100%;
             word-wrap: break-word;
         }
-        
+
         .history-item:hover {
             background: rgba(155, 89, 182, 0.3);
         }
-        
+
         .alert-danger {
             background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
             color: white;
@@ -419,7 +424,7 @@
             width: 100%;
             word-wrap: break-word;
         }
-        
+
         .badge {
             font-size: clamp(0.8rem, 2.5vw, 1.1rem);
             padding: 8px 15px !important;
@@ -427,132 +432,194 @@
             word-wrap: break-word;
             display: inline-block;
         }
-        
+
         @media (max-width: 576px) {
             body {
                 padding: 10px;
             }
-            
+
             .card-header h1 {
                 font-size: 1.2rem;
             }
-            
+
             .product-row .row {
                 flex-direction: column;
             }
-            
+
             .product-row [class*="col-"] {
                 width: 100%;
                 margin-bottom: 10px;
             }
-            
+
             .stats-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .mode-options {
                 flex-direction: column;
             }
-            
+
             .mode-option {
                 width: 100%;
             }
-            
+
             .profit-badge {
                 font-size: 1.2rem;
                 white-space: normal;
             }
-            
+
             .export-buttons {
                 grid-template-columns: 1fr;
             }
-            
+
             .charts-container {
                 grid-template-columns: 1fr;
             }
-            
+
             .chart-container {
                 height: 250px;
             }
         }
-        
+
         @media (min-width: 577px) and (max-width: 768px) {
             .stats-container {
                 grid-template-columns: repeat(2, 1fr);
             }
-            
+
             .export-buttons {
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-        
+
         @media (min-width: 1200px) {
             .container {
                 max-width: 1140px;
             }
         }
-        
+
         .text-center {
             text-align: center;
         }
-        
-        .mt-2 { margin-top: 0.5rem; }
-        .mt-3 { margin-top: 1rem; }
-        .mt-4 { margin-top: 1.5rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-3 { margin-bottom: 1rem; }
-        .mb-4 { margin-bottom: 1.5rem; }
-        .me-1 { margin-right: 0.25rem; }
-        .me-2 { margin-right: 0.5rem; }
-        .gap-4 { gap: 1.5rem; }
-        
-        .d-flex { display: flex; }
-        .flex-wrap { flex-wrap: wrap; }
-        .align-items-center { align-items: center; }
-        .justify-content-center { justify-content: center; }
-        .justify-content-between { justify-content: space-between; }
-        
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-3 {
+            margin-top: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1.5rem;
+        }
+
+        .me-1 {
+            margin-right: 0.25rem;
+        }
+
+        .me-2 {
+            margin-right: 0.5rem;
+        }
+
+        .gap-4 {
+            gap: 1.5rem;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .flex-wrap {
+            flex-wrap: wrap;
+        }
+
+        .align-items-center {
+            align-items: center;
+        }
+
+        .justify-content-center {
+            justify-content: center;
+        }
+
+        .justify-content-between {
+            justify-content: space-between;
+        }
+
         .row {
             display: flex;
             flex-wrap: wrap;
             margin: -10px;
             width: calc(100% + 20px);
         }
-        
-        .col-md-3, .col-md-4, .col-md-6, .col-md-8, .col-md-12 {
+
+        .col-md-3,
+        .col-md-4,
+        .col-md-6,
+        .col-md-8,
+        .col-md-12 {
             padding: 10px;
             width: 100%;
         }
-        
+
         @media (min-width: 768px) {
-            .col-md-3 { width: 25%; }
-            .col-md-4 { width: 33.333%; }
-            .col-md-6 { width: 50%; }
-            .col-md-8 { width: 66.667%; }
-            .col-md-12 { width: 100%; }
+            .col-md-3 {
+                width: 25%;
+            }
+
+            .col-md-4 {
+                width: 33.333%;
+            }
+
+            .col-md-6 {
+                width: 50%;
+            }
+
+            .col-md-8 {
+                width: 66.667%;
+            }
+
+            .col-md-12 {
+                width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-lg-10 col-md-12">
                 <div class="calculator-card">
                     <div class="card-header">
-                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения в условиях ограниченных ресурсов</h1>
+                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения в условиях ограниченных
+                            ресурсов</h1>
                         <p>Введите данные о продуктах и ресурсах — программа найдёт оптимальный план производства</p>
                     </div>
-                    
+
                     <div class="card-body">
                         <!-- Настройки ресурсов -->
                         <div class="row mb-4">
                             <div class="col-md-6">
                                 <label class="form-label">Общее количество часов:</label>
-                                <input type="number" id="totalHours" class="form-control" value="100" min="1" onchange="updateComplexity()">
+                                <input type="number" id="totalHours" class="form-control" value="30" min="1"
+                                    onchange="updateComplexity()">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Общее количество материала (кг):</label>
-                                <input type="number" id="totalMaterial" class="form-control" value="100" min="1" onchange="updateComplexity()">
+                                <input type="number" id="totalMaterial" class="form-control" value="40" min="1"
+                                    onchange="updateComplexity()">
                             </div>
                         </div>
 
@@ -561,24 +628,26 @@
                             <label class="form-label mb-3">Режим расчёта:</label>
                             <div class="mode-options">
                                 <div class="form-check mode-option">
-                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMax" value="max" checked>
+                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMax"
+                                        value="max" checked>
                                     <label class="form-check-label" for="modeMax">
                                         <i class="bi bi-arrow-up-circle-fill text-success"></i> Максимизация прибыли
                                     </label>
                                 </div>
                                 <div class="form-check mode-option">
-                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMin" value="min">
+                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMin"
+                                        value="min">
                                     <label class="form-check-label" for="modeMin">
                                         <i class="bi bi-arrow-down-circle-fill text-danger"></i> Минимизация прибыли
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Продукты -->
                         <h3 class="mb-3">Продукты</h3>
                         <div id="productsContainer"></div>
-                        
+
                         <!-- Кнопки управления -->
                         <div class="row mb-4">
                             <div class="col-md-6">
@@ -597,16 +666,16 @@
                             <i class="bi bi-info-circle me-2"></i>
                             <strong>Теоретическое число комбинаций:</strong> <span id="totalCombinations">0</span>
                         </div>
-                        
+
                         <!-- Кнопка расчёта -->
                         <button class="btn-calculate" onclick="calculateOptimum()">
                             <i class="bi bi-search me-2"></i>Найти оптимальное решение
                         </button>
-                        
+
                         <!-- Результаты -->
                         <div id="results" style="display: none;">
                             <h3 class="mb-3">Результат оптимизации</h3>
-                            
+
                             <div class="result-card mb-4">
                                 <div class="result-content">
                                     <div class="result-info">
@@ -626,23 +695,25 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Использование ресурсов -->
                             <div class="resource-usage">
                                 <div class="resource-item">
-                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">100</span></div>
+                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">100</span>
+                                    </div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="hoursBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                                 <div class="resource-item">
-                                    <div>Материалы: <span id="usedMaterial">0</span> / <span id="totalMaterialDisplay">100</span></div>
+                                    <div>Материалы: <span id="usedMaterial">0</span> / <span
+                                            id="totalMaterialDisplay">100</span></div>
                                     <div class="resource-bar">
                                         <div class="resource-bar-fill" id="materialBar" style="width: 0%"></div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- Статистика -->
                             <div class="stats-container">
                                 <div class="checks-info">
@@ -692,7 +763,7 @@
                                     <canvas id="efficiencyChart"></canvas>
                                 </div>
                             </div>
-                            
+
                             <!-- Таблица расчёта -->
                             <div class="mt-4">
                                 <h5>Детальный расчёт</h5>
@@ -730,7 +801,7 @@
             </div>
         </div>
     </div>
-    
+
     <script>
         let productCount = 2;
         const maxProducts = 10;
@@ -743,32 +814,32 @@
         let currentChecks = 0;
         let currentTime = 0;
         let currentSpeedup = 0;
-        
+
         // Хранилище для данных продуктов
         let productsData = [];
-        
+
         // Инициализация
-        window.onload = function() {
+        window.onload = function () {
             productsData = [
-                { name: 'P1', labor: 1, material: 1, profit: 1000 },
-                { name: 'P2', labor: 1, material: 1, profit: 1 }
+                { name: 'P1', labor: 10, material: 15, profit: 50 },
+                { name: 'P2', labor: 12, material: 20, profit: 60 }
             ];
             renderProducts();
-            
-            document.getElementById('totalHours').value = 100;
-            document.getElementById('totalMaterial').value = 100;
-            
+
+            document.getElementById('totalHours').value = 30;
+            document.getElementById('totalMaterial').value = 40;
+
             updateComplexity();
             displayHistory();
         };
-        
+
         function saveCurrentProducts() {
             for (let i = 0; i < productCount; i++) {
                 const nameInput = document.getElementById(`name${i}`);
                 const laborInput = document.getElementById(`labor${i}`);
                 const materialInput = document.getElementById(`material${i}`);
                 const profitInput = document.getElementById(`profit${i}`);
-                
+
                 if (nameInput && laborInput && materialInput && profitInput) {
                     if (!productsData[i]) {
                         productsData[i] = {};
@@ -782,21 +853,21 @@
                 }
             }
         }
-        
+
         // Поля для продуктов
         function renderProducts() {
             const container = document.getElementById('productsContainer');
             container.innerHTML = '';
-            
+
             for (let i = 0; i < productCount; i++) {
                 // Получение сохраненных данных или используемые значения по умолчанию
-                const savedData = productsData[i] || { 
-                    name: `P${i+1}`,
+                const savedData = productsData[i] || {
+                    name: `P${i + 1}`,
                     labor: Math.floor(Math.random() * 8) + 1,
                     material: Math.floor(Math.random() * 8) + 1,
                     profit: Math.floor(Math.random() * 80) + 20
                 };
-                
+
                 container.innerHTML += `
                     <div class="product-row" id="product${i}">
                         <div class="row g-3">
@@ -822,14 +893,14 @@
             }
             updateComplexity();
         }
-        
+
         // Обновление данных продукта в хранилище
         function updateProductData(index) {
             const nameInput = document.getElementById(`name${index}`);
             const laborInput = document.getElementById(`labor${index}`);
             const materialInput = document.getElementById(`material${index}`);
             const profitInput = document.getElementById(`profit${index}`);
-            
+
             if (nameInput && laborInput && materialInput && profitInput) {
                 productsData[index] = {
                     name: nameInput.value,
@@ -839,63 +910,63 @@
                 };
             }
         }
-        
+
         // Обновление информации о сложности
         function updateComplexity() {
             const totalHours = parseInt(document.getElementById('totalHours').value) || 0;
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value) || 0;
-            
+
             let combinations = 1;
             for (let i = 0; i < productCount; i++) {
                 const labor = parseInt(document.getElementById(`labor${i}`).value) || 1;
                 const material = parseInt(document.getElementById(`material${i}`).value) || 1;
-                
+
                 const byHours = Math.floor(totalHours / labor);
                 const byMaterial = Math.floor(totalMaterial / material);
                 const maxPossible = Math.min(byHours, byMaterial);
-                
+
                 combinations *= (maxPossible + 1);
             }
-            
+
             document.getElementById('totalCombinations').innerText = combinations.toLocaleString();
         }
-        
+
         function addProduct() {
             if (productCount < maxProducts) {
                 saveCurrentProducts();
                 productCount++;
-                
+
                 productsData[productCount - 1] = {
                     name: `P${productCount}`,
                     labor: Math.floor(Math.random() * 8) + 1,
                     material: Math.floor(Math.random() * 8) + 1,
                     profit: Math.floor(Math.random() * 80) + 20
                 };
-                
+
                 renderProducts();
             } else {
                 alert(`Максимум ${maxProducts} продуктов`);
             }
         }
-        
+
         // Удалить продукт
         function removeProduct() {
             if (productCount > 1) {
                 saveCurrentProducts();
                 productCount--;
-                
+
                 productsData.pop();
-                
+
                 renderProducts();
             }
         }
-        
+
         // Получение данных о продуктах
         function getProductsData() {
             const products = [];
             for (let i = 0; i < productCount; i++) {
                 products.push({
-                    name: document.getElementById(`name${i}`).value || `P${i+1}`,
+                    name: document.getElementById(`name${i}`).value || `P${i + 1}`,
                     labor: parseInt(document.getElementById(`labor${i}`).value),
                     material: parseInt(document.getElementById(`material${i}`).value),
                     profit: parseInt(document.getElementById(`profit${i}`).value)
@@ -903,65 +974,73 @@
             }
             return products;
         }
-        
+
         // Основной алгоритм
         function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value);
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
             const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-            
+            const modeCpp = mode === 'max' ? 1 : 2; // 1 - max, 2 - min как в C++
+
             if (totalHours <= 0 || totalMaterial <= 0) {
                 showError('Ресурсы должны быть положительными числами');
                 return;
             }
-            
+
             const products = getProductsData();
-            
+
             for (let i = 0; i < productCount; i++) {
                 if (products[i].labor <= 0 || products[i].material <= 0 || products[i].profit <= 0) {
                     showError('Все значения должны быть положительными числами');
                     return;
                 }
             }
-            
+
             // Сохранение данных для экспорта
             currentProducts = products;
             currentMode = mode;
-            
+
             // Вычисление максимальных количеств
             const maxCount = [];
+            console.log("МАКСИМАЛЬНО ВОЗМОЖНОЕ КОЛИЧЕСТВО КАЖДОГО ПРОДУКТА:");
             for (let i = 0; i < productCount; i++) {
                 const byHours = Math.floor(totalHours / products[i].labor);
                 const byMaterial = Math.floor(totalMaterial / products[i].material);
-                maxCount.push(Math.min(byHours, byMaterial));
+                maxCount[i] = Math.min(byHours, byMaterial);
+                console.log(`  ${products[i].name}: ${maxCount[i]} ед. (по труду: ${byHours}, по материалам: ${byMaterial})`);
             }
-            
+
+            // Теоретическое число комбинаций
+            let theoreticalCombinations = 1;
+            for (let i = 0; i < productCount; i++) {
+                theoreticalCombinations *= (maxCount[i] + 1);
+            }
+            console.log(`\nТЕОРЕТИЧЕСКОЕ ЧИСЛО КОМБИНАЦИЙ: ${theoreticalCombinations}`);
+
             const startTime = performance.now();
-            
+
             // Полный перебор
             let best = new Array(productCount).fill(0);
             let current = new Array(productCount).fill(0);
-            let optimalProfit = (mode === 'max') ? -1 : Infinity;
+            let optimalProfit = (modeCpp === 1) ? -1 : Infinity;
             let checks = 0;
-            
-            function bruteForce(index) {
+
+            // РЕКУРСИВНЫЙ ПЕРЕБОР КАК В C++
+            function bruteForce(index, hours, material, profit) {
+                if (hours > totalHours || material > totalMaterial) {
+                    return;
+                }
+
                 if (index === productCount) {
                     checks++;
-                    
-                    let hours = 0, material = 0, profit = 0;
-                    for (let i = 0; i < productCount; i++) {
-                        hours += current[i] * products[i].labor;
-                        material += current[i] * products[i].material;
-                        profit += current[i] * products[i].profit;
-                    }
-                    
+
                     if (hours <= totalHours && material <= totalMaterial) {
-                        if (mode === 'max') {
+                        if (modeCpp === 1) { // Максимизация
                             if (profit > optimalProfit) {
                                 optimalProfit = profit;
                                 best = [...current];
                             }
-                        } else {
+                        } else { // Минимизация
                             if (profit < optimalProfit) {
                                 optimalProfit = profit;
                                 best = [...current];
@@ -970,35 +1049,36 @@
                     }
                     return;
                 }
-                
+
+                // Перебор всех количеств текущего продукта
                 for (let count = 0; count <= maxCount[index]; count++) {
                     current[index] = count;
-                    bruteForce(index + 1);
+                    bruteForce(index + 1,
+                        hours + count * products[index].labor,
+                        material + count * products[index].material,
+                        profit + count * products[index].profit);
                 }
             }
-            
-            bruteForce(0);
-            
+
+            console.log("\nНАЧАЛО РАСЧЁТА (Branch and Bound)...");
+            bruteForce(0, 0, 0, 0);
+            console.log("✓ Расчёт завершён");
+
             const endTime = performance.now();
             const calcTimeMs = (endTime - startTime).toFixed(2);
-            
+            const speedup = (theoreticalCombinations / checks).toFixed(2);
+
             // Сохранение результатов
             currentBest = best;
             currentProfit = optimalProfit;
             currentChecks = checks;
             currentTime = calcTimeMs;
-            
-            // Вычисление ускорения
-            let totalCombinations = 1;
-            for (let i = 0; i < productCount; i++) {
-                totalCombinations *= (maxCount[i] + 1);
-            }
-            currentSpeedup = (totalCombinations / checks).toFixed(2);
-            
+            currentSpeedup = speedup;
+
             // Отображение результатов
             document.getElementById('results').style.display = 'block';
             document.getElementById('error').style.display = 'none';
-            
+
             if (mode === 'max') {
                 document.getElementById('modeBadge').innerHTML = '<i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль';
                 document.getElementById('modeBadge').className = 'badge bg-success mb-3';
@@ -1008,37 +1088,37 @@
                 document.getElementById('modeBadge').className = 'badge bg-danger mb-3';
                 document.getElementById('profitLabel').innerText = 'минимальная прибыль';
             }
-            
+
             document.getElementById('optimalProfit').innerText = optimalProfit;
             document.getElementById('checksCount').innerText = checks;
             document.getElementById('calcTime').innerText = calcTimeMs;
-            document.getElementById('speedup').innerText = currentSpeedup;
-            
+            document.getElementById('speedup').innerText = speedup;
+
             // Использование ресурсов
             let usedHours = 0, usedMaterial = 0;
             for (let i = 0; i < productCount; i++) {
                 usedHours += best[i] * products[i].labor;
                 usedMaterial += best[i] * products[i].material;
             }
-            
+
             document.getElementById('usedHours').innerText = usedHours;
             document.getElementById('usedMaterial').innerText = usedMaterial;
             document.getElementById('totalHoursDisplay').innerText = totalHours;
             document.getElementById('totalMaterialDisplay').innerText = totalMaterial;
-            
+
             const hoursPercent = (usedHours / totalHours * 100).toFixed(1);
             const materialPercent = (usedMaterial / totalMaterial * 100).toFixed(1);
-            
+
             document.getElementById('hoursBar').style.width = hoursPercent + '%';
             document.getElementById('materialBar').style.width = materialPercent + '%';
-            
+
             // Результаты по продуктам
             let resultHtml = '';
             for (let i = 0; i < productCount; i++) {
                 resultHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
             }
             document.getElementById('resultProducts').innerHTML = resultHtml;
-            
+
             // Таблица деталей
             let tableHtml = '';
             for (let i = 0; i < productCount; i++) {
@@ -1055,18 +1135,18 @@
                 `;
             }
             document.getElementById('tableBody').innerHTML = tableHtml;
-            
+
             // Графики
             renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial);
-            
+
             // Сохранение в историю
             saveToHistory(products, best, optimalProfit, mode, checks, calcTimeMs);
         }
-        
+
         function renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial) {
             if (resourceChart) resourceChart.destroy();
             if (efficiencyChart) efficiencyChart.destroy();
-            
+
             const resourceCtx = document.getElementById('resourceChart').getContext('2d');
             resourceChart = new Chart(resourceCtx, {
                 type: 'bar',
@@ -1094,11 +1174,11 @@
                     }
                 }
             });
-            
-            const efficiencyData = products.map(p => 
+
+            const efficiencyData = products.map(p =>
                 (p.profit / (p.labor + p.material)).toFixed(2)
             );
-            
+
             const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
             efficiencyChart = new Chart(efficiencyCtx, {
                 type: 'doughnut',
@@ -1118,7 +1198,7 @@
                 }
             });
         }
-        
+
         // Экспорт XLSX
         function exportToXLSX() {
             const products = currentProducts;
@@ -1130,13 +1210,13 @@
             const checks = currentChecks;
             const time = currentTime;
             const speedup = currentSpeedup;
-            
+
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
                 usedHours += best[i] * p.labor;
                 usedMaterial += best[i] * p.material;
             });
-            
+
             const data = [
                 ['ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ'],
                 ['==================================================='],
@@ -1148,18 +1228,18 @@
                 ['ОПТИМАЛЬНЫЙ ПЛАН:'],
                 ['---'],
             ];
-            
+
             products.forEach((p, i) => {
                 data.push([`${p.name}: ${best[i]} ед.`]);
             });
-            
+
             data.push([]);
             data.push(['===================================================']);
             data.push([`ПРИБЫЛЬ: ${profit}`]);
             data.push([]);
             data.push(['ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:']);
-            data.push([`Часы: ${usedHours} из ${totalHours} (${(usedHours/totalHours*100).toFixed(1)}%)`]);
-            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial/totalMaterial*100).toFixed(1)}%)`]);
+            data.push([`Часы: ${usedHours} из ${totalHours} (${(usedHours / totalHours * 100).toFixed(1)}%)`]);
+            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial / totalMaterial * 100).toFixed(1)}%)`]);
             data.push([]);
             data.push(['СТАТИСТИКА РАСЧЁТА:']);
             data.push([`Проверено комбинаций: ${checks}`]);
@@ -1168,18 +1248,18 @@
             data.push([]);
             data.push(['ДЕТАЛЬНЫЙ РАСЧЁТ:']);
             data.push(['ПРОДУКТ', 'ТРУД', 'МАТЕРИАЛ', 'ПРИБЫЛЬ', 'ЭФФЕКТИВН.', 'ОПТИМУМ']);
-            
+
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
                 data.push([p.name, p.labor, p.material, p.profit, efficiency, best[i]]);
             });
-            
+
             const ws = XLSX.utils.aoa_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Оптимальный план');
             XLSX.writeFile(wb, 'optimization_result.xlsx');
         }
-        
+
         // Экспорт JSON
         function exportToJSON() {
             const products = currentProducts;
@@ -1191,20 +1271,20 @@
             const checks = currentChecks;
             const time = currentTime;
             const speedup = currentSpeedup;
-            
+
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
                 usedHours += best[i] * p.labor;
                 usedMaterial += best[i] * p.material;
             });
-            
+
             const data = {
                 title: "ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ",
                 date: new Date().toLocaleString(),
                 mode: mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ',
                 resources: {
-                    hours: { total: totalHours, used: usedHours, percent: (usedHours/totalHours*100).toFixed(1) },
-                    material: { total: totalMaterial, used: usedMaterial, percent: (usedMaterial/totalMaterial*100).toFixed(1) }
+                    hours: { total: totalHours, used: usedHours, percent: (usedHours / totalHours * 100).toFixed(1) },
+                    material: { total: totalMaterial, used: usedMaterial, percent: (usedMaterial / totalMaterial * 100).toFixed(1) }
                 },
                 optimalPlan: products.map((p, i) => ({
                     name: p.name,
@@ -1225,14 +1305,14 @@
                     optimum: best[i]
                 }))
             };
-            
+
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = 'optimization_result.json';
             link.click();
         }
-        
+
         // Экспорт TXT
         function exportToTXT() {
             const products = currentProducts;
@@ -1244,13 +1324,13 @@
             const checks = currentChecks;
             const time = currentTime;
             const speedup = currentSpeedup;
-            
+
             let usedHours = 0, usedMaterial = 0;
             products.forEach((p, i) => {
                 usedHours += best[i] * p.labor;
                 usedMaterial += best[i] * p.material;
             });
-            
+
             let text = 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n';
             text += '===================================================\n\n';
             text += `Дата расчёта: ${new Date().toLocaleString()}\n`;
@@ -1258,47 +1338,47 @@
             text += `Ресурсы: ${totalHours} часов, ${totalMaterial} кг материалов\n\n`;
             text += 'ОПТИМАЛЬНЫЙ ПЛАН:\n';
             text += '---\n';
-            
+
             products.forEach((p, i) => {
                 text += `${p.name}: ${best[i]} ед.\n`;
             });
-            
+
             text += '\n===================================================\n\n';
             text += `ПРИБЫЛЬ: ${profit}\n\n`;
             text += 'ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n';
-            text += `Часы: ${usedHours} из ${totalHours} (${(usedHours/totalHours*100).toFixed(1)}%)\n`;
-            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial/totalMaterial*100).toFixed(1)}%)\n\n`;
+            text += `Часы: ${usedHours} из ${totalHours} (${(usedHours / totalHours * 100).toFixed(1)}%)\n`;
+            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial / totalMaterial * 100).toFixed(1)}%)\n\n`;
             text += 'СТАТИСТИКА РАСЧЁТА:\n';
             text += `Проверено комбинаций: ${checks}\n`;
             text += `Время расчёта: ${time} мс\n`;
             text += `Ускорение: ${speedup}x\n\n`;
             text += 'ДЕТАЛЬНЫЙ РАСЧЁТ:\n';
             text += 'ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n';
-            
+
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
                 text += `${p.name.padEnd(10)} ${p.labor.toString().padEnd(7)} ${p.material.toString().padEnd(10)} ${p.profit.toString().padEnd(9)} ${efficiency.toString().padEnd(12)} ${best[i]}\n`;
             });
-            
+
             text += '\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n';
             products.forEach((p, i) => {
                 const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
                 text += `${p.name}: ${efficiency}\n`;
             });
-            
+
             text += '\nРАСЧЁТ ЗАВЕРШЁН\n';
-            
+
             const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = 'optimization_result.txt';
             link.click();
         }
-        
+
         // История расчётов
         function saveToHistory(products, best, profit, mode, checks, time) {
             const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-            
+
             history.unshift({
                 timestamp: new Date().toLocaleString(),
                 products: products.map(p => p.name),
@@ -1308,22 +1388,22 @@
                 checks: checks,
                 time: time
             });
-            
+
             if (history.length > 10) history.pop();
-            
+
             localStorage.setItem('calcHistory', JSON.stringify(history));
             displayHistory();
         }
-        
+
         function displayHistory() {
             const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
             const historyList = document.getElementById('historyList');
-            
+
             if (history.length === 0) {
                 historyList.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>';
                 return;
             }
-            
+
             historyList.innerHTML = history.map((item, index) => `
                 <div class="history-item" onclick="loadHistoryItem(${index})">
                     <div class="d-flex justify-content-between">
@@ -1337,7 +1417,7 @@
                 </div>
             `).join('');
         }
-        
+
         function loadHistoryItem(index) {
             const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
             const item = history[index];
@@ -1345,18 +1425,19 @@
                 alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПлан: ${item.plan.join(', ')} ед.`);
             }
         }
-        
+
         function clearHistory() {
             if (confirm('Очистить историю?')) {
                 localStorage.removeItem('calcHistory');
                 displayHistory();
             }
         }
-        
+
         function showError(message) {
             document.getElementById('error').style.display = 'block';
             document.getElementById('error').innerText = message;
         }
     </script>
 </body>
+
 </html>
