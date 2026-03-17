@@ -289,7 +289,7 @@ body {
     display: inline-block;
     white-space: nowrap;
     transition: all 0.3s ease;
-    animation: pulse 2s infinite;
+    animation: gentlePulse 3s ease-in-out infinite;
 }
 
 .profit-badge:hover {
@@ -297,20 +297,21 @@ body {
     background: rgba(255, 255, 255, 0.3);
 }
 
-@keyframes pulse {
+@keyframes gentlePulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+        opacity: 1;
     }
 
-    70% {
-        box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
+    50% {
+        opacity: 0.9;
     }
 
     100% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        opacity: 1;
     }
 }
 
+/* Новая анимация для кнопки "Найти оптимальное решение" */
 .btn-calculate {
     background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
     color: white;
@@ -322,23 +323,39 @@ body {
     font-weight: 700;
     margin: 20px 0;
     cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
     display: inline-block;
     text-align: center;
     line-height: 1.5;
     box-sizing: border-box;
+    animation: buttonGlow 2s ease-in-out infinite;
 }
 
 .btn-calculate:hover {
     background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(155, 89, 182, 0.5);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(155, 89, 182, 0.6);
+    animation: none;
 }
 
 .btn-calculate:active {
-    transform: translateY(0);
+    transform: translateY(-1px);
+}
+
+@keyframes buttonGlow {
+    0% {
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 10px 25px rgba(155, 89, 182, 0.6);
+    }
+
+    100% {
+        box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+    }
 }
 
 .btn-calculate::before {
@@ -756,6 +773,7 @@ body {
     transform: scale(1.02);
 }
 
+/* Новая анимация для блока "Теоретическое число комбинаций" */
 .complexity-info {
     background: rgba(155, 89, 182, 0.1);
     border: 1px solid #9b59b6;
@@ -768,11 +786,52 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    animation: borderPulse 2s ease-in-out infinite;
+}
+
+.complexity-info:hover {
+    background: rgba(155, 89, 182, 0.15);
+    border-color: #b87bc6;
+    box-shadow: 0 5px 15px rgba(155, 89, 182, 0.2);
+    animation: none;
+}
+
+@keyframes borderPulse {
+    0% {
+        border-color: #9b59b6;
+    }
+
+    50% {
+        border-color: #b87bc6;
+    }
+
+    100% {
+        border-color: #9b59b6;
+    }
 }
 
 .complexity-info i {
     font-size: 1.2rem;
     color: #9b59b6;
+    animation: iconRotate 4s ease-in-out infinite;
+}
+
+@keyframes iconRotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(10deg);
+    }
+
+    75% {
+        transform: rotate(-10deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
 }
 
 .complexity-info strong {
@@ -784,12 +843,32 @@ body {
     color: white;
     font-weight: 700;
     margin-left: 5px;
+    animation: numberGlow 2s ease-in-out infinite;
 }
 
+@keyframes numberGlow {
+    0% {
+        text-shadow: 0 0 2px rgba(155, 89, 182, 0.3);
+    }
+
+    50% {
+        text-shadow: 0 0 8px rgba(155, 89, 182, 0.6);
+    }
+
+    100% {
+        text-shadow: 0 0 2px rgba(155, 89, 182, 0.3);
+    }
+}
+
+/* История расчётов без ползунка */
 .history-list {
     width: 100%;
     border-radius: 10px;
+    max-height: none;
     overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .history-item {
@@ -797,7 +876,6 @@ body {
     border: 1px solid #9b59b6;
     border-radius: 10px;
     padding: 12px 15px;
-    margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     width: 100%;
@@ -805,6 +883,7 @@ body {
     animation: slideInLeft 0.3s ease;
     position: relative;
     overflow: hidden;
+    margin-bottom: 0;
 }
 
 @keyframes slideInLeft {
