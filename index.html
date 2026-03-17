@@ -820,9 +820,10 @@
 
         // Инициализация
         window.onload = function () {
+            // Начальные данные с отрицательной прибылью для теста минимизации
             productsData = [
-                { name: 'P1', labor: 10, material: 15, profit: 50 },
-                { name: 'P2', labor: 12, material: 20, profit: 60 }
+                { name: 'P1', labor: 10, material: 15, profit: -50 },
+                { name: 'P2', labor: 12, material: 20, profit: -60 }
             ];
             renderProducts();
 
@@ -846,9 +847,9 @@
                     }
                     productsData[i] = {
                         name: nameInput.value,
-                        labor: laborInput.value,
-                        material: materialInput.value,
-                        profit: profitInput.value
+                        labor: parseInt(laborInput.value),
+                        material: parseInt(materialInput.value),
+                        profit: parseInt(profitInput.value)
                     };
                 }
             }
@@ -862,9 +863,9 @@
             for (let i = 0; i < productCount; i++) {
                 const savedData = productsData[i] || {
                     name: `P${i + 1}`,
-                    labor: Math.floor(Math.random() * 8) + 1,
-                    material: Math.floor(Math.random() * 8) + 1,
-                    profit: Math.floor(Math.random() * 80) + 20
+                    labor: 10,
+                    material: 15,
+                    profit: 50
                 };
 
                 container.innerHTML += `
@@ -884,7 +885,7 @@
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Прибыль</label>
-                                <input type="number" class="form-control" id="profit${i}" value="${savedData.profit}" min="1" onchange="updateProductData(${i})">
+                                <input type="number" class="form-control" id="profit${i}" value="${savedData.profit}" onchange="updateProductData(${i})">
                             </div>
                         </div>
                     </div>
@@ -902,9 +903,9 @@
             if (nameInput && laborInput && materialInput && profitInput) {
                 productsData[index] = {
                     name: nameInput.value,
-                    labor: laborInput.value,
-                    material: materialInput.value,
-                    profit: profitInput.value
+                    labor: parseInt(laborInput.value),
+                    material: parseInt(materialInput.value),
+                    profit: parseInt(profitInput.value)
                 };
             }
         }
@@ -935,9 +936,9 @@
 
                 productsData[productCount - 1] = {
                     name: `P${productCount}`,
-                    labor: Math.floor(Math.random() * 8) + 1,
-                    material: Math.floor(Math.random() * 8) + 1,
-                    profit: Math.floor(Math.random() * 80) + 20
+                    labor: 10,
+                    material: 15,
+                    profit: 50
                 };
 
                 renderProducts();
@@ -973,6 +974,7 @@
             const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
             const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
 
+            // Проверка только на положительные ресурсы (как в C++)
             if (totalHours <= 0 || totalMaterial <= 0) {
                 showError('Ресурсы должны быть положительными числами');
                 return;
@@ -980,11 +982,14 @@
 
             const products = getProductsData();
 
+            // В C++ нет проверки на знак прибыли - можно вводить любые числа
+            // Проверяем только чтобы труд и материал были положительными
             for (let i = 0; i < productCount; i++) {
-                if (products[i].labor < 1 || products[i].material < 1 || products[i].profit < 1) {
-                    showError('Все значения должны быть положительными числами');
+                if (products[i].labor < 1 || products[i].material < 1) {
+                    showError('Труд и материал должны быть положительными числами');
                     return;
                 }
+                // Прибыль может быть любой (положительной, отрицательной, нулевой)
             }
 
             currentProducts = products;
@@ -1004,9 +1009,9 @@
             let optimalProfit;
 
             if (mode === 'max') {
-                optimalProfit = -1;
+                optimalProfit = -Infinity; // как -1 в C++, но для отрицательных чисел нужно -Infinity
             } else {
-                optimalProfit = Number.MAX_SAFE_INTEGER;
+                optimalProfit = Infinity; // как numeric_limits<int>::max()
             }
 
             let checks = 0;
