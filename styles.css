@@ -315,22 +315,30 @@ body {
     background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
     color: white;
     border: none;
-    padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 35px);
-    font-size: clamp(1rem, 3vw, 1.3rem);
+    padding: 15px 30px;
+    font-size: 1.2rem;
     border-radius: 60px;
     width: 100%;
     font-weight: 700;
     margin: 20px 0;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
-    animation: shimmer 3s infinite;
+    display: inline-block;
+    text-align: center;
+    line-height: 1.5;
+    box-sizing: border-box;
 }
 
 .btn-calculate:hover {
-    transform: translateY(-2px) scale(1.02);
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    transform: translateY(-2px);
     box-shadow: 0 10px 30px rgba(155, 89, 182, 0.5);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
 }
 
 .btn-calculate::before {
@@ -346,16 +354,6 @@ body {
 
 .btn-calculate:hover::before {
     left: 100%;
-}
-
-@keyframes shimmer {
-    0% {
-        background-position: -1000px 0;
-    }
-
-    100% {
-        background-position: 1000px 0;
-    }
 }
 
 .btn-add,
@@ -762,31 +760,43 @@ body {
     background: rgba(155, 89, 182, 0.1);
     border: 1px solid #9b59b6;
     border-radius: 10px;
-    padding: 10px;
+    padding: 12px 15px;
     margin-bottom: 15px;
     width: 100%;
     word-wrap: break-word;
     transition: all 0.3s ease;
-    animation: pulse 3s infinite;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.complexity-info:hover {
-    background: rgba(155, 89, 182, 0.2);
-    transform: scale(1.02);
+.complexity-info i {
+    font-size: 1.2rem;
+    color: #9b59b6;
+}
+
+.complexity-info strong {
+    color: #e0e0e0;
+    font-weight: 600;
+}
+
+.complexity-info span {
+    color: white;
+    font-weight: 700;
+    margin-left: 5px;
 }
 
 .history-list {
     width: 100%;
-    max-height: 300px;
-    overflow-y: auto;
     border-radius: 10px;
+    overflow: visible;
 }
 
 .history-item {
     background: rgba(54, 54, 54, 0.9);
     border: 1px solid #9b59b6;
     border-radius: 10px;
-    padding: 10px;
+    padding: 12px 15px;
     margin-bottom: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -811,7 +821,7 @@ body {
 
 .history-item:hover {
     background: rgba(155, 89, 182, 0.3);
-    transform: translateX(5px) scale(1.02);
+    transform: translateX(5px);
     box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
 }
 
