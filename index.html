@@ -241,8 +241,7 @@
         // Инициализация
         window.onload = function () {
             productsData = [
-                { name: 'P1', labor: 10, material: 15, profit: 50 },
-                { name: 'P2', labor: 12, material: 20, profit: 60 }
+                { name: 'P1', labor: 0, material: 0, profit: 0 },
             ];
             renderProducts();
 
@@ -282,9 +281,9 @@
             for (let i = 0; i < productCount; i++) {
                 const savedData = productsData[i] || {
                     name: `P${i + 1}`,
-                    labor: 10,
-                    material: 15,
-                    profit: 50
+                    labor: 0,
+                    material: 0,
+                    profit: 0
                 };
 
                 container.innerHTML += `
@@ -355,9 +354,9 @@
 
                 productsData[productCount - 1] = {
                     name: `P${productCount}`,
-                    labor: 10,
-                    material: 15,
-                    profit: 50
+                    labor: 0,
+                    material: 0,
+                    profit: 0
                 };
 
                 renderProducts();
