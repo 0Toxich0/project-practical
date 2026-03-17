@@ -242,7 +242,7 @@ int main()
 
     cout << "ДЕТАЛЬНЫЙ РАСЧЁТ:\n";
     printLine('-', 65);
-    cout << "  ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n";
+    cout << "ПРОДУКТ     ТРУД    МАТЕРИАЛ   ПРИБЫЛЬ  ЭФФЕКТИВН. ОПТИМУМ\n";
     printLine('-', 65);
 
     for (int i = 0; i < N; i++)
@@ -256,14 +256,6 @@ int main()
         cout << setw(10) << p[i].profit;
         cout << setw(12) << fixed << setprecision(2) << efficiency;
         cout << best[i] << "\n";
-    }
-
-    cout << "\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n";
-    printLine('-', 25);
-    for (int i = 0; i < N; i++)
-    {
-        double efficiency = (double)p[i].profit / (p[i].labor + p[i].material);
-        cout << "  " << p[i].name << ": " << fixed << setprecision(2) << efficiency << "\n";
     }
 
     cout << "\n";

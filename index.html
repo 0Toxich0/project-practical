@@ -1008,10 +1008,11 @@
             let current = new Array(productCount).fill(0);
             let optimalProfit;
 
+            // ИСПРАВЛЕНИЕ: Используем Number.MIN_SAFE_INTEGER и Number.MAX_SAFE_INTEGER вместо -Infinity/Infinity
             if (mode === 'max') {
-                optimalProfit = -Infinity; // как -1 в C++, но для отрицательных чисел нужно -Infinity
+                optimalProfit = Number.MIN_SAFE_INTEGER; // Для максимизации используем минимально возможное число
             } else {
-                optimalProfit = Infinity; // как numeric_limits<int>::max()
+                optimalProfit = Number.MAX_SAFE_INTEGER; // Для минимизации используем максимально возможное число
             }
 
             let checks = 0;
@@ -1050,6 +1051,13 @@
             }
 
             bruteForce(0, 0, 0, 0);
+
+            // ИСПРАВЛЕНИЕ: Проверяем, было ли найдено решение
+            if ((mode === 'max' && optimalProfit === Number.MIN_SAFE_INTEGER) ||
+                (mode === 'min' && optimalProfit === Number.MAX_SAFE_INTEGER)) {
+                showError('Не найдено допустимых решений');
+                return;
+            }
 
             const endTime = performance.now();
             const calcTimeMs = (endTime - startTime).toFixed(2);
