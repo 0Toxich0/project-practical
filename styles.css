@@ -88,6 +88,7 @@ body {
     color: #e0e0e0;
 }
 
+/* ========== КНОПКИ ========== */
 .btn-calculate {
     background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
     color: white;
@@ -117,6 +118,10 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
 .btn-add {
@@ -131,12 +136,19 @@ body {
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
 }
 
-.product-row {
-    background: rgba(54, 54, 54, 0.9);
-    border-radius: 15px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-left: 5px solid #9b59b6;
+.btn-add:hover,
+.btn-remove:hover,
+.btn-export:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* ========== ФОРМЫ ========== */
+.form-label {
+    color: #e0e0e0;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
 }
 
 .form-control {
@@ -146,6 +158,7 @@ body {
     border-radius: 12px;
     padding: 10px;
     width: 100%;
+    transition: all 0.3s ease;
 }
 
 .form-control:focus {
@@ -154,6 +167,16 @@ body {
     outline: none;
 }
 
+/* ========== КАРТОЧКИ ПРОДУКТОВ ========== */
+.product-row {
+    background: rgba(54, 54, 54, 0.9);
+    border-radius: 15px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-left: 5px solid #9b59b6;
+}
+
+/* ========== РЕЗУЛЬТАТЫ ========== */
 .result-card {
     background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
     border-radius: 20px;
@@ -161,19 +184,19 @@ body {
     margin-top: 20px;
 }
 
-.stats-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 15px;
-    margin: 20px 0;
+.profit-badge {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 60px;
+    padding: 12px 24px;
+    display: inline-block;
+    font-size: 1.4rem;
+    font-weight: bold;
 }
 
-.checks-info {
-    background: rgba(54, 54, 54, 0.9);
-    border-radius: 15px;
-    padding: 15px;
-    text-align: center;
-    border: 1px solid #9b59b6;
+.resource-usage {
+    display: flex;
+    gap: 15px;
+    margin: 15px 0;
 }
 
 .resource-bar {
@@ -189,6 +212,23 @@ body {
     transition: width 0.5s;
 }
 
+/* ========== СТАТИСТИКА ========== */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.checks-info {
+    background: rgba(54, 54, 54, 0.9);
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #9b59b6;
+}
+
+/* ========== ГРАФИКИ ========== */
 .charts-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -203,36 +243,34 @@ body {
     height: 300px;
 }
 
-.complexity-info {
-    background: rgba(155, 89, 182, 0.1);
-    border: 1px solid #9b59b6;
-    border-radius: 10px;
-    padding: 12px 15px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
+/* ========== ТАБЛИЦЫ ========== */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 15px;
 }
 
-.history-item {
-    background: rgba(54, 54, 54, 0.9);
-    border: 1px solid #9b59b6;
-    border-radius: 10px;
-    padding: 12px 15px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin-bottom: 8px;
+.table {
+    color: #e0e0e0;
+    border-color: #9b59b6;
+    margin-bottom: 0;
 }
 
-.alert-danger {
-    background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+.table thead th {
+    background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
     color: white;
-    border-radius: 10px;
+    border-bottom: none;
     padding: 12px;
 }
 
-/* TSP стили */
+.table tbody tr {
+    transition: background 0.2s;
+}
+
+.table tbody tr:hover {
+    background: rgba(155, 89, 182, 0.2);
+}
+
+/* ========== TSP (МАТРИЦА) ========== */
 .tsp-section,
 .simplex-section {
     margin-top: 20px;
@@ -287,32 +325,49 @@ canvas#tspGraphCanvas {
     display: block;
 }
 
+/* ========== ВКЛАДКИ ========== */
+.nav-tabs {
+    border-bottom: 1px solid #9b59b6;
+    margin-bottom: 1.5rem;
+}
+
 .nav-tabs .nav-link {
     color: #e0e0e0;
     background-color: rgba(45, 45, 45, 0.8);
-    border-color: #9b59b6;
+    border-color: #9b59b6 #9b59b6 transparent;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+    padding: 10px 20px;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: rgba(155, 89, 182, 0.3);
+    color: white;
 }
 
 .nav-tabs .nav-link.active {
     background-color: #9b59b6;
     color: white;
-    border-color: #9b59b6;
+    border-color: #9b59b6 #9b59b6 transparent;
 }
 
-/* ===== АДАПТИВНОСТЬ ===== */
-
-/* Планшеты и небольшие экраны (до 992px) */
-@media (max-width: 992px) {
-    .stats-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .export-buttons {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* ========== ИСТОРИЯ ========== */
+.history-item {
+    background: rgba(54, 54, 54, 0.9);
+    border: 1px solid #9b59b6;
+    border-radius: 10px;
+    padding: 12px 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 8px;
 }
 
-/* Мобильные устройства (до 768px) */
+.history-item:hover {
+    background: rgba(155, 89, 182, 0.3);
+    transform: translateX(5px);
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
 @media (max-width: 768px) {
     .matrix-input {
         width: 55px;
@@ -320,44 +375,26 @@ canvas#tspGraphCanvas {
         font-size: 0.7rem;
     }
 
-    .chart-container {
-        height: 250px;
-    }
-
-    .btn-add,
-    .btn-remove,
-    .btn-export {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .mode-selector .d-flex {
-        flex-direction: column;
-        gap: 10px;
+    .stats-container {
+        grid-template-columns: 1fr;
     }
 
     .resource-usage {
         flex-direction: column;
     }
 
-    .tsp-result-badge {
-        font-size: 1rem;
-        padding: 8px 15px;
-        margin-top: 10px;
+    .btn-add,
+    .btn-remove,
+    .btn-export {
+        width: 100%;
+        margin-bottom: 8px;
     }
 
-    .result-card .d-flex {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .profit-badge {
-        margin-top: 15px;
-        align-self: flex-start;
+    .row.g-3>[class*="col-"] {
+        margin-bottom: 10px;
     }
 }
 
-/* Очень маленькие телефоны (до 576px) */
 @media (max-width: 576px) {
     body {
         padding: 10px;
@@ -367,19 +404,6 @@ canvas#tspGraphCanvas {
         padding: 15px;
     }
 
-    .stats-container {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    .export-buttons {
-        grid-template-columns: 1fr;
-    }
-
-    .charts-container {
-        grid-template-columns: 1fr;
-    }
-
     .chart-container {
         height: 220px;
     }
@@ -387,55 +411,4 @@ canvas#tspGraphCanvas {
     .product-row .row {
         flex-direction: column;
     }
-
-    .product-row [class*="col-"] {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-
-    .nav-tabs {
-        flex-wrap: wrap;
-    }
-
-    .nav-tabs .nav-link {
-        flex: 1 0 auto;
-        text-align: center;
-        margin-bottom: 5px;
-    }
-
-    .tsp-card,
-    .simplex-card {
-        padding: 12px;
-    }
-
-    .matrix-input {
-        width: 45px;
-        font-size: 0.6rem;
-        padding: 3px;
-    }
-
-    .table-responsive {
-        font-size: 0.8rem;
-    }
-
-    .btn-calculate {
-        font-size: 1rem;
-        padding: 12px 20px;
-    }
 }
-
-        .limit-badge {
-            background: #ffc107;
-            color: #000;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-        }
-    
-        .mode-selector-simplex {
-            background: rgba(54, 54, 54, 0.5);
-            border-radius: 15px;
-            padding: 10px;
-            margin-top: 10px;
-        }
-    
