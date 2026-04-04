@@ -72,31 +72,45 @@
                                     решение</button>
                                 <div id="results" style="display: none;">
                                     <div class="result-card mb-4">
-                                        <div class="d-flex flex-wrap justify-content-between">
+                                        <div class="d-flex flex-wrap justify-content-between align-items-center">
                                             <div><span class="badge bg-success" id="modeBadge">Максимальная
                                                     прибыль</span>
                                                 <div id="resultProducts"></div>
                                             </div>
-                                            <div class="profit-badge bg-white bg-opacity-25 rounded-pill px-4 py-2"><i
-                                                    class="bi bi-currency-ruble"></i> <span id="optimalProfit">0</span>
+                                            <div class="profit-badge" id="profitBadge">
+                                                <i class="bi bi-currency-ruble"></i> <span id="optimalProfit">0</span>
                                                 <div id="profitLabel">максимальная прибыль</div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="resource-usage d-flex gap-3">
-                                        <div class="flex-grow-1">Часы: <span id="usedHours">0</span> / <span
-                                                id="totalHoursDisplay"></span>
-                                            <div class="resource-bar mt-1">
-                                                <div class="resource-bar-fill" id="hoursBar"></div>
+
+                                    <!-- Новая гистограмма ресурсов -->
+                                    <div class="resource-usage">
+                                        <div class="resource-item">
+                                            <div class="resource-header">
+                                                <span><i class="bi bi-clock"></i> Трудовые ресурсы (часы)</span>
+                                                <span><span id="usedHours">0</span> / <span
+                                                        id="totalHoursDisplay">0</span></span>
+                                            </div>
+                                            <div class="resource-bar-container">
+                                                <div class="resource-bar-used" id="hoursBar" style="width: 0%;">0%</div>
+                                                <div class="resource-bar-remaining" style="width: 100%;"></div>
                                             </div>
                                         </div>
-                                        <div class="flex-grow-1">Материалы: <span id="usedMaterial">0</span> / <span
-                                                id="totalMaterialDisplay"></span>
-                                            <div class="resource-bar mt-1">
-                                                <div class="resource-bar-fill" id="materialBar"></div>
+                                        <div class="resource-item">
+                                            <div class="resource-header">
+                                                <span><i class="bi bi-box-seam"></i> Материалы (кг)</span>
+                                                <span><span id="usedMaterial">0</span> / <span
+                                                        id="totalMaterialDisplay">0</span></span>
+                                            </div>
+                                            <div class="resource-bar-container">
+                                                <div class="resource-bar-used" id="materialBar" style="width: 0%;">0%
+                                                </div>
+                                                <div class="resource-bar-remaining" style="width: 100%;"></div>
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="stats-container">
                                         <div class="checks-info"><i class="bi bi-diagram-3"></i><strong>ПРОВЕРЕНО
                                                 КОМБИНАЦИЙ</strong>
@@ -118,7 +132,7 @@
                                     <div class="mt-4">
                                         <h5>Детальный расчёт</h5>
                                         <div class="table-responsive">
-                                            <table class="table table-dark table-striped">
+                                            <table class="table">
                                                 <thead>
                                                     <tr>
                                                         <th>ПРОДУКТ</th>
@@ -157,7 +171,7 @@
                                             Двойственный симплекс</button></li>
                                 </ul>
                                 <div class="tab-content">
-                                    <!-- ===== КОММИВОЯЖЁР С ОГРАНИЧЕНИЕМ НА РЕСУРС ===== -->
+                                    <!-- КОММИВОЯЖЁР -->
                                     <div class="tab-pane fade show active" id="tspTab">
                                         <div class="tsp-section">
                                             <h3><i class="bi bi-truck"></i> Задача коммивояжёра (логистика)</h3>
@@ -236,25 +250,29 @@
                                         </div>
                                     </div>
 
-                                    <!-- ===== СИМПЛЕКС-МЕТОД (МАКСИМИЗАЦИЯ/МИНИМИЗАЦИЯ) ===== -->
+                                    <!-- СИМПЛЕКС-МЕТОД -->
                                     <div class="tab-pane fade" id="simplexTab">
                                         <div class="simplex-section">
-                                            <h3><i class="bi bi-graph-up"></i> Симплекс-метод (задача ЛП)</h3>
+                                            <h3><i class="bi bi-graph-up"></i> Симплекс-метод </h3>
                                             <p>Форма: max/min c<sup>T</sup>x при Ax ≤ b, x ≥ 0. Решает задачи
                                                 распределения ресурсов (производство, транспорт).</p>
-                                            <div class="row g-3 mb-3">
-                                                <div class="col-md-2"><label class="form-label">Переменных
-                                                        (n):</label><input type="number" id="simplexVars"
-                                                        class="form-control" value="2" min="2" max="5"></div>
-                                                <div class="col-md-2"><label class="form-label">Ограничений
-                                                        (m):</label><input type="number" id="simplexCons"
-                                                        class="form-control" value="2" min="1" max="5"></div>
-                                                <div class="col-md-3"><button class="btn-add"
-                                                        onclick="buildSimplexInput()"><i
+                                            <div class="row g-3 mb-3 align-items-end">
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Переменных (n):</label>
+                                                    <input type="number" id="simplexVars" class="form-control" value="2"
+                                                        min="2" max="5">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Ограничений (m):</label>
+                                                    <input type="number" id="simplexCons" class="form-control" value="2"
+                                                        min="1" max="5">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button class="btn-add w-100" onclick="buildSimplexInput()"><i
                                                             class="bi bi-pencil-square me-1"></i>Сформировать</button>
                                                 </div>
-                                                <div class="col-md-5"><button class="btn-calculate"
-                                                        onclick="solveSimplex()"><i
+                                                <div class="col-md-5">
+                                                    <button class="btn-calculate w-100" onclick="solveSimplex()"><i
                                                             class="bi bi-calculator me-1"></i>Решить симплексом</button>
                                                 </div>
                                             </div>
@@ -279,25 +297,29 @@
                                         </div>
                                     </div>
 
-                                    <!-- ===== ДВОЙСТВЕННЫЙ СИМПЛЕКС (МИНИМИЗАЦИЯ, ≥) ===== -->
+                                    <!-- ДВОЙСТВЕННЫЙ СИМПЛЕКС -->
                                     <div class="tab-pane fade" id="dualTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-arrow-left-right"></i> Двойственный симплекс-метод</h3>
                                             <p>Решение задачи min c<sup>T</sup>x при Ax ≥ b, x ≥ 0. Используется для
                                                 минимизации затрат при нижних границах ресурсов.</p>
-                                            <div class="row g-3 mb-3">
-                                                <div class="col-md-2"><label class="form-label">Переменных
-                                                        (n):</label><input type="number" id="dualVars"
-                                                        class="form-control" value="2" min="2" max="5"></div>
-                                                <div class="col-md-2"><label class="form-label">Ограничений
-                                                        (m):</label><input type="number" id="dualCons"
-                                                        class="form-control" value="2" min="1" max="5"></div>
-                                                <div class="col-md-3"><button class="btn-add"
-                                                        onclick="buildDualInput()"><i
+                                            <div class="row g-3 mb-3 align-items-end">
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Переменных (n):</label>
+                                                    <input type="number" id="dualVars" class="form-control" value="2"
+                                                        min="2" max="5">
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label">Ограничений (m):</label>
+                                                    <input type="number" id="dualCons" class="form-control" value="2"
+                                                        min="1" max="5">
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <button class="btn-add w-100" onclick="buildDualInput()"><i
                                                             class="bi bi-pencil-square me-1"></i>Сформировать</button>
                                                 </div>
-                                                <div class="col-md-5"><button class="btn-calculate"
-                                                        onclick="solveDualSimplex()"><i
+                                                <div class="col-md-5">
+                                                    <button class="btn-calculate w-100" onclick="solveDualSimplex()"><i
                                                             class="bi bi-calculator me-1"></i>Двойственный
                                                         симплекс</button>
                                                 </div>
@@ -320,7 +342,7 @@
     </div>
 
     <script>
-        // ========== 1. ОПТИМИЗАЦИЯ РЕСУРСОВ (ПОЛНЫЙ ПЕРЕБОР) – БЕЗ ИЗМЕНЕНИЙ ==========
+        // ========== 1. ОПТИМИЗАЦИЯ РЕСУРСОВ (ПОЛНЫЙ ПЕРЕБОР) ==========
         let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null, efficiencyChart = null;
@@ -391,7 +413,24 @@
             let usedHours = 0, usedMat = 0; for (let i = 0; i < productCount; i++) { usedHours += best[i] * products[i].labor; usedMat += best[i] * products[i].material; }
             document.getElementById('usedHours').innerText = usedHours; document.getElementById('usedMaterial').innerText = usedMat;
             document.getElementById('totalHoursDisplay').innerText = totalHours; document.getElementById('totalMaterialDisplay').innerText = totalMaterial;
-            document.getElementById('hoursBar').style.width = (usedHours / totalHours * 100).toFixed(1) + '%'; document.getElementById('materialBar').style.width = (usedMat / totalMaterial * 100).toFixed(1) + '%';
+            let hoursPercent = (usedHours / totalHours * 100).toFixed(1);
+            let materialPercent = (usedMat / totalMaterial * 100).toFixed(1);
+            let hoursBar = document.getElementById('hoursBar');
+            let materialBar = document.getElementById('materialBar');
+            hoursBar.style.width = hoursPercent + '%';
+            hoursBar.innerText = hoursPercent + '%';
+            materialBar.style.width = materialPercent + '%';
+            materialBar.innerText = materialPercent + '%';
+            let profitBadge = document.getElementById('profitBadge');
+            if (optProfit < 0) profitBadge.classList.add('negative');
+            else profitBadge.classList.remove('negative');
+            if (mode === 'max') {
+                document.getElementById('modeBadge').innerHTML = 'Максимальная прибыль';
+                document.getElementById('profitLabel').innerText = 'максимальная прибыль';
+            } else {
+                document.getElementById('modeBadge').innerHTML = 'Минимальная прибыль';
+                document.getElementById('profitLabel').innerText = 'минимальная прибыль';
+            }
             let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
             document.getElementById('resultProducts').innerHTML = resHtml;
             let tabHtml = ''; for (let i = 0; i < productCount; i++) { let eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2); tabHtml += `<tr><td><strong>${products[i].name}</strong></td><td>${products[i].labor}</td><td>${products[i].material}</td><td>${products[i].profit}</td><td>${eff}</td><td class="fw-bold">${best[i]}</td></tr>`; }
@@ -407,7 +446,7 @@
         function clearHistory() { if (confirm('Очистить историю?')) { localStorage.removeItem('calcHistory'); displayHistory(); } }
         function showError(msg) { let errDiv = document.getElementById('error'); errDiv.style.display = 'block'; errDiv.innerText = msg; }
 
-        // ========== 2. КОММИВОЯЖЁР С ОГРАНИЧЕНИЕМ НА РЕСУРС ==========
+        // ========== 2. КОММИВОЯЖЁР ==========
         let tspDistanceMatrix = [], tspCities = 5, tspBestRoute = [], tspBestDistance = Infinity, tspCanvas = null;
         let tspLimit = 200;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
@@ -499,7 +538,7 @@
         }
         function exportTSPToJSON() { let data = { cities: tspCities, matrix: tspDistanceMatrix, route: tspBestRoute, distance: tspBestDistance }; let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tsp_result.json'; a.click(); }
 
-        // ========== 3. СИМПЛЕКС-МЕТОД (МАКСИМИЗАЦИЯ / МИНИМИЗАЦИЯ) ==========
+        // ========== 3. СИМПЛЕКС-МЕТОД ==========
         let simplexVars = 2, simplexCons = 2;
         function buildSimplexInput() {
             let n = parseInt(document.getElementById('simplexVars').value);
@@ -528,10 +567,7 @@
                 b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0);
             }
             let direction = document.querySelector('input[name="simplexDirection"]:checked').value;
-            let originalC = [...c];
-            if (direction === 'min') {
-                c = c.map(ci => -ci); // минимизация -> максимизация
-            }
+            if (direction === 'min') c = c.map(ci => -ci);
             let tableau = [];
             for (let i = 0; i < m; i++) {
                 let row = [...A[i], ...Array(m).fill(0), b[i]];
@@ -541,8 +577,7 @@
             let objRow = c.map(ci => -ci);
             objRow.push(...Array(m).fill(0), 0);
             tableau.push(objRow);
-            let steps = [];
-            let iter = 0;
+            let steps = [], iter = 0;
             while (true) {
                 let pivotCol = -1;
                 for (let j = 0; j < n + m; j++) if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j;
@@ -577,7 +612,7 @@
             document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций";
         }
 
-        // ========== 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС (МИНИМИЗАЦИЯ, ≥) ==========
+        // ========== 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС ==========
         let dualVars = 2, dualCons = 2;
         function buildDualInput() {
             let n = parseInt(document.getElementById('dualVars').value);
@@ -615,8 +650,7 @@
             let objRow = c.map(ci => ci);
             objRow.push(0, 0);
             tableau.push(objRow);
-            let steps = [];
-            let iter = 0;
+            let steps = [], iter = 0;
             while (true) {
                 let pivotRow = -1;
                 for (let i = 0; i < m; i++) if (tableau[i][n + 1] < -1e-9 && (pivotRow == -1 || tableau[i][n + 1] < tableau[pivotRow][n + 1])) pivotRow = i;
