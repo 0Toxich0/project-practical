@@ -22,14 +22,16 @@
                     <div class="card-header">
                         <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения в условиях ограниченных
                             ресурсов</h1>
-                        <p>Производство (перебор) | Коммивояжёр | Симплекс | Двойственный симплекс</p>
+                        <p>Производство (перебор) | Коммивояжёр (логистика) | Симплекс | Двойственный симплекс</p>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
                             <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
-                                    data-bs-target="#production">Производство (ресурсы)</button></li>
+                                    data-bs-target="#production"><i class="bi bi-box-seam me-1"></i> Производство
+                                    (ресурсы)</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#advanced">Математические методы</button></li>
+                                    data-bs-target="#advanced"><i class="bi bi-graph-up me-1"></i> Математические
+                                    методы</button></li>
                         </ul>
                         <div class="tab-content">
                             <!-- ========== ВКЛАДКА 1: ОПТИМИЗАЦИЯ РЕСУРСОВ (ПОЛНЫЙ ПЕРЕБОР) ========== -->
@@ -56,14 +58,17 @@
                                 <h3 class="mb-3">Продукты</h3>
                                 <div id="productsContainer"></div>
                                 <div class="row mb-4">
-                                    <div class="col-md-6"><button class="btn-add" onclick="addProduct()">Добавить
+                                    <div class="col-md-6"><button class="btn-add" onclick="addProduct()"><i
+                                                class="bi bi-plus-circle me-2"></i>Добавить
                                             продукт</button></div>
-                                    <div class="col-md-6"><button class="btn-remove" onclick="removeProduct()">Удалить
+                                    <div class="col-md-6"><button class="btn-remove" onclick="removeProduct()"><i
+                                                class="bi bi-dash-circle me-2"></i>Удалить
                                             последний</button></div>
                                 </div>
                                 <div class="complexity-info"><i class="bi bi-info-circle"></i> <strong>Теоретическое
                                         число комбинаций:</strong> <span id="totalCombinations">0</span></div>
-                                <button class="btn-calculate" onclick="calculateOptimum()">Найти оптимальное
+                                <button class="btn-calculate" onclick="calculateOptimum()"><i
+                                        class="bi bi-search me-2"></i> Найти оптимальное
                                     решение</button>
                                 <div id="results" style="display: none;">
                                     <div class="result-card mb-4">
@@ -132,7 +137,8 @@
                                 <div class="mt-4">
                                     <h5>История расчётов</h5>
                                     <div id="historyList"></div><button class="btn-remove mt-2"
-                                        onclick="clearHistory()">Очистить историю</button>
+                                        onclick="clearHistory()"><i class="bi bi-trash me-2"></i>Очистить
+                                        историю</button>
                                 </div>
                                 <div id="error" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
@@ -141,69 +147,101 @@
                             <div class="tab-pane fade" id="advanced">
                                 <ul class="nav nav-tabs mb-3" id="subTab" role="tablist">
                                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#tspTab">Коммивояжёр</button></li>
+                                            data-bs-target="#tspTab"><i class="bi bi-truck me-1"></i> Коммивояжёр
+                                            (доставка)</button></li>
                                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                            data-bs-target="#simplexTab">Симплекс-метод</button></li>
+                                            data-bs-target="#simplexTab"><i class="bi bi-graph-up me-1"></i>
+                                            Симплекс-метод</button></li>
                                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                            data-bs-target="#dualTab">Двойственный симплекс</button></li>
+                                            data-bs-target="#dualTab"><i class="bi bi-arrow-left-right me-1"></i>
+                                            Двойственный симплекс</button></li>
                                 </ul>
                                 <div class="tab-content">
+                                    <!-- ===== КОММИВОЯЖЁР С ОГРАНИЧЕНИЕМ НА РЕСУРС ===== -->
                                     <div class="tab-pane fade show active" id="tspTab">
                                         <div class="tsp-section">
-                                            <h3><i class="bi bi-diagram-3"></i> Задача коммивояжёра </h3>
-                                            <p>Поиск кратчайшего замкнутого маршрута через все города (полный перебор).
-                                            </p>
+                                            <h3><i class="bi bi-truck"></i> Задача коммивояжёра (логистика)</h3>
+                                            <p>Поиск кратчайшего замкнутого маршрута через все города с учётом
+                                                ограниченного ресурса (лимит пробега).</p>
                                             <div class="row g-3 mb-4">
                                                 <div class="col-md-3"><label class="form-label">Количество городов
                                                         (3–9):</label><input type="number" id="tspCitiesCount"
                                                         class="form-control" value="5" min="3" max="9"></div>
+                                                <div class="col-md-3"><label class="form-label">Лимит расстояния
+                                                        (км):</label><input type="number" id="tspLimit"
+                                                        class="form-control" value="200" min="10"></div>
                                                 <div class="col-md-3"><button class="btn-add w-100"
-                                                        onclick="rebuildTSPMatrix()">Построить матрицу</button></div>
+                                                        onclick="rebuildTSPMatrix()"><i
+                                                            class="bi bi-grid-3x3-gap-fill me-1"></i>Построить
+                                                        матрицу</button></div>
                                                 <div class="col-md-3"><button class="btn-export w-100"
-                                                        onclick="generateRandomDistances()">Случайные
+                                                        onclick="generateRandomDistances()"><i
+                                                            class="bi bi-shuffle me-1"></i>Случайные
                                                         расстояния</button></div>
-                                                <div class="col-md-3"><button class="btn-calculate w-100"
-                                                        onclick="solveTSP()">Найти маршрут</button></div>
                                             </div>
-                                            <div class="tsp-card"><strong>Матрица расстояний (симметричная,
+                                            <div class="tsp-card"><strong><i class="bi bi-table me-1"></i> Матрица
+                                                    расстояний (симметричная,
                                                     км)</strong>
                                                 <div id="distanceMatrixContainer" class="mt-3"></div>
+                                            </div>
+                                            <div class="row g-3 mb-3">
+                                                <div class="col-md-6"><button class="btn-calculate w-100"
+                                                        onclick="solveTSP()"><i
+                                                            class="bi bi-geo-alt-fill me-1"></i>Найти оптимальный
+                                                        маршрут</button></div>
+                                                <div class="col-md-6"><button class="btn-export w-100"
+                                                        onclick="exportTSPToJSON()"><i
+                                                            class="bi bi-file-earmark-code me-1"></i>Экспорт
+                                                        JSON</button></div>
                                             </div>
                                             <div id="tspResults" class="mt-4" style="display: none;">
                                                 <div class="result-card">
                                                     <div class="d-flex flex-wrap justify-content-between">
-                                                        <div><span class="badge bg-info">Оптимальный тур</span>
+                                                        <div><span class="badge bg-info" id="tspResultBadge">
+                                                                <i class="bi bi-flag-fill me-1"></i> Оптимальный маршрут
+                                                                (в рамках лимита)</span>
                                                             <div id="tspOptimalPath" class="mt-2"></div>
                                                         </div>
-                                                        <div class="tsp-result-badge">Длина: <span
-                                                                id="tspTotalDistance">0</span></div>
+                                                        <div class="tsp-result-badge"> <i class="bi bi-rulers me-1"></i>
+                                                            Длина: <span id="tspTotalDistance">0</span> км</div>
                                                     </div>
                                                     <div class="stats-container mt-3">
-                                                        <div class="checks-info"><strong>ПРОВЕРЕНО МАРШРУТОВ</strong>
+                                                        <div class="checks-info"><strong><i
+                                                                    class="bi bi-search me-1"></i> ПРОВЕРЕНО
+                                                                МАРШРУТОВ</strong>
                                                             <div><span id="tspChecks">0</span></div>
                                                         </div>
-                                                        <div class="checks-info"><strong>ВРЕМЯ</strong>
+                                                        <div class="checks-info"><strong><i
+                                                                    class="bi bi-check-circle me-1"></i>
+                                                                ДОПУСТИМЫХ</strong>
+                                                            <div><span id="tspValidCount">0</span></div>
+                                                        </div>
+                                                        <div class="checks-info"><strong><i
+                                                                    class="bi bi-hourglass-split me-1"></i>
+                                                                ВРЕМЯ</strong>
                                                             <div><span id="tspTime">0</span> мс</div>
                                                         </div>
-                                                        <div class="checks-info"><strong>ГОРОДОВ</strong>
-                                                            <div><span id="tspCityCount">0</span></div>
-                                                        </div>
                                                     </div>
-                                                    <button class="btn-export mt-2" onclick="exportTSPToJSON()">
-                                                        Экспорт JSON</button>
+                                                    <div class="mt-2 text-secondary small" id="tspLimitMessage"><i
+                                                            class="bi bi-info-circle me-1"></i> Найден
+                                                        маршрут, не превышающий лимит <span
+                                                            id="tspLimitDisplay">200</span> км.</div>
                                                 </div>
                                             </div>
-                                            <div class="tsp-canvas-container"><strong>Карта
+                                            <div class="tsp-canvas-container"><strong><i class="bi bi-map me-1"></i>
+                                                    Карта
                                                     маршрутов</strong><br><small>Красные линии — оптимальный
                                                     путь</small><canvas id="tspGraphCanvas" width="600"
                                                     height="400"></canvas></div>
                                         </div>
                                     </div>
-                                    <!-- Симплекс-метод (максимизация, ≤) -->
+
+                                    <!-- ===== СИМПЛЕКС-МЕТОД (МАКСИМИЗАЦИЯ/МИНИМИЗАЦИЯ) ===== -->
                                     <div class="tab-pane fade" id="simplexTab">
                                         <div class="simplex-section">
-                                            <h3><i class="bi bi-graph-up"></i> Симплекс-метод (максимизация)</h3>
-                                            <p>Форма: max c<sup>T</sup>x при Ax ≤ b, x ≥ 0.</p>
+                                            <h3><i class="bi bi-graph-up"></i> Симплекс-метод (задача ЛП)</h3>
+                                            <p>Форма: max/min c<sup>T</sup>x при Ax ≤ b, x ≥ 0. Решает задачи
+                                                распределения ресурсов (производство, транспорт).</p>
                                             <div class="row g-3 mb-3">
                                                 <div class="col-md-2"><label class="form-label">Переменных
                                                         (n):</label><input type="number" id="simplexVars"
@@ -211,24 +249,42 @@
                                                 <div class="col-md-2"><label class="form-label">Ограничений
                                                         (m):</label><input type="number" id="simplexCons"
                                                         class="form-control" value="2" min="1" max="5"></div>
-                                                <div class="col-md-2"><button class="btn-add"
-                                                        onclick="buildSimplexInput()">Сформировать</button></div>
-                                                <div class="col-md-3"><button class="btn-calculate"
-                                                        onclick="solveSimplex()">Решить симплексом</button></div>
+                                                <div class="col-md-3"><button class="btn-add"
+                                                        onclick="buildSimplexInput()"><i
+                                                            class="bi bi-pencil-square me-1"></i>Сформировать</button>
+                                                </div>
+                                                <div class="col-md-5"><button class="btn-calculate"
+                                                        onclick="solveSimplex()"><i
+                                                            class="bi bi-calculator me-1"></i>Решить симплексом</button>
+                                                </div>
+                                            </div>
+                                            <div class="mode-selector-simplex mb-3">
+                                                <label class="form-label">Направление оптимизации:</label>
+                                                <div class="d-flex gap-3">
+                                                    <div class="form-check"><input class="form-check-input" type="radio"
+                                                            name="simplexDirection" id="simplexMax" value="max"
+                                                            checked><label class="form-check-label">Максимизация
+                                                            (прибыль)</label></div>
+                                                    <div class="form-check"><input class="form-check-input" type="radio"
+                                                            name="simplexDirection" id="simplexMin" value="min"><label
+                                                            class="form-check-label">Минимизация (затраты)</label></div>
+                                                </div>
                                             </div>
                                             <div id="simplexInputArea" class="simplex-card"></div>
                                             <div id="simplexResult" class="result-card mt-3" style="display: none;">
-                                                <h5>Решение</h5>
+                                                <h5><i class="bi bi-check-lg me-1"></i> Решение</h5>
                                                 <div id="simplexSolution"></div>
                                                 <div id="simplexSteps" class="mt-2 small text-secondary"></div>
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Двойственный симплекс (минимизация, ≥) -->
+
+                                    <!-- ===== ДВОЙСТВЕННЫЙ СИМПЛЕКС (МИНИМИЗАЦИЯ, ≥) ===== -->
                                     <div class="tab-pane fade" id="dualTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-arrow-left-right"></i> Двойственный симплекс-метод</h3>
-                                            <p>Решение задачи min c<sup>T</sup>x при Ax ≥ b, x ≥ 0.</p>
+                                            <p>Решение задачи min c<sup>T</sup>x при Ax ≥ b, x ≥ 0. Используется для
+                                                минимизации затрат при нижних границах ресурсов.</p>
                                             <div class="row g-3 mb-3">
                                                 <div class="col-md-2"><label class="form-label">Переменных
                                                         (n):</label><input type="number" id="dualVars"
@@ -236,15 +292,19 @@
                                                 <div class="col-md-2"><label class="form-label">Ограничений
                                                         (m):</label><input type="number" id="dualCons"
                                                         class="form-control" value="2" min="1" max="5"></div>
-                                                <div class="col-md-2"><button class="btn-add"
-                                                        onclick="buildDualInput()">Сформировать</button></div>
-                                                <div class="col-md-3"><button class="btn-calculate"
-                                                        onclick="solveDualSimplex()">Двойственный симплекс</button>
+                                                <div class="col-md-3"><button class="btn-add"
+                                                        onclick="buildDualInput()"><i
+                                                            class="bi bi-pencil-square me-1"></i>Сформировать</button>
+                                                </div>
+                                                <div class="col-md-5"><button class="btn-calculate"
+                                                        onclick="solveDualSimplex()"><i
+                                                            class="bi bi-calculator me-1"></i>Двойственный
+                                                        симплекс</button>
                                                 </div>
                                             </div>
                                             <div id="dualInputArea" class="simplex-card"></div>
                                             <div id="dualResult" class="result-card mt-3" style="display: none;">
-                                                <h5>Решение</h5>
+                                                <h5><i class="bi bi-check-lg me-1"></i> Решение</h5>
                                                 <div id="dualSolution"></div>
                                                 <div id="dualSteps" class="mt-2 small text-secondary"></div>
                                             </div>
@@ -260,7 +320,7 @@
     </div>
 
     <script>
-        // ========== 1. ОПТИМИЗАЦИЯ РЕСУРСОВ (ПОЛНЫЙ ПЕРЕБОР) ==========
+        // ========== 1. ОПТИМИЗАЦИЯ РЕСУРСОВ (ПОЛНЫЙ ПЕРЕБОР) – БЕЗ ИЗМЕНЕНИЙ ==========
         let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null, efficiencyChart = null;
@@ -347,8 +407,9 @@
         function clearHistory() { if (confirm('Очистить историю?')) { localStorage.removeItem('calcHistory'); displayHistory(); } }
         function showError(msg) { let errDiv = document.getElementById('error'); errDiv.style.display = 'block'; errDiv.innerText = msg; }
 
-        // ========== 2. КОММИВОЯЖЁР ==========
+        // ========== 2. КОММИВОЯЖЁР С ОГРАНИЧЕНИЕМ НА РЕСУРС ==========
         let tspDistanceMatrix = [], tspCities = 5, tspBestRoute = [], tspBestDistance = Infinity, tspCanvas = null;
+        let tspLimit = 200;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
         function rebuildTSPMatrix() {
             let n = parseInt(document.getElementById('tspCitiesCount').value);
@@ -376,14 +437,22 @@
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 5; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${i}_${j}`).value = v; document.getElementById(`dist_${j}_${i}`).value = v; } drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function solveTSP() {
             let start = performance.now();
+            let limit = parseInt(document.getElementById('tspLimit').value) || 999999;
+            document.getElementById('tspLimitDisplay').innerText = limit;
             let indices = [...Array(tspCities).keys()];
-            let bestRoute = [], bestDist = Infinity, checks = 0;
+            let bestRoute = [], bestDist = Infinity;
+            let bestValidRoute = [], bestValidDist = Infinity;
+            let checks = 0, validCount = 0;
             function permute(arr, startIdx) {
                 if (startIdx === arr.length - 1) {
                     checks++;
                     let total = 0;
                     for (let i = 0; i < arr.length - 1; i++) total += tspDistanceMatrix[arr[i]][arr[i + 1]];
                     total += tspDistanceMatrix[arr[arr.length - 1]][arr[0]];
+                    if (total <= limit) {
+                        validCount++;
+                        if (total < bestValidDist) { bestValidDist = total; bestValidRoute = [...arr]; }
+                    }
                     if (total < bestDist) { bestDist = total; bestRoute = [...arr]; }
                     return;
                 }
@@ -391,14 +460,28 @@
             }
             permute(indices, 0);
             let end = performance.now();
-            tspBestRoute = bestRoute; tspBestDistance = bestDist;
+            let finalRoute, finalDist, message;
+            if (bestValidRoute.length > 0) {
+                finalRoute = bestValidRoute;
+                finalDist = bestValidDist;
+                message = `Найден маршрут, не превышающий лимит ${limit} км.`;
+                document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-flag-fill me-1"></i> Оптимальный маршрут (в рамках лимита)';
+            } else {
+                finalRoute = bestRoute;
+                finalDist = bestDist;
+                message = `Ни один маршрут не укладывается в лимит ${limit} км. Показан кратчайший (${finalDist} км).`;
+                document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Лучший маршрут (превышает лимит)';
+            }
+            tspBestRoute = finalRoute;
+            tspBestDistance = finalDist;
             document.getElementById('tspResults').style.display = 'block';
-            document.getElementById('tspOptimalPath').innerHTML = bestRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${bestRoute[0] + 1}`;
-            document.getElementById('tspTotalDistance').innerText = bestDist;
+            document.getElementById('tspOptimalPath').innerHTML = finalRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${finalRoute[0] + 1}`;
+            document.getElementById('tspTotalDistance').innerText = finalDist;
             document.getElementById('tspChecks').innerText = checks;
+            document.getElementById('tspValidCount').innerText = validCount;
             document.getElementById('tspTime').innerText = (end - start).toFixed(2);
-            document.getElementById('tspCityCount').innerText = tspCities;
-            drawTSPGraph(bestRoute);
+            document.getElementById('tspLimitMessage').innerHTML = '<i class="bi bi-info-circle me-1"></i> ' + message;
+            drawTSPGraph(finalRoute);
         }
         function drawTSPGraph(route) {
             if (!tspCanvas) return;
@@ -416,13 +499,13 @@
         }
         function exportTSPToJSON() { let data = { cities: tspCities, matrix: tspDistanceMatrix, route: tspBestRoute, distance: tspBestDistance }; let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tsp_result.json'; a.click(); }
 
-        // ========== 3. СИМПЛЕКС-МЕТОД (МАКСИМИЗАЦИЯ, ≤) ==========
+        // ========== 3. СИМПЛЕКС-МЕТОД (МАКСИМИЗАЦИЯ / МИНИМИЗАЦИЯ) ==========
         let simplexVars = 2, simplexCons = 2;
         function buildSimplexInput() {
             let n = parseInt(document.getElementById('simplexVars').value);
             let m = parseInt(document.getElementById('simplexCons').value);
             simplexVars = n; simplexCons = m;
-            let html = `<div class="mb-3"><label>Целевая функция (максимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`;
+            let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`;
             for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`;
             html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`;
             for (let i = 0; i < m; i++) {
@@ -443,6 +526,11 @@
                 for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0);
                 A.push(row);
                 b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0);
+            }
+            let direction = document.querySelector('input[name="simplexDirection"]:checked').value;
+            let originalC = [...c];
+            if (direction === 'min') {
+                c = c.map(ci => -ci); // минимизация -> максимизация
             }
             let tableau = [];
             for (let i = 0; i < m; i++) {
@@ -482,12 +570,14 @@
                 if (basicRow != -1) x[j] = tableau[basicRow][n + m];
             }
             let optValue = tableau[m][n + m];
+            if (direction === 'min') optValue = -optValue;
             document.getElementById('simplexResult').style.display = 'block';
-            document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Значение целевой функции: ${optValue.toFixed(4)}<br>`;
+            let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение';
+            document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`;
             document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций";
         }
 
-        // ========== 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС-МЕТОД (МИНИМИЗАЦИЯ, ≥) ==========
+        // ========== 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС (МИНИМИЗАЦИЯ, ≥) ==========
         let dualVars = 2, dualCons = 2;
         function buildDualInput() {
             let n = parseInt(document.getElementById('dualVars').value);
@@ -555,7 +645,7 @@
             }
             let optValue = tableau[m][n + 1];
             document.getElementById('dualResult').style.display = 'block';
-            document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Значение целевой функции: ${optValue.toFixed(4)}<br>`;
+            document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`;
             document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден";
         }
 

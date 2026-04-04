@@ -145,6 +145,7 @@ body {
     color: #e0e0e0;
     border-radius: 12px;
     padding: 10px;
+    width: 100%;
 }
 
 .form-control:focus {
@@ -211,6 +212,7 @@ body {
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .history-item {
@@ -243,6 +245,7 @@ body {
     padding: 20px;
     border: 1px solid #9b59b6;
     margin-top: 20px;
+    overflow-x: auto;
 }
 
 .matrix-input {
@@ -277,9 +280,11 @@ canvas#tspGraphCanvas {
     width: 100%;
     height: auto;
     max-width: 800px;
-    aspect-ratio: 600/400;
+    aspect-ratio: 600 / 400;
     background: #0f0f1a;
     border-radius: 16px;
+    margin: 0 auto;
+    display: block;
 }
 
 .nav-tabs .nav-link {
@@ -294,10 +299,143 @@ canvas#tspGraphCanvas {
     border-color: #9b59b6;
 }
 
+/* ===== АДАПТИВНОСТЬ ===== */
+
+/* Планшеты и небольшие экраны (до 992px) */
+@media (max-width: 992px) {
+    .stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .export-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Мобильные устройства (до 768px) */
 @media (max-width: 768px) {
     .matrix-input {
         width: 55px;
         padding: 4px;
         font-size: 0.7rem;
     }
+
+    .chart-container {
+        height: 250px;
+    }
+
+    .btn-add,
+    .btn-remove,
+    .btn-export {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .mode-selector .d-flex {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .resource-usage {
+        flex-direction: column;
+    }
+
+    .tsp-result-badge {
+        font-size: 1rem;
+        padding: 8px 15px;
+        margin-top: 10px;
+    }
+
+    .result-card .d-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .profit-badge {
+        margin-top: 15px;
+        align-self: flex-start;
+    }
 }
+
+/* Очень маленькие телефоны (до 576px) */
+@media (max-width: 576px) {
+    body {
+        padding: 10px;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .stats-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .export-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-container {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-container {
+        height: 220px;
+    }
+
+    .product-row .row {
+        flex-direction: column;
+    }
+
+    .product-row [class*="col-"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+
+    .nav-tabs .nav-link {
+        flex: 1 0 auto;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .tsp-card,
+    .simplex-card {
+        padding: 12px;
+    }
+
+    .matrix-input {
+        width: 45px;
+        font-size: 0.6rem;
+        padding: 3px;
+    }
+
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+
+    .btn-calculate {
+        font-size: 1rem;
+        padding: 12px 20px;
+    }
+}
+
+        .limit-badge {
+            background: #ffc107;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+    
+        .mode-selector-simplex {
+            background: rgba(54, 54, 54, 0.5);
+            border-radius: 15px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    
