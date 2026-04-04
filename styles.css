@@ -100,6 +100,8 @@ body {
     margin: 20px 0;
     cursor: pointer;
     transition: all 0.3s ease;
+    display: block;
+    text-align: center;
 }
 
 .btn-calculate:hover {
@@ -121,6 +123,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 8px;
+    text-align: center;
 }
 
 .btn-add {
@@ -280,6 +283,14 @@ body {
     border-radius: 15px;
     padding: 15px;
     height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    max-height: 100%;
 }
 
 .table-responsive {
@@ -414,6 +425,15 @@ canvas#tspGraphCanvas {
     transform: translateX(5px);
 }
 
+/* Центрирование кнопок в рядах */
+.row.justify-content-center .btn-add,
+.row.justify-content-center .btn-remove,
+.row.justify-content-center .btn-export,
+.row.justify-content-center .btn-calculate {
+    width: 100%;
+}
+
+/* Дополнительное выравнивание для мобильных */
 @media (max-width: 768px) {
     .matrix-input {
         width: 55px;
@@ -438,6 +458,10 @@ canvas#tspGraphCanvas {
 
     .row.g-3>[class*="col-"] {
         margin-bottom: 10px;
+    }
+
+    .charts-container {
+        grid-template-columns: 1fr;
     }
 }
 
