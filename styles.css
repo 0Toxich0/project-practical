@@ -169,6 +169,32 @@ body {
     color: #e0e0e0;
 }
 
+/* Вкладки */
+.nav-tabs {
+    border-bottom: 1px solid #9b59b6;
+    margin-bottom: 1.5rem;
+}
+
+.nav-tabs .nav-link {
+    color: #e0e0e0;
+    background-color: rgba(45, 45, 45, 0.8);
+    border-color: #9b59b6 #9b59b6 transparent;
+    margin-right: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: rgba(155, 89, 182, 0.3);
+    color: white;
+    border-color: #b87bc6 #b87bc6 transparent;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #9b59b6;
+    color: white;
+    border-color: #9b59b6 #9b59b6 transparent;
+}
+
 .product-row {
     background: rgba(54, 54, 54, 0.9);
     border-radius: 15px;
@@ -211,18 +237,6 @@ body {
     to {
         opacity: 1;
     }
-}
-
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    width: 100%;
-}
-
-.product-field {
-    min-width: 0;
-    width: 100%;
 }
 
 .result-card {
@@ -311,7 +325,6 @@ body {
     }
 }
 
-/* Новая анимация для кнопки "Найти оптимальное решение" */
 .btn-calculate {
     background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
     color: white;
@@ -730,6 +743,16 @@ body {
     animation: shimmer 2s infinite;
 }
 
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
 .export-buttons {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
@@ -773,7 +796,6 @@ body {
     transform: scale(1.02);
 }
 
-/* Новая анимация для блока "Теоретическое число комбинаций" */
 .complexity-info {
     background: rgba(155, 89, 182, 0.1);
     border: 1px solid #9b59b6;
@@ -860,7 +882,6 @@ body {
     }
 }
 
-/* История расчётов без ползунка */
 .history-list {
     width: 100%;
     border-radius: 10px;
@@ -967,6 +988,94 @@ body {
     transform: scale(1.05);
 }
 
+/* ========== НОВЫЕ СТИЛИ ДЛЯ TSP (ЗАДАЧА КОММИВОЯЖЁРА) ========== */
+.tsp-section {
+    margin-top: 20px;
+}
+
+.tsp-card {
+    background: rgba(30, 30, 45, 0.8);
+    border-radius: 20px;
+    padding: 20px;
+    border: 1px solid #9b59b6;
+    margin-top: 20px;
+}
+
+.distance-matrix-table {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    overflow-x: auto;
+}
+
+.matrix-input {
+    width: 70px;
+    text-align: center;
+    background: rgba(64, 64, 64, 0.9);
+    border: 1px solid #9b59b6;
+    color: white;
+    border-radius: 8px;
+    padding: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.matrix-input:focus {
+    outline: none;
+    box-shadow: 0 0 8px #9b59b6;
+    border-color: #b87bc6;
+}
+
+.city-label {
+    font-weight: bold;
+    color: #d4a5f0;
+}
+
+.tsp-result-badge {
+    background: #9b59b6;
+    border-radius: 40px;
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.tsp-canvas-container {
+    background: #1e1e2a;
+    border-radius: 20px;
+    padding: 10px;
+    margin-top: 20px;
+    border: 1px solid #9b59b6;
+    text-align: center;
+}
+
+canvas#tspGraphCanvas {
+    width: 100%;
+    height: auto;
+    max-width: 800px;
+    aspect-ratio: 600 / 400;
+    background: #0f0f1a;
+    border-radius: 16px;
+    margin-top: 12px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Адаптивность для TSP */
+@media (max-width: 768px) {
+    .matrix-input {
+        width: 55px;
+        padding: 4px;
+        font-size: 0.7rem;
+    }
+
+    .tsp-result-badge {
+        font-size: 1rem;
+        padding: 8px 15px;
+    }
+}
+
+/* Общие адаптивные стили */
 @media (max-width: 576px) {
     body {
         padding: 10px;
@@ -1031,6 +1140,7 @@ body {
     }
 }
 
+/* Вспомогательные классы */
 .text-center {
     text-align: center;
 }
@@ -1065,10 +1175,6 @@ body {
 
 .me-2 {
     margin-right: 0.5rem;
-}
-
-.gap-4 {
-    gap: 1.5rem;
 }
 
 .d-flex {

@@ -4,17 +4,339 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Оптимальные решения в условиях ограниченных ресурсов</title>
-    <!-- Bootstrap 5 -->
+    <title>Оптимизация ресурсов + Задача коммивояжёра (TSP)</title>
+    <!-- Bootstrap 5 + Icons + Chart.js + SheetJS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- SheetJS для экспорта XLSX -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
-    <!-- Подключаем внешний CSS файл -->
-    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* ========== ОСНОВНЫЕ СТИЛИ ========== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
+            animation: gradientShift 15s ease infinite;
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
+        }
+
+        .calculator-card {
+            background: rgba(45, 45, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(155, 89, 182, 0.4);
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: clamp(20px, 5vw, 35px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header h1 {
+            margin: 0;
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header p {
+            margin: 10px 0 0;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.95;
+        }
+
+        .card-body {
+            padding: clamp(15px, 4vw, 35px);
+            background: rgba(45, 45, 45, 0.98);
+            color: #e0e0e0;
+        }
+
+        /* Кнопки и элементы */
+        .btn-calculate {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 60px;
+            width: 100%;
+            font-weight: 700;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-calculate:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(155, 89, 182, 0.6);
+        }
+
+        .btn-add,
+        .btn-remove,
+        .btn-export {
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 60px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+        }
+
+        .product-row {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #9b59b6;
+            transition: all 0.3s ease;
+        }
+
+        .form-control {
+            background: rgba(64, 64, 64, 0.8);
+            border: 2px solid #4a4a4a;
+            color: #e0e0e0;
+            border-radius: 12px;
+            padding: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #9b59b6;
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .checks-info {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #9b59b6;
+        }
+
+        .resource-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .resource-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            transition: width 0.5s;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .chart-container {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            height: 300px;
+        }
+
+        .complexity-info {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid #9b59b6;
+            border-radius: 10px;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-item {
+            background: rgba(54, 54, 54, 0.9);
+            border: 1px solid #9b59b6;
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 12px;
+        }
+
+        /* === СТИЛИ ДЛЯ TSP === */
+        .tsp-section {
+            margin-top: 20px;
+        }
+
+        .tsp-card {
+            background: rgba(30, 30, 45, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #9b59b6;
+            margin-top: 20px;
+        }
+
+        .distance-matrix-table {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow-x: auto;
+        }
+
+        .matrix-input {
+            width: 70px;
+            text-align: center;
+            background: rgba(64, 64, 64, 0.9);
+            border: 1px solid #9b59b6;
+            color: white;
+            border-radius: 8px;
+            padding: 6px;
+            font-size: 0.85rem;
+        }
+
+        .matrix-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px #9b59b6;
+        }
+
+        .city-label {
+            font-weight: bold;
+            color: #d4a5f0;
+        }
+
+        .tsp-result-badge {
+            background: #9b59b6;
+            border-radius: 40px;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .tsp-canvas-container {
+            background: #1e1e2a;
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #9b59b6;
+            text-align: center;
+        }
+
+        canvas#tspGraphCanvas {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            aspect-ratio: 600/400;
+            background: #0f0f1a;
+            border-radius: 16px;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .matrix-input {
+                width: 55px;
+                padding: 4px;
+                font-size: 0.7rem;
+            }
+        }
+
+        .nav-tabs .nav-link {
+            color: #e0e0e0;
+            background-color: rgba(45, 45, 45, 0.8);
+            border-color: #9b59b6;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: #9b59b6;
+            color: white;
+            border-color: #9b59b6;
+        }
+    </style>
 </head>
 
 <body>
@@ -23,199 +345,222 @@
             <div class="col-lg-10 col-md-12">
                 <div class="calculator-card">
                     <div class="card-header">
-                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения в условиях ограниченных
-                            ресурсов</h1>
-                        <p>Введите данные о продуктах и ресурсах — программа найдёт оптимальный план производства</p>
+                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения + Задача коммивояжёра</h1>
+                        <p>Вкладка 1: оптимизация производства (ресурсы) | Вкладка 2: TSP и визуализация графа</p>
                     </div>
-
                     <div class="card-body">
-                        <!-- Настройки ресурсов -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <label class="form-label">Общее количество часов:</label>
-                                <input type="number" id="totalHours" class="form-control" value="30" min="1"
-                                    onchange="updateComplexity()">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Общее количество материала (кг):</label>
-                                <input type="number" id="totalMaterial" class="form-control" value="40" min="1"
-                                    onchange="updateComplexity()">
-                            </div>
-                        </div>
-
-                        <!-- Режим расчёта -->
-                        <div class="mode-selector">
-                            <label class="form-label mb-3">Режим расчёта:</label>
-                            <div class="mode-options">
-                                <div class="form-check mode-option">
-                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMax"
-                                        value="max" checked>
-                                    <label class="form-check-label" for="modeMax">
-                                        <i class="bi bi-arrow-up-circle-fill text-success"></i> Максимизация прибыли
-                                    </label>
-                                </div>
-                                <div class="form-check mode-option">
-                                    <input class="form-check-input" type="radio" name="optimizationMode" id="modeMin"
-                                        value="min">
-                                    <label class="form-check-label" for="modeMin">
-                                        <i class="bi bi-arrow-down-circle-fill text-danger"></i> Минимизация прибыли
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Продукты -->
-                        <h3 class="mb-3">Продукты</h3>
-                        <div id="productsContainer"></div>
-
-                        <!-- Кнопки управления -->
-                        <div class="row mb-4">
-                            <div class="col-md-6">
-                                <button class="btn-add" onclick="addProduct()">
-                                    <i class="bi bi-plus-circle me-2"></i>Добавить продукт
+                        <!-- Вкладки навигации -->
+                        <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="production-tab" data-bs-toggle="tab"
+                                    data-bs-target="#production" type="button" role="tab">
+                                    <i class="bi bi-box-seam me-1"></i> Оптимизация ресурсов
                                 </button>
-                            </div>
-                            <div class="col-md-6">
-                                <button class="btn-remove" onclick="removeProduct()">
-                                    <i class="bi bi-dash-circle me-2"></i>Удалить последний
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="tsp-tab" data-bs-toggle="tab" data-bs-target="#tsp"
+                                    type="button" role="tab">
+                                    <i class="bi bi-diagram-3 me-1"></i> Коммивояжёр (TSP) & Граф
                                 </button>
-                            </div>
-                        </div>
-
-                        <div class="complexity-info">
-                            <i class="bi bi-info-circle me-2"></i>
-                            <strong>Теоретическое число комбинаций:</strong> <span id="totalCombinations">0</span>
-                        </div>
-
-                        <!-- Кнопка расчёта -->
-                        <button class="btn-calculate" onclick="calculateOptimum()">
-                            <i class="bi bi-search me-2"></i>Найти оптимальное решение
-                        </button>
-
-                        <!-- Результаты -->
-                        <div id="results" style="display: none;">
-                            <h3 class="mb-3">Результат оптимизации</h3>
-
-                            <div class="result-card mb-4">
-                                <div class="result-content">
-                                    <div class="result-info">
-                                        <div class="mb-3">
-                                            <span class="badge bg-success" id="modeBadge">
-                                                <i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль
-                                            </span>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <!-- ========== ВКЛАДКА 1: ОПТИМИЗАЦИЯ ПРОИЗВОДСТВА ========== -->
+                            <div class="tab-pane fade show active" id="production" role="tabpanel">
+                                <div class="row mb-4">
+                                    <div class="col-md-6"><label class="form-label">Общее количество
+                                            часов:</label><input type="number" id="totalHours" class="form-control"
+                                            value="30" min="1" onchange="updateComplexity()"></div>
+                                    <div class="col-md-6"><label class="form-label">Общее количество материала
+                                            (кг):</label><input type="number" id="totalMaterial" class="form-control"
+                                            value="40" min="1" onchange="updateComplexity()"></div>
+                                </div>
+                                <div class="mode-selector mb-3"><label class="form-label">Режим расчёта:</label>
+                                    <div class="mode-options d-flex gap-3">
+                                        <div class="form-check"><input class="form-check-input" type="radio"
+                                                name="optimizationMode" id="modeMax" value="max" checked><label
+                                                class="form-check-label" for="modeMax"><i
+                                                    class="bi bi-arrow-up-circle-fill text-success"></i> Максимизация
+                                                прибыли</label></div>
+                                        <div class="form-check"><input class="form-check-input" type="radio"
+                                                name="optimizationMode" id="modeMin" value="min"><label
+                                                class="form-check-label" for="modeMin"><i
+                                                    class="bi bi-arrow-down-circle-fill text-danger"></i> Минимизация
+                                                прибыли</label></div>
+                                    </div>
+                                </div>
+                                <h3 class="mb-3">Продукты</h3>
+                                <div id="productsContainer"></div>
+                                <div class="row mb-4">
+                                    <div class="col-md-6"><button class="btn-add" onclick="addProduct()"><i
+                                                class="bi bi-plus-circle me-2"></i>Добавить продукт</button></div>
+                                    <div class="col-md-6"><button class="btn-remove" onclick="removeProduct()"><i
+                                                class="bi bi-dash-circle me-2"></i>Удалить последний</button></div>
+                                </div>
+                                <div class="complexity-info"><i class="bi bi-info-circle me-2"></i><strong>Теоретическое
+                                        число комбинаций:</strong> <span id="totalCombinations">0</span></div>
+                                <button class="btn-calculate" onclick="calculateOptimum()"><i
+                                        class="bi bi-search me-2"></i>Найти оптимальное решение</button>
+                                <div id="results" style="display: none;">
+                                    <h3 class="mb-3">Результат оптимизации</h3>
+                                    <div class="result-card mb-4">
+                                        <div
+                                            class="result-content d-flex flex-wrap justify-content-between align-items-center">
+                                            <div>
+                                                <div class="mb-2"><span class="badge bg-success" id="modeBadge"><i
+                                                            class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная
+                                                        прибыль</span></div>
+                                                <div id="resultProducts" class="result-item"></div>
+                                            </div>
+                                            <div class="profit-badge bg-white bg-opacity-25 rounded-pill px-4 py-2"><i
+                                                    class="bi bi-currency-ruble me-1"></i><span
+                                                    id="optimalProfit">0</span>
+                                                <div id="profitLabel" class="small">максимальная прибыль</div>
+                                            </div>
                                         </div>
-                                        <div id="resultProducts" class="result-item"></div>
                                     </div>
-                                    <div class="result-profit">
-                                        <div class="profit-badge">
-                                            <i class="bi bi-currency-ruble me-1"></i>
-                                            <span id="optimalProfit">0</span>
+                                    <div class="resource-usage d-flex flex-wrap gap-3">
+                                        <div class="flex-grow-1">
+                                            <div>Часы: <span id="usedHours">0</span> / <span
+                                                    id="totalHoursDisplay">100</span></div>
+                                            <div class="resource-bar mt-1">
+                                                <div class="resource-bar-fill" id="hoursBar" style="width: 0%"></div>
+                                            </div>
                                         </div>
-                                        <div class="mt-2" id="profitLabel">максимальная прибыль</div>
+                                        <div class="flex-grow-1">
+                                            <div>Материалы: <span id="usedMaterial">0</span> / <span
+                                                    id="totalMaterialDisplay">100</span></div>
+                                            <div class="resource-bar mt-1">
+                                                <div class="resource-bar-fill" id="materialBar" style="width: 0%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stats-container">
+                                        <div class="checks-info"><i class="bi bi-diagram-3"></i><strong>ПРОВЕРЕНО
+                                                КОМБИНАЦИЙ</strong>
+                                            <div><span id="checksCount">0</span></div>
+                                        </div>
+                                        <div class="checks-info"><i class="bi bi-hourglass-split"></i><strong>ВРЕМЯ
+                                                РАСЧЁТА</strong>
+                                            <div><span id="calcTime">0</span> мс</div>
+                                        </div>
+                                        <div class="checks-info"><i
+                                                class="bi bi-lightning-charge"></i><strong>УСКОРЕНИЕ</strong>
+                                            <div><span id="speedup">0</span> x</div>
+                                        </div>
+                                    </div>
+                                    <div class="export-buttons d-flex gap-2 my-3"><button class="btn-export"
+                                            onclick="exportToXLSX()"><i class="bi bi-file-earmark-spreadsheet"></i>
+                                            XLSX</button><button class="btn-export" onclick="exportToJSON()"><i
+                                                class="bi bi-file-earmark-code"></i> JSON</button><button
+                                            class="btn-export" onclick="exportToTXT()"><i
+                                                class="bi bi-file-earmark-text"></i> TXT</button></div>
+                                    <div class="charts-container">
+                                        <div class="chart-container"><canvas id="resourceChart"></canvas></div>
+                                        <div class="chart-container"><canvas id="efficiencyChart"></canvas></div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <h5>Детальный расчёт</h5>
+                                        <div class="table-responsive">
+                                            <table class="table table-dark table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>ПРОДУКТ</th>
+                                                        <th>ТРУД</th>
+                                                        <th>МАТЕРИАЛ</th>
+                                                        <th>ПРИБЫЛЬ</th>
+                                                        <th>ЭФФЕКТИВН.</th>
+                                                        <th>ОПТИМУМ</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tableBody"></tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
+                                <div class="mt-4">
+                                    <h5>История расчётов</h5>
+                                    <div id="historyList"></div><button class="btn-remove mt-2" onclick="clearHistory()"
+                                        style="width: auto;"><i class="bi bi-trash me-2"></i>Очистить историю</button>
+                                </div>
+                                <div id="error" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- Использование ресурсов -->
-                            <div class="resource-usage">
-                                <div class="resource-item">
-                                    <div>Часы: <span id="usedHours">0</span> / <span id="totalHoursDisplay">100</span>
+                            <!-- ========== ВКЛАДКА 2: ЗАДАЧА КОММИВОЯЖЁРА (TSP) ========== -->
+                            <div class="tab-pane fade" id="tsp" role="tabpanel">
+                                <div class="tsp-section">
+                                    <h3><i class="bi bi-map-fill me-2"></i>Задача коммивояжёра (TSP)</h3>
+                                    <p>Поиск кратчайшего замкнутого маршрута через все города. Граф отображается на
+                                        холсте, оптимальный путь выделен красным.</p>
+                                    <div class="row g-3 mb-4">
+                                        <div class="col-md-3"><label class="form-label">Количество городов
+                                                (3–9):</label><input type="number" id="tspCitiesCount"
+                                                class="form-control" value="5" min="3" max="9" step="1"></div>
+                                        <div class="col-md-3 d-flex align-items-end"><button class="btn-add w-100"
+                                                onclick="rebuildTSPMatrix()"><i class="bi bi-grid-3x3-gap-fill"></i>
+                                                Построить матрицу</button></div>
+                                        <div class="col-md-3 d-flex align-items-end"><button class="btn-export w-100"
+                                                onclick="generateRandomDistances()"><i class="bi bi-shuffle"></i>
+                                                Случайные расстояния</button></div>
+                                        <div class="col-md-3 d-flex align-items-end"><button class="btn-calculate w-100"
+                                                style="margin:0;" onclick="solveTSP()"><i
+                                                    class="bi bi-geo-alt-fill"></i> Найти маршрут</button></div>
                                     </div>
-                                    <div class="resource-bar">
-                                        <div class="resource-bar-fill" id="hoursBar" style="width: 0%"></div>
+                                    <!-- Матрица расстояний -->
+                                    <div class="tsp-card">
+                                        <div class="d-flex justify-content-between flex-wrap"><strong><i
+                                                    class="bi bi-diagram-3"></i> Матрица расстояний
+                                                (симметричная)</strong><small class="text-secondary">* диагональ всегда
+                                                0</small></div>
+                                        <div id="distanceMatrixContainer" class="distance-matrix-table mt-3"
+                                            style="overflow-x: auto;"></div>
                                     </div>
-                                </div>
-                                <div class="resource-item">
-                                    <div>Материалы: <span id="usedMaterial">0</span> / <span
-                                            id="totalMaterialDisplay">100</span></div>
-                                    <div class="resource-bar">
-                                        <div class="resource-bar-fill" id="materialBar" style="width: 0%"></div>
+                                    <!-- Результаты TSP -->
+                                    <div id="tspResults" class="mt-4" style="display: none;">
+                                        <div class="result-card">
+                                            <div class="d-flex flex-wrap justify-content-between align-items-center">
+                                                <div><span class="badge bg-info"><i class="bi bi-flag-fill"></i>
+                                                        Оптимальный тур</span>
+                                                    <div id="tspOptimalPath" class="mt-2 fw-bold"
+                                                        style="font-size:1.1rem;">—</div>
+                                                </div>
+                                                <div class="tsp-result-badge mt-2 mt-sm-0"><i class="bi bi-rulers"></i>
+                                                    Длина: <span id="tspTotalDistance">0</span></div>
+                                            </div>
+                                            <div class="stats-container mt-3"
+                                                style="grid-template-columns: repeat(3,1fr);">
+                                                <div class="checks-info"><i class="bi bi-search"></i><strong>ПРОВЕРЕНО
+                                                        МАРШРУТОВ</strong>
+                                                    <div><span id="tspChecks">0</span></div>
+                                                </div>
+                                                <div class="checks-info"><i
+                                                        class="bi bi-hourglass"></i><strong>ВРЕМЯ</strong>
+                                                    <div><span id="tspTime">0</span> мс</div>
+                                                </div>
+                                                <div class="checks-info"><i
+                                                        class="bi bi-graph-up"></i><strong>ГОРОДОВ</strong>
+                                                    <div><span id="tspCityCount">0</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="export-buttons d-flex gap-2 mt-2">
+                                                <button class="btn-export" onclick="exportTSPToJSON()"><i
+                                                        class="bi bi-file-code"></i> JSON (TSP)</button>
+                                                <button class="btn-export" onclick="exportTSPToTXT()"><i
+                                                        class="bi bi-file-text"></i> TXT (TSP)</button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Статистика -->
-                            <div class="stats-container">
-                                <div class="checks-info">
-                                    <i class="bi bi-diagram-3"></i>
-                                    <strong>ПРОВЕРЕНО КОМБИНАЦИЙ</strong>
-                                    <div class="value-container">
-                                        <span id="checksCount">0</span>
+                                    <!-- Графическое отображение графа -->
+                                    <div class="tsp-canvas-container">
+                                        <div class="d-flex justify-content-between flex-wrap"><strong><i
+                                                    class="bi bi-bezier2"></i> Визуализация графа и
+                                                маршрута</strong><small class="text-secondary">Красные линии —
+                                                оптимальный путь</small></div>
+                                        <canvas id="tspGraphCanvas" width="600" height="400"></canvas>
                                     </div>
-                                </div>
-                                <div class="checks-info">
-                                    <i class="bi bi-hourglass-split"></i>
-                                    <strong>ВРЕМЯ РАСЧЁТА</strong>
-                                    <div class="value-container">
-                                        <span id="calcTime">0</span>
-                                        <small>мс</small>
-                                    </div>
-                                </div>
-                                <div class="checks-info">
-                                    <i class="bi bi-lightning-charge"></i>
-                                    <strong>УСКОРЕНИЕ</strong>
-                                    <div class="value-container">
-                                        <span id="speedup">0</span>
-                                        <small>x</small>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Кнопки экспорта -->
-                            <div class="export-buttons">
-                                <button class="btn-export" onclick="exportToXLSX()">
-                                    <i class="bi bi-file-earmark-spreadsheet"></i> XLSX
-                                </button>
-                                <button class="btn-export" onclick="exportToJSON()">
-                                    <i class="bi bi-file-earmark-code"></i> JSON
-                                </button>
-                                <button class="btn-export" onclick="exportToTXT()">
-                                    <i class="bi bi-file-earmark-text"></i> TXT
-                                </button>
-                            </div>
-
-                            <!-- Графики -->
-                            <div class="charts-container">
-                                <div class="chart-container">
-                                    <canvas id="resourceChart"></canvas>
-                                </div>
-                                <div class="chart-container">
-                                    <canvas id="efficiencyChart"></canvas>
-                                </div>
-                            </div>
-
-                            <!-- Таблица расчёта -->
-                            <div class="mt-4">
-                                <h5>Детальный расчёт</h5>
-                                <div class="table-responsive">
-                                    <table class="table-result">
-                                        <thead>
-                                            <tr>
-                                                <th>ПРОДУКТ</th>
-                                                <th>ТРУД</th>
-                                                <th>МАТЕРИАЛ</th>
-                                                <th>ПРИБЫЛЬ</th>
-                                                <th>ЭФФЕКТИВН.</th>
-                                                <th>ОПТИМУМ</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tableBody">
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- История расчётов -->
-                        <div class="mt-4">
-                            <h5>История расчётов</h5>
-                            <div class="history-list" id="historyList"></div>
-                            <button class="btn-remove mt-2" onclick="clearHistory()" style="width: auto;">
-                                <i class="bi bi-trash me-2"></i>Очистить историю
-                            </button>
-                        </div>
-
-                        <div id="error" class="alert-danger mt-3" style="display: none;"></div>
                     </div>
                 </div>
             </div>
@@ -223,616 +568,239 @@
     </div>
 
     <script>
+        // ========== ОПТИМИЗАЦИЯ РЕСУРСОВ ==========
         let productCount = 2;
         const maxProducts = 10;
-        let resourceChart = null;
-        let efficiencyChart = null;
-        let currentBest = [];
-        let currentProducts = [];
-        let currentMode = 'max';
-        let currentProfit = 0;
-        let currentChecks = 0;
-        let currentTime = 0;
-        let currentSpeedup = 0;
-
-        // Хранилище для данных продуктов
+        let resourceChart = null, efficiencyChart = null;
+        let currentBest = [], currentProducts = [], currentMode = 'max', currentProfit = 0, currentChecks = 0, currentTime = 0, currentSpeedup = 0;
         let productsData = [];
 
-        // Инициализация
         window.onload = function () {
-            productsData = [
-                { name: 'P1', labor: 0, material: 0, profit: 0 },
-            ];
+            productsData = [{ name: 'P1', labor: 4, material: 3, profit: 25 }, { name: 'P2', labor: 3, material: 4, profit: 30 }];
             renderProducts();
-
             document.getElementById('totalHours').value = 30;
             document.getElementById('totalMaterial').value = 40;
-
             updateComplexity();
             displayHistory();
+            initTSP(); // инициализация TSP
         };
 
-        function saveCurrentProducts() {
-            for (let i = 0; i < productCount; i++) {
-                const nameInput = document.getElementById(`name${i}`);
-                const laborInput = document.getElementById(`labor${i}`);
-                const materialInput = document.getElementById(`material${i}`);
-                const profitInput = document.getElementById(`profit${i}`);
+        function saveCurrentProducts() { for (let i = 0; i < productCount; i++) { const n = document.getElementById(`name${i}`), l = document.getElementById(`labor${i}`), m = document.getElementById(`material${i}`), p = document.getElementById(`profit${i}`); if (n && l && m && p) { if (!productsData[i]) productsData[i] = {}; productsData[i] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; } } }
+        function renderProducts() { const container = document.getElementById('productsContainer'); container.innerHTML = ''; for (let i = 0; i < productCount; i++) { const d = productsData[i] || { name: `P${i + 1}`, labor: 0, material: 0, profit: 0 }; container.innerHTML += `<div class="product-row"><div class="row g-3"><div class="col-md-3"><label class="form-label">Название</label><input type="text" class="form-control" id="name${i}" value="${d.name}" onchange="updateProductData(${i})"></div><div class="col-md-3"><label class="form-label">Труд (ч)</label><input type="number" class="form-control" id="labor${i}" value="${d.labor}" min="1" onchange="updateProductData(${i}); updateComplexity()"></div><div class="col-md-3"><label class="form-label">Материал (кг)</label><input type="number" class="form-control" id="material${i}" value="${d.material}" min="1" onchange="updateProductData(${i}); updateComplexity()"></div><div class="col-md-3"><label class="form-label">Прибыль</label><input type="number" class="form-control" id="profit${i}" value="${d.profit}" onchange="updateProductData(${i})"></div></div></div>`; } updateComplexity(); }
+        function updateProductData(idx) { const n = document.getElementById(`name${idx}`), l = document.getElementById(`labor${idx}`), m = document.getElementById(`material${idx}`), p = document.getElementById(`profit${idx}`); if (n && l && m && p) productsData[idx] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; }
+        function updateComplexity() { let totalHours = parseInt(document.getElementById('totalHours').value) || 0, totalMaterial = parseInt(document.getElementById('totalMaterial').value) || 0, comb = 1; for (let i = 0; i < productCount; i++) { let labor = parseInt(document.getElementById(`labor${i}`).value) || 1, material = parseInt(document.getElementById(`material${i}`).value) || 1; let maxPossible = Math.min(Math.floor(totalHours / labor), Math.floor(totalMaterial / material)); comb *= (maxPossible + 1); } document.getElementById('totalCombinations').innerText = comb.toLocaleString(); }
+        function addProduct() { if (productCount < maxProducts) { saveCurrentProducts(); productCount++; productsData[productCount - 1] = { name: `P${productCount}`, labor: 0, material: 0, profit: 0 }; renderProducts(); } else alert(`Максимум ${maxProducts} продуктов`); }
+        function removeProduct() { if (productCount > 1) { saveCurrentProducts(); productCount--; productsData.pop(); renderProducts(); } }
+        function getProductsData() { let arr = []; for (let i = 0; i < productCount; i++) arr.push({ name: document.getElementById(`name${i}`).value, labor: parseInt(document.getElementById(`labor${i}`).value), material: parseInt(document.getElementById(`material${i}`).value), profit: parseInt(document.getElementById(`profit${i}`).value) }); return arr; }
+        function calculateOptimum() { const totalHours = parseInt(document.getElementById('totalHours').value), totalMaterial = parseInt(document.getElementById('totalMaterial').value), mode = document.querySelector('input[name="optimizationMode"]:checked').value; if (totalHours <= 0 || totalMaterial <= 0) { showError('Ресурсы должны быть положительными'); return; } const products = getProductsData(); for (let p of products) if (p.labor < 1 || p.material < 1) { showError('Труд и материал >0'); return; } currentProducts = products; currentMode = mode; const maxCount = []; for (let i = 0; i < productCount; i++) maxCount[i] = Math.min(Math.floor(totalHours / products[i].labor), Math.floor(totalMaterial / products[i].material)); const start = performance.now(); let best = new Array(productCount).fill(0), cur = new Array(productCount).fill(0); let optProfit = mode === 'max' ? -Infinity : Infinity; let checks = 0; function brute(idx, hours, material, profit) { if (hours > totalHours || material > totalMaterial) return; if (idx === productCount) { checks++; if (hours <= totalHours && material <= totalMaterial) { if ((mode === 'max' && profit > optProfit) || (mode === 'min' && profit < optProfit)) { optProfit = profit; best = [...cur]; } } return; } for (let cnt = 0; cnt <= maxCount[idx]; cnt++) { cur[idx] = cnt; brute(idx + 1, hours + cnt * products[idx].labor, material + cnt * products[idx].material, profit + cnt * products[idx].profit); } } brute(0, 0, 0, 0); if ((mode === 'max' && optProfit === -Infinity) || (mode === 'min' && optProfit === Infinity)) { showError('Нет допустимых решений'); return; } const end = performance.now(); let totalComb = 1; for (let i = 0; i < productCount; i++) totalComb *= (maxCount[i] + 1); const speedup = (totalComb / checks).toFixed(2); currentBest = best; currentProfit = optProfit; currentChecks = checks; currentTime = (end - start).toFixed(2); currentSpeedup = speedup; document.getElementById('results').style.display = 'block'; document.getElementById('error').style.display = 'none'; document.getElementById('optimalProfit').innerText = optProfit; document.getElementById('checksCount').innerText = checks; document.getElementById('calcTime').innerText = (end - start).toFixed(2); document.getElementById('speedup').innerText = speedup; let usedHours = 0, usedMat = 0; for (let i = 0; i < productCount; i++) { usedHours += best[i] * products[i].labor; usedMat += best[i] * products[i].material; } document.getElementById('usedHours').innerText = usedHours; document.getElementById('usedMaterial').innerText = usedMat; document.getElementById('totalHoursDisplay').innerText = totalHours; document.getElementById('totalMaterialDisplay').innerText = totalMaterial; document.getElementById('hoursBar').style.width = (usedHours / totalHours * 100).toFixed(1) + '%'; document.getElementById('materialBar').style.width = (usedMat / totalMaterial * 100).toFixed(1) + '%'; let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`; document.getElementById('resultProducts').innerHTML = resHtml; let tabHtml = ''; for (let i = 0; i < productCount; i++) { let eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2); tabHtml += `<tr><td><strong>${products[i].name}</strong></td><td>${products[i].labor}</td><td>${products[i].material}</td><td>${products[i].profit}</td><td>${eff}</td><td class="fw-bold">${best[i]}</td></tr>`; } document.getElementById('tableBody').innerHTML = tabHtml; if (resourceChart) resourceChart.destroy(); if (efficiencyChart) efficiencyChart.destroy(); const ctx1 = document.getElementById('resourceChart').getContext('2d'); resourceChart = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMaterial - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } }); const ctx2 = document.getElementById('efficiencyChart').getContext('2d'); efficiencyChart = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => (p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } }); saveToHistory(products, best, optProfit, mode, checks, (end - start).toFixed(2)); }
+        function saveToHistory(products, best, profit, mode, checks, time) { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); hist.unshift({ timestamp: new Date().toLocaleString(), products: products.map(p => p.name), plan: best, profit, mode, checks, time }); if (hist.length > 10) hist.pop(); localStorage.setItem('calcHistory', JSON.stringify(hist)); displayHistory(); }
+        function displayHistory() { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); let container = document.getElementById('historyList'); if (hist.length === 0) { container.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>'; return; } container.innerHTML = hist.map((item, idx) => `<div class="history-item" onclick="loadHistoryItem(${idx})"><div class="d-flex justify-content-between"><small>${item.timestamp}</small><span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">${item.mode === 'max' ? 'MAX' : 'MIN'}</span></div><div><strong>Прибыль: ${item.profit}</strong></div><small>Продукты: ${item.products.join(', ')}</small></div>`).join(''); }
+        function loadHistoryItem(idx) { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); let item = hist[idx]; if (item) alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПлан: ${item.plan.join(', ')} ед.`); }
+        function clearHistory() { if (confirm('Очистить историю?')) { localStorage.removeItem('calcHistory'); displayHistory(); } }
+        function showError(msg) { let errDiv = document.getElementById('error'); errDiv.style.display = 'block'; errDiv.innerText = msg; }
+        function exportToXLSX() { alert('Экспорт XLSX (демо)'); }
+        function exportToJSON() { alert('Экспорт JSON (демо)'); }
+        function exportToTXT() { alert('Экспорт TXT (демо)'); }
 
-                if (nameInput && laborInput && materialInput && profitInput) {
-                    if (!productsData[i]) {
-                        productsData[i] = {};
+        // ========== МОДУЛЬ TSP (ЗАДАЧА КОММИВОЯЖЁРА) ==========
+        let tspDistanceMatrix = [];
+        let tspCities = 5;
+        let tspBestRoute = [];
+        let tspBestDistance = Infinity;
+        let tspCanvas = null;
+
+        function initTSP() {
+            tspCanvas = document.getElementById('tspGraphCanvas');
+            rebuildTSPMatrix();
+        }
+        function rebuildTSPMatrix() {
+            const cityInput = document.getElementById('tspCitiesCount');
+            let newCount = parseInt(cityInput.value);
+            if (isNaN(newCount)) newCount = 5;
+            newCount = Math.min(9, Math.max(3, newCount));
+            tspCities = newCount;
+            cityInput.value = tspCities;
+            if (tspDistanceMatrix.length !== tspCities) {
+                tspDistanceMatrix = Array(tspCities).fill().map(() => Array(tspCities).fill(0));
+                for (let i = 0; i < tspCities; i++) {
+                    for (let j = i + 1; j < tspCities; j++) {
+                        let val = Math.floor(Math.random() * 30) + 5;
+                        tspDistanceMatrix[i][j] = val;
+                        tspDistanceMatrix[j][i] = val;
                     }
-                    productsData[i] = {
-                        name: nameInput.value,
-                        labor: parseInt(laborInput.value),
-                        material: parseInt(materialInput.value),
-                        profit: parseInt(profitInput.value)
-                    };
                 }
-            }
-        }
-
-        // Поля для продуктов
-        function renderProducts() {
-            const container = document.getElementById('productsContainer');
-            container.innerHTML = '';
-
-            for (let i = 0; i < productCount; i++) {
-                const savedData = productsData[i] || {
-                    name: `P${i + 1}`,
-                    labor: 0,
-                    material: 0,
-                    profit: 0
-                };
-
-                container.innerHTML += `
-                    <div class="product-row" id="product${i}">
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label">Название</label>
-                                <input type="text" class="form-control" id="name${i}" value="${savedData.name}" onchange="updateProductData(${i})">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Труд (ч)</label>
-                                <input type="number" class="form-control" id="labor${i}" value="${savedData.labor}" min="1" onchange="updateProductData(${i}); updateComplexity()">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Материал (кг)</label>
-                                <input type="number" class="form-control" id="material${i}" value="${savedData.material}" min="1" onchange="updateProductData(${i}); updateComplexity()">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label">Прибыль</label>
-                                <input type="number" class="form-control" id="profit${i}" value="${savedData.profit}" onchange="updateProductData(${i})">
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-            updateComplexity();
-        }
-
-        function updateProductData(index) {
-            const nameInput = document.getElementById(`name${index}`);
-            const laborInput = document.getElementById(`labor${index}`);
-            const materialInput = document.getElementById(`material${index}`);
-            const profitInput = document.getElementById(`profit${index}`);
-
-            if (nameInput && laborInput && materialInput && profitInput) {
-                productsData[index] = {
-                    name: nameInput.value,
-                    labor: parseInt(laborInput.value),
-                    material: parseInt(materialInput.value),
-                    profit: parseInt(profitInput.value)
-                };
-            }
-        }
-
-        function updateComplexity() {
-            const totalHours = parseInt(document.getElementById('totalHours').value) || 0;
-            const totalMaterial = parseInt(document.getElementById('totalMaterial').value) || 0;
-
-            let combinations = 1;
-            for (let i = 0; i < productCount; i++) {
-                const labor = parseInt(document.getElementById(`labor${i}`).value) || 1;
-                const material = parseInt(document.getElementById(`material${i}`).value) || 1;
-
-                const byHours = Math.floor(totalHours / labor);
-                const byMaterial = Math.floor(totalMaterial / material);
-                const maxPossible = Math.min(byHours, byMaterial);
-
-                combinations *= (maxPossible + 1);
-            }
-
-            document.getElementById('totalCombinations').innerText = combinations.toLocaleString();
-        }
-
-        function addProduct() {
-            if (productCount < maxProducts) {
-                saveCurrentProducts();
-                productCount++;
-
-                productsData[productCount - 1] = {
-                    name: `P${productCount}`,
-                    labor: 0,
-                    material: 0,
-                    profit: 0
-                };
-
-                renderProducts();
             } else {
-                alert(`Максимум ${maxProducts} продуктов`);
+                let newMat = Array(tspCities).fill().map(() => Array(tspCities).fill(0));
+                for (let i = 0; i < Math.min(tspCities, tspDistanceMatrix.length); i++) {
+                    for (let j = 0; j < Math.min(tspCities, tspDistanceMatrix.length); j++) {
+                        if (i !== j) newMat[i][j] = tspDistanceMatrix[i][j] || 10;
+                    }
+                }
+                for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) if (newMat[i][j] === 0 && i !== j) newMat[i][j] = newMat[j][i] = 10;
+                tspDistanceMatrix = newMat;
             }
+            renderDistanceMatrix();
+            drawTSPGraph([]);
+            document.getElementById('tspResults').style.display = 'none';
         }
-
-        function removeProduct() {
-            if (productCount > 1) {
-                saveCurrentProducts();
-                productCount--;
-                productsData.pop();
-                renderProducts();
+        function renderDistanceMatrix() {
+            const container = document.getElementById('distanceMatrixContainer');
+            if (!container) return;
+            let html = '<table class="table table-bordered text-center" style="color:white; min-width:300px;"><thead><tr><th></th>';
+            for (let i = 0; i < tspCities; i++) html += `<th class="city-label">Город ${i + 1}</th>`;
+            html += '</tr></thead><tbody>';
+            for (let i = 0; i < tspCities; i++) {
+                html += `<tr><td class="city-label fw-bold">Город ${i + 1}</td>`;
+                for (let j = 0; j < tspCities; j++) {
+                    if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#333;"></td>`;
+                    else {
+                        let val = tspDistanceMatrix[i][j];
+                        html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${val}" onchange="updateDistance(${i},${j},this.value)"></td>`;
+                    }
+                }
+                html += '</tr>';
             }
+            html += '</tbody></table>';
+            container.innerHTML = html;
         }
-
-        function getProductsData() {
-            const products = [];
-            for (let i = 0; i < productCount; i++) {
-                products.push({
-                    name: document.getElementById(`name${i}`).value || `P${i + 1}`,
-                    labor: parseInt(document.getElementById(`labor${i}`).value),
-                    material: parseInt(document.getElementById(`material${i}`).value),
-                    profit: parseInt(document.getElementById(`profit${i}`).value)
-                });
-            }
-            return products;
+        function updateDistance(i, j, val) {
+            let num = parseInt(val);
+            if (isNaN(num)) num = 1;
+            num = Math.max(1, Math.min(100, num));
+            tspDistanceMatrix[i][j] = num;
+            tspDistanceMatrix[j][i] = num;
+            let other = document.getElementById(`dist_${j}_${i}`);
+            if (other) other.value = num;
+            drawTSPGraph([]);
+            document.getElementById('tspResults').style.display = 'none';
         }
-
-        function calculateOptimum() {
-            const totalHours = parseInt(document.getElementById('totalHours').value);
-            const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-
-            if (totalHours <= 0 || totalMaterial <= 0) {
-                showError('Ресурсы должны быть положительными числами');
-                return;
-            }
-
-            const products = getProductsData();
-
-            for (let i = 0; i < productCount; i++) {
-                if (products[i].labor < 1 || products[i].material < 1) {
-                    showError('Труд и материал должны быть положительными числами');
-                    return;
+        function generateRandomDistances() {
+            for (let i = 0; i < tspCities; i++) {
+                for (let j = i + 1; j < tspCities; j++) {
+                    let val = Math.floor(Math.random() * 30) + 5;
+                    tspDistanceMatrix[i][j] = val;
+                    tspDistanceMatrix[j][i] = val;
+                    let inp1 = document.getElementById(`dist_${i}_${j}`);
+                    let inp2 = document.getElementById(`dist_${j}_${i}`);
+                    if (inp1) inp1.value = val;
+                    if (inp2) inp2.value = val;
                 }
             }
-
-            currentProducts = products;
-            currentMode = mode;
-
-            const maxCount = [];
-            for (let i = 0; i < productCount; i++) {
-                const byHours = Math.floor(totalHours / products[i].labor);
-                const byMaterial = Math.floor(totalMaterial / products[i].material);
-                maxCount[i] = Math.min(byHours, byMaterial);
-            }
-
+            drawTSPGraph([]);
+            document.getElementById('tspResults').style.display = 'none';
+        }
+        function solveTSP() {
             const startTime = performance.now();
-
-            let best = new Array(productCount).fill(0);
-            let current = new Array(productCount).fill(0);
-            let optimalProfit;
-
-            if (mode === 'max') {
-                optimalProfit = Number.MIN_SAFE_INTEGER;
-            } else {
-                optimalProfit = Number.MAX_SAFE_INTEGER;
-            }
-
+            let cities = tspCities;
+            let indices = [...Array(cities).keys()];
+            let bestRoute = [];
+            let bestDist = Infinity;
             let checks = 0;
-
-            function bruteForce(index, hours, material, profit) {
-                if (hours > totalHours || material > totalMaterial) {
-                    return;
-                }
-
-                if (index === productCount) {
+            function permute(arr, start) {
+                if (start === arr.length - 1) {
                     checks++;
-
-                    if (hours <= totalHours && material <= totalMaterial) {
-                        if (mode === 'max') {
-                            if (profit > optimalProfit) {
-                                optimalProfit = profit;
-                                best = [...current];
-                            }
-                        } else {
-                            if (profit < optimalProfit) {
-                                optimalProfit = profit;
-                                best = [...current];
-                            }
-                        }
+                    let total = 0;
+                    for (let i = 0; i < arr.length - 1; i++) total += tspDistanceMatrix[arr[i]][arr[i + 1]];
+                    total += tspDistanceMatrix[arr[arr.length - 1]][arr[0]];
+                    if (total < bestDist) {
+                        bestDist = total;
+                        bestRoute = [...arr];
                     }
                     return;
                 }
-
-                for (let count = 0; count <= maxCount[index]; count++) {
-                    current[index] = count;
-                    bruteForce(index + 1,
-                        hours + count * products[index].labor,
-                        material + count * products[index].material,
-                        profit + count * products[index].profit);
+                for (let i = start; i < arr.length; i++) {
+                    [arr[start], arr[i]] = [arr[i], arr[start]];
+                    permute(arr, start + 1);
+                    [arr[start], arr[i]] = [arr[i], arr[start]];
                 }
             }
-
-            bruteForce(0, 0, 0, 0);
-
-            if ((mode === 'max' && optimalProfit === Number.MIN_SAFE_INTEGER) ||
-                (mode === 'min' && optimalProfit === Number.MAX_SAFE_INTEGER)) {
-                showError('Не найдено допустимых решений');
-                return;
-            }
-
+            permute(indices, 0);
             const endTime = performance.now();
-            const calcTimeMs = (endTime - startTime).toFixed(2);
-
-            let totalCombinations = 1;
-            for (let i = 0; i < productCount; i++) {
-                totalCombinations *= (maxCount[i] + 1);
-            }
-            const speedup = (totalCombinations / checks).toFixed(2);
-
-            currentBest = best;
-            currentProfit = optimalProfit;
-            currentChecks = checks;
-            currentTime = calcTimeMs;
-            currentSpeedup = speedup;
-
-            document.getElementById('results').style.display = 'block';
-            document.getElementById('error').style.display = 'none';
-
-            if (mode === 'max') {
-                document.getElementById('modeBadge').innerHTML = '<i class="bi bi-arrow-up-circle-fill me-1"></i>Максимальная прибыль';
-                document.getElementById('modeBadge').className = 'badge bg-success mb-3';
-                document.getElementById('profitLabel').innerText = 'максимальная прибыль';
-            } else {
-                document.getElementById('modeBadge').innerHTML = '<i class="bi bi-arrow-down-circle-fill me-1"></i>Минимальная прибыль';
-                document.getElementById('modeBadge').className = 'badge bg-danger mb-3';
-                document.getElementById('profitLabel').innerText = 'минимальная прибыль';
-            }
-
-            document.getElementById('optimalProfit').innerText = optimalProfit;
-            document.getElementById('checksCount').innerText = checks;
-            document.getElementById('calcTime').innerText = calcTimeMs;
-            document.getElementById('speedup').innerText = speedup;
-
-            let usedHours = 0, usedMaterial = 0;
-            for (let i = 0; i < productCount; i++) {
-                usedHours += best[i] * products[i].labor;
-                usedMaterial += best[i] * products[i].material;
-            }
-
-            document.getElementById('usedHours').innerText = usedHours;
-            document.getElementById('usedMaterial').innerText = usedMaterial;
-            document.getElementById('totalHoursDisplay').innerText = totalHours;
-            document.getElementById('totalMaterialDisplay').innerText = totalMaterial;
-
-            const hoursPercent = (usedHours / totalHours * 100).toFixed(1);
-            const materialPercent = (usedMaterial / totalMaterial * 100).toFixed(1);
-
-            document.getElementById('hoursBar').style.width = hoursPercent + '%';
-            document.getElementById('materialBar').style.width = materialPercent + '%';
-
-            let resultHtml = '';
-            for (let i = 0; i < productCount; i++) {
-                resultHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
-            }
-            document.getElementById('resultProducts').innerHTML = resultHtml;
-
-            let tableHtml = '';
-            for (let i = 0; i < productCount; i++) {
-                const efficiency = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
-                tableHtml += `
-                    <tr>
-                        <td><strong>${products[i].name}</strong></td>
-                        <td>${products[i].labor}</td>
-                        <td>${products[i].material}</td>
-                        <td>${products[i].profit}</td>
-                        <td>${efficiency}</td>
-                        <td class="fw-bold">${best[i]}</td>
-                    </tr>
-                `;
-            }
-            document.getElementById('tableBody').innerHTML = tableHtml;
-
-            renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial);
-            saveToHistory(products, best, optimalProfit, mode, checks, calcTimeMs);
+            tspBestRoute = bestRoute;
+            tspBestDistance = bestDist;
+            document.getElementById('tspResults').style.display = 'block';
+            document.getElementById('tspOptimalPath').innerHTML = bestRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${bestRoute[0] + 1}`;
+            document.getElementById('tspTotalDistance').innerText = bestDist;
+            document.getElementById('tspChecks').innerText = checks;
+            document.getElementById('tspTime').innerText = (endTime - startTime).toFixed(2);
+            document.getElementById('tspCityCount').innerText = cities;
+            drawTSPGraph(bestRoute);
         }
-
-        function renderCharts(products, best, usedHours, usedMaterial, totalHours, totalMaterial) {
-            if (resourceChart) resourceChart.destroy();
-            if (efficiencyChart) efficiencyChart.destroy();
-
-            const resourceCtx = document.getElementById('resourceChart').getContext('2d');
-            resourceChart = new Chart(resourceCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Трудовые ресурсы (часы)', 'Материалы (кг)'],
-                    datasets: [{
-                        label: 'Использовано',
-                        data: [usedHours, usedMaterial],
-                        backgroundColor: ['rgba(155, 89, 182, 0.8)', 'rgba(46, 204, 113, 0.8)'],
-                    }, {
-                        label: 'Остаток',
-                        data: [totalHours - usedHours, totalMaterial - usedMaterial],
-                        backgroundColor: ['rgba(155, 89, 182, 0.3)', 'rgba(46, 204, 113, 0.3)'],
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#ffffff' } }
-                    },
-                    scales: {
-                        y: { ticks: { color: '#ffffff' } },
-                        x: { ticks: { color: '#ffffff' } }
-                    }
+        function drawTSPGraph(route) {
+            if (!tspCanvas) return;
+            const ctx = tspCanvas.getContext('2d');
+            const w = tspCanvas.clientWidth, h = tspCanvas.clientHeight;
+            tspCanvas.width = w; tspCanvas.height = h;
+            ctx.clearRect(0, 0, w, h);
+            if (tspCities === 0) return;
+            const angleStep = (2 * Math.PI) / tspCities;
+            const radius = Math.min(w, h) * 0.35;
+            const cx = w / 2, cy = h / 2;
+            let points = [];
+            for (let i = 0; i < tspCities; i++) {
+                let angle = i * angleStep - Math.PI / 2;
+                let x = cx + radius * Math.cos(angle);
+                let y = cy + radius * Math.sin(angle);
+                points.push({ x, y });
+            }
+            // рёбра
+            ctx.beginPath();
+            ctx.strokeStyle = "#555";
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < tspCities; i++) {
+                for (let j = i + 1; j < tspCities; j++) {
+                    ctx.beginPath();
+                    ctx.moveTo(points[i].x, points[i].y);
+                    ctx.lineTo(points[j].x, points[j].y);
+                    ctx.stroke();
+                    let mx = (points[i].x + points[j].x) / 2;
+                    let my = (points[i].y + points[j].y) / 2;
+                    ctx.fillStyle = "#aaa";
+                    ctx.font = "12px 'Segoe UI'";
+                    ctx.fillText(tspDistanceMatrix[i][j], mx, my - 5);
                 }
-            });
-
-            const efficiencyData = products.map(p =>
-                (p.profit / (p.labor + p.material)).toFixed(2)
-            );
-
-            const efficiencyCtx = document.getElementById('efficiencyChart').getContext('2d');
-            efficiencyChart = new Chart(efficiencyCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: products.map(p => p.name),
-                    datasets: [{
-                        data: efficiencyData,
-                        backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: '#ffffff' } }
-                    }
+            }
+            // города
+            for (let i = 0; i < tspCities; i++) {
+                ctx.beginPath();
+                ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI);
+                ctx.fillStyle = "#9b59b6";
+                ctx.fill();
+                ctx.fillStyle = "white";
+                ctx.font = "bold 16px 'Segoe UI'";
+                ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7);
+            }
+            // оптимальный маршрут
+            if (route && route.length > 1) {
+                ctx.beginPath();
+                ctx.strokeStyle = "#e74c3c";
+                ctx.lineWidth = 3;
+                for (let k = 0; k < route.length; k++) {
+                    let from = route[k];
+                    let to = route[(k + 1) % route.length];
+                    ctx.beginPath();
+                    ctx.moveTo(points[from].x, points[from].y);
+                    ctx.lineTo(points[to].x, points[to].y);
+                    ctx.stroke();
                 }
-            });
+            }
         }
-
-        function exportToXLSX() {
-            const products = currentProducts;
-            const best = currentBest;
-            const totalHours = parseInt(document.getElementById('totalHours').value);
-            const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = currentMode;
-            const profit = currentProfit;
-            const checks = currentChecks;
-            const time = currentTime;
-            const speedup = currentSpeedup;
-
-            let usedHours = 0, usedMaterial = 0;
-            products.forEach((p, i) => {
-                usedHours += best[i] * p.labor;
-                usedMaterial += best[i] * p.material;
-            });
-
-            const data = [
-                ['ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ'],
-                ['==================================================='],
-                [],
-                [`Дата расчёта: ${new Date().toLocaleString()}`],
-                [`Режим: ${mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ'} прибыли`],
-                [`Ресурсы: ${totalHours} часов, ${totalMaterial} кг материалов`],
-                [],
-                ['ОПТИМАЛЬНЫЙ ПЛАН:'],
-                ['---'],
-            ];
-
-            products.forEach((p, i) => {
-                data.push([`${p.name}: ${best[i]} ед.`]);
-            });
-
-            data.push([]);
-            data.push(['===================================================']);
-            data.push([`ПРИБЫЛЬ: ${profit}`]);
-            data.push([]);
-            data.push(['ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:']);
-            data.push([`Часы: ${usedHours} из ${totalHours} (${(usedHours / totalHours * 100).toFixed(1)}%)`]);
-            data.push([`Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial / totalMaterial * 100).toFixed(1)}%)`]);
-            data.push([]);
-            data.push(['СТАТИСТИКА РАСЧЁТА:']);
-            data.push([`Проверено комбинаций: ${checks}`]);
-            data.push([`Время расчёта: ${time} мс`]);
-            data.push([`Ускорение: ${speedup}x`]);
-            data.push([]);
-            data.push(['ДЕТАЛЬНЫЙ РАСЧЁТ:']);
-            data.push(['ПРОДУКТ', 'ТРУД', 'МАТЕРИАЛ', 'ПРИБЫЛЬ', 'ЭФФЕКТИВН.', 'ОПТИМУМ']);
-
-            products.forEach((p, i) => {
-                const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                data.push([p.name, p.labor, p.material, p.profit, efficiency, best[i]]);
-            });
-
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Оптимальный план');
-            XLSX.writeFile(wb, 'optimization_result.xlsx');
-        }
-
-        function exportToJSON() {
-            const products = currentProducts;
-            const best = currentBest;
-            const totalHours = parseInt(document.getElementById('totalHours').value);
-            const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = currentMode;
-            const profit = currentProfit;
-            const checks = currentChecks;
-            const time = currentTime;
-            const speedup = currentSpeedup;
-
-            let usedHours = 0, usedMaterial = 0;
-            products.forEach((p, i) => {
-                usedHours += best[i] * p.labor;
-                usedMaterial += best[i] * p.material;
-            });
-
-            const data = {
-                title: "ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ",
-                date: new Date().toLocaleString(),
-                mode: mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ',
-                resources: {
-                    hours: { total: totalHours, used: usedHours, percent: (usedHours / totalHours * 100).toFixed(1) },
-                    material: { total: totalMaterial, used: usedMaterial, percent: (usedMaterial / totalMaterial * 100).toFixed(1) }
-                },
-                optimalPlan: products.map((p, i) => ({
-                    name: p.name,
-                    quantity: best[i]
-                })),
-                profit: profit,
-                statistics: {
-                    checks: checks,
-                    time: time,
-                    speedup: speedup
-                },
-                detailedCalculation: products.map((p, i) => ({
-                    name: p.name,
-                    labor: p.labor,
-                    material: p.material,
-                    profit: p.profit,
-                    efficiency: (p.profit / (p.labor + p.material)).toFixed(2),
-                    optimum: best[i]
-                }))
-            };
-
+        function exportTSPToJSON() {
+            const data = { cities: tspCities, distanceMatrix: tspDistanceMatrix, optimalTour: tspBestRoute, totalDistance: tspBestDistance };
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'optimization_result.json';
+            link.download = 'tsp_result.json';
             link.click();
         }
-
-        function exportToTXT() {
-            const products = currentProducts;
-            const best = currentBest;
-            const totalHours = parseInt(document.getElementById('totalHours').value);
-            const totalMaterial = parseInt(document.getElementById('totalMaterial').value);
-            const mode = currentMode;
-            const profit = currentProfit;
-            const checks = currentChecks;
-            const time = currentTime;
-            const speedup = currentSpeedup;
-
-            let usedHours = 0, usedMaterial = 0;
-            products.forEach((p, i) => {
-                usedHours += best[i] * p.labor;
-                usedMaterial += best[i] * p.material;
-            });
-
-            let text = 'ОПТИМАЛЬНОЕ РАСПРЕДЕЛЕНИЕ РЕСУРСОВ\n';
-            text += '===================================================\n\n';
-            text += `Дата расчёта: ${new Date().toLocaleString()}\n`;
-            text += `Режим: ${mode === 'max' ? 'МАКСИМИЗАЦИЯ' : 'МИНИМИЗАЦИЯ'} прибыли\n`;
-            text += `Ресурсы: ${totalHours} часов, ${totalMaterial} кг материалов\n\n`;
-            text += 'ОПТИМАЛЬНЫЙ ПЛАН:\n';
-            text += '---\n';
-
-            products.forEach((p, i) => {
-                text += `${p.name}: ${best[i]} ед.\n`;
-            });
-
-            text += '\n===================================================\n\n';
-            text += `ПРИБЫЛЬ: ${profit}\n\n`;
-            text += 'ИСПОЛЬЗОВАНИЕ РЕСУРСОВ:\n';
-            text += `Часы: ${usedHours} из ${totalHours} (${(usedHours / totalHours * 100).toFixed(1)}%)\n`;
-            text += `Материалы: ${usedMaterial} из ${totalMaterial} (${(usedMaterial / totalMaterial * 100).toFixed(1)}%)\n\n`;
-            text += 'СТАТИСТИКА РАСЧЁТА:\n';
-            text += `Проверено комбинаций: ${checks}\n`;
-            text += `Время расчёта: ${time} мс\n`;
-            text += `Ускорение: ${speedup}x\n\n`;
-            text += 'ДЕТАЛЬНЫЙ РАСЧЁТ:\n';
-            text += 'ПРОДУКТ    ТРУД    МАТЕРИАЛ    ПРИБЫЛЬ    ЭФФЕКТИВН.    ОПТИМУМ\n';
-
-            products.forEach((p, i) => {
-                const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                text += `${p.name.padEnd(10)} ${p.labor.toString().padEnd(7)} ${p.material.toString().padEnd(10)} ${p.profit.toString().padEnd(9)} ${efficiency.toString().padEnd(12)} ${best[i]}\n`;
-            });
-
-            text += '\nЭФФЕКТИВНОСТЬ ПРОДУКТОВ:\n';
-            products.forEach((p, i) => {
-                const efficiency = (p.profit / (p.labor + p.material)).toFixed(2);
-                text += `${p.name}: ${efficiency}\n`;
-            });
-
-            text += '\nРАСЧЁТ ЗАВЕРШЁН\n';
-
-            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+        function exportTSPToTXT() {
+            let txt = `TSP РЕЗУЛЬТАТ\nГородов: ${tspCities}\nОптимальный маршрут: ${tspBestRoute.map(c => c + 1).join('->')}->${tspBestRoute[0] + 1}\nДлина: ${tspBestDistance}\nМатрица расстояний:\n`;
+            for (let i = 0; i < tspCities; i++) txt += tspDistanceMatrix[i].join('\t') + '\n';
+            const blob = new Blob([txt], { type: 'text/plain' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = 'optimization_result.txt';
+            link.download = 'tsp_result.txt';
             link.click();
-        }
-
-        function saveToHistory(products, best, profit, mode, checks, time) {
-            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-            history.unshift({
-                timestamp: new Date().toLocaleString(),
-                products: products.map(p => p.name),
-                plan: best,
-                profit: profit,
-                mode: mode,
-                checks: checks,
-                time: time
-            });
-            if (history.length > 10) history.pop();
-            localStorage.setItem('calcHistory', JSON.stringify(history));
-            displayHistory();
-        }
-
-        function displayHistory() {
-            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-            const historyList = document.getElementById('historyList');
-
-            if (history.length === 0) {
-                historyList.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>';
-                return;
-            }
-
-            historyList.innerHTML = history.map((item, index) => `
-                <div class="history-item" onclick="loadHistoryItem(${index})">
-                    <div class="d-flex justify-content-between">
-                        <small>${item.timestamp}</small>
-                        <span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">
-                            ${item.mode === 'max' ? 'MAX' : 'MIN'}
-                        </span>
-                    </div>
-                    <div><strong>Прибыль: ${item.profit}</strong></div>
-                    <small>Продукты: ${item.products.join(', ')}</small>
-                </div>
-            `).join('');
-        }
-
-        function loadHistoryItem(index) {
-            const history = JSON.parse(localStorage.getItem('calcHistory') || '[]');
-            const item = history[index];
-            if (item) {
-                alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПлан: ${item.plan.join(', ')} ед.`);
-            }
-        }
-
-        function clearHistory() {
-            if (confirm('Очистить историю?')) {
-                localStorage.removeItem('calcHistory');
-                displayHistory();
-            }
-        }
-
-        function showError(message) {
-            document.getElementById('error').style.display = 'block';
-            document.getElementById('error').innerText = message;
         }
     </script>
 </body>
