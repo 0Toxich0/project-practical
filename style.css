@@ -526,3 +526,30 @@
             outline: none;
             box-shadow: 0 0 8px rgba(230, 126, 34, 0.5);
         }
+                /* Выравнивание кнопок в симплексе и двойственном симплексе */
+                #simplexTab .btn-add,
+                #simplexTab .btn-calculate,
+                #dualTab .btn-add,
+                #dualTab .btn-calculate {
+                    width: 100%;
+                    min-height: 48px;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    white-space: nowrap;
+                    font-size: 0.9rem;
+                    padding: 8px 12px;
+                }
+        
+                @media (max-width: 640px) {
+        
+                    #simplexTab .btn-add,
+                    #simplexTab .btn-calculate,
+                    #dualTab .btn-add,
+                    #dualTab .btn-calculate {
+                        white-space: normal;
+                        font-size: 0.8rem;
+                        padding: 6px 8px;
+                        min-height: auto;
+                    }
+                }
