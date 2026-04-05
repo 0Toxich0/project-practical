@@ -327,45 +327,57 @@
         function removeProduct() { if (productCount > 1) { saveCurrentProducts(); productCount--; productsData.pop(); renderProducts(); } }
         function getProductsData() { let arr = []; for (let i = 0; i < productCount; i++) arr.push({ name: document.getElementById(`name${i}`).value, labor: parseInt(document.getElementById(`labor${i}`).value), material: parseInt(document.getElementById(`material${i}`).value), profit: parseInt(document.getElementById(`profit${i}`).value) }); return arr; }
         function calculateOptimum() {
-            const totalHours = parseInt(document.getElementById('totalHours').value), totalMaterial = parseInt(document.getElementById('totalMaterial').value), mode = document.querySelector('input[name="optimizationMode"]:checked').value;
-            if (totalHours <= 0 || totalMaterial <= 0) { showError('Ресурсы должны быть положительными'); return; }
-            const products = getProductsData();
-            for (let p of products) if (p.labor < 1 || p.material < 1) { showError('Труд и материал >0'); return; }
-            const maxCount = []; for (let i = 0; i < productCount; i++) maxCount[i] = Math.min(Math.floor(totalHours / products[i].labor), Math.floor(totalMaterial / products[i].material));
-            const start = performance.now();
-            let best = new Array(productCount).fill(0), cur = new Array(productCount).fill(0);
-            let optProfit = mode === 'max' ? -Infinity : Infinity, checks = 0;
-            function brute(idx, hours, material, profit) {
-                if (hours > totalHours || material > totalMaterial) return;
-                if (idx === productCount) { checks++; if (hours <= totalHours && material <= totalMaterial) { if ((mode === 'max' && profit > optProfit) || (mode === 'min' && profit < optProfit)) { optProfit = profit; best = [...cur]; } } return; }
-                for (let cnt = 0; cnt <= maxCount[idx]; cnt++) { cur[idx] = cnt; brute(idx + 1, hours + cnt * products[idx].labor, material + cnt * products[idx].material, profit + cnt * products[idx].profit); }
-            }
-            brute(0, 0, 0, 0);
-            if ((mode === 'max' && optProfit === -Infinity) || (mode === 'min' && optProfit === Infinity)) { showError('Нет допустимых решений'); return; }
-            const end = performance.now(); let totalComb = 1; for (let i = 0; i < productCount; i++) totalComb *= (maxCount[i] + 1);
-            const speedup = (totalComb / checks).toFixed(2);
-            document.getElementById('results').style.display = 'block'; document.getElementById('error').style.display = 'none';
-            document.getElementById('optimalProfit').innerText = optProfit; document.getElementById('checksCount').innerText = checks;
-            document.getElementById('calcTime').innerText = (end - start).toFixed(2); document.getElementById('speedup').innerText = speedup;
-            let usedHours = 0, usedMat = 0; for (let i = 0; i < productCount; i++) { usedHours += best[i] * products[i].labor; usedMat += best[i] * products[i].material; }
-            document.getElementById('usedHours').innerText = usedHours; document.getElementById('usedMaterial').innerText = usedMat;
-            document.getElementById('totalHoursDisplay').innerText = totalHours; document.getElementById('totalMaterialDisplay').innerText = totalMaterial;
-            let hoursPercent = (usedHours / totalHours * 100).toFixed(1);
-            let materialPercent = (usedMat / totalMaterial * 100).toFixed(1);
-            let hoursBar = document.getElementById('hoursBar'); let materialBar = document.getElementById('materialBar');
-            hoursBar.style.width = hoursPercent + '%'; hoursBar.innerText = hoursPercent + '%';
-            materialBar.style.width = materialPercent + '%'; materialBar.innerText = materialPercent + '%';
-            let profitBadge = document.getElementById('profitBadge'); if (optProfit < 0) profitBadge.classList.add('negative'); else profitBadge.classList.remove('negative');
-            if (mode === 'max') { document.getElementById('modeBadge').innerHTML = 'Максимальная прибыль'; document.getElementById('profitLabel').innerText = 'максимальная прибыль'; }
-            else { document.getElementById('modeBadge').innerHTML = 'Минимальная прибыль'; document.getElementById('profitLabel').innerText = 'минимальная прибыль'; }
-            let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
-            document.getElementById('resultProducts').innerHTML = resHtml;
-            let tabHtml = ''; for (let i = 0; i < productCount; i++) { let eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2); tabHtml += `<tr><td><strong>${products[i].name}</strong></td><td>${products[i].labor}</td><td>${products[i].material}</td><td>${products[i].profit}</td><td>${eff}</td><td class="fw-bold">${best[i]}</td></tr>`; }
-            document.getElementById('tableBody').innerHTML = tabHtml;
-            if (resourceChart) resourceChart.destroy(); if (efficiencyChart) efficiencyChart.destroy();
-            const ctx1 = document.getElementById('resourceChart').getContext('2d'); resourceChart = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMaterial - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
-            const ctx2 = document.getElementById('efficiencyChart').getContext('2d'); efficiencyChart = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => (p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
-            saveToHistory(products, best, optProfit, mode, checks, (end - start).toFixed(2));
+                const totalHours = parseInt(document.getElementById('totalHours').value), totalMaterial = parseInt(document.getElementById('totalMaterial').value), mode = document.querySelector('input[name="optimizationMode"]:checked').value;
+                if (totalHours <= 0 || totalMaterial <= 0) { showError('Ресурсы должны быть положительными'); return; }
+                const products = getProductsData();
+                for (let p of products) if (p.labor < 1 || p.material < 1) { showError('Труд и материал >0'); return; }
+                const maxCount = []; for (let i = 0; i < productCount; i++) maxCount[i] = Math.min(Math.floor(totalHours / products[i].labor), Math.floor(totalMaterial / products[i].material));
+                const start = performance.now();
+                let best = new Array(productCount).fill(0), cur = new Array(productCount).fill(0);
+                let optProfit = mode === 'max' ? -Infinity : Infinity, checks = 0;
+                function brute(idx, hours, material, profit) {
+                    if (hours > totalHours || material > totalMaterial) return;
+                    if (idx === productCount) { checks++; if (hours <= totalHours && material <= totalMaterial) { if ((mode === 'max' && profit > optProfit) || (mode === 'min' && profit < optProfit)) { optProfit = profit; best = [...cur]; } } return; }
+                    for (let cnt = 0; cnt <= maxCount[idx]; cnt++) { cur[idx] = cnt; brute(idx + 1, hours + cnt * products[idx].labor, material + cnt * products[idx].material, profit + cnt * products[idx].profit); }
+                }
+                brute(0, 0, 0, 0);
+                if ((mode === 'max' && optProfit === -Infinity) || (mode === 'min' && optProfit === Infinity)) { showError('Нет допустимых решений'); return; }
+                const end = performance.now(); let totalComb = 1; for (let i = 0; i < productCount; i++) totalComb *= (maxCount[i] + 1);
+                const speedup = (totalComb / checks).toFixed(2);
+                document.getElementById('results').style.display = 'block'; document.getElementById('error').style.display = 'none';
+                document.getElementById('optimalProfit').innerText = optProfit; document.getElementById('checksCount').innerText = checks;
+                document.getElementById('calcTime').innerText = (end - start).toFixed(2); document.getElementById('speedup').innerText = speedup;
+                let usedHours = 0, usedMat = 0; for (let i = 0; i < productCount; i++) { usedHours += best[i] * products[i].labor; usedMat += best[i] * products[i].material; }
+                document.getElementById('usedHours').innerText = usedHours; document.getElementById('usedMaterial').innerText = usedMat;
+                document.getElementById('totalHoursDisplay').innerText = totalHours; document.getElementById('totalMaterialDisplay').innerText = totalMaterial;
+                let hoursPercent = (usedHours / totalHours * 100).toFixed(1);
+                let materialPercent = (usedMat / totalMaterial * 100).toFixed(1);
+
+                // Исправление: устанавливаем ширину использованной части и остатка
+                let hoursBar = document.getElementById('hoursBar');
+                let materialBar = document.getElementById('materialBar');
+                let hoursRemaining = document.querySelector('#hoursBar + .resource-bar-remaining') || hoursBar.nextElementSibling;
+                let materialRemaining = document.querySelector('#materialBar + .resource-bar-remaining') || materialBar.nextElementSibling;
+
+                hoursBar.style.width = hoursPercent + '%';
+                hoursBar.innerText = hoursPercent + '%';
+                if (hoursRemaining) hoursRemaining.style.width = (100 - parseFloat(hoursPercent)) + '%';
+
+                materialBar.style.width = materialPercent + '%';
+                materialBar.innerText = materialPercent + '%';
+                if (materialRemaining) materialRemaining.style.width = (100 - parseFloat(materialPercent)) + '%';
+
+                let profitBadge = document.getElementById('profitBadge'); if (optProfit < 0) profitBadge.classList.add('negative'); else profitBadge.classList.remove('negative');
+                if (mode === 'max') { document.getElementById('modeBadge').innerHTML = 'Максимальная прибыль'; document.getElementById('profitLabel').innerText = 'максимальная прибыль'; }
+                else { document.getElementById('modeBadge').innerHTML = 'Минимальная прибыль'; document.getElementById('profitLabel').innerText = 'минимальная прибыль'; }
+                let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
+                document.getElementById('resultProducts').innerHTML = resHtml;
+                let tabHtml = ''; for (let i = 0; i < productCount; i++) { let eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2); tabHtml += `<tr><td><strong>${products[i].name}</strong></td><td>${products[i].labor}</td><td>${products[i].material}</td><td>${products[i].profit}</td><td>${eff}</td><td class="fw-bold">${best[i]}</td></tr>`; }
+                document.getElementById('tableBody').innerHTML = tabHtml;
+                if (resourceChart) resourceChart.destroy(); if (efficiencyChart) efficiencyChart.destroy();
+                const ctx1 = document.getElementById('resourceChart').getContext('2d'); resourceChart = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMaterial - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
+                const ctx2 = document.getElementById('efficiencyChart').getContext('2d'); efficiencyChart = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => (p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
+                saveToHistory(products, best, optProfit, mode, checks, (end - start).toFixed(2));
         }
         function saveToHistory(products, best, profit, mode, checks, time) { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); hist.unshift({ timestamp: new Date().toLocaleString(), products: products.map(p => p.name), plan: best, profit, mode, checks, time }); if (hist.length > 10) hist.pop(); localStorage.setItem('calcHistory', JSON.stringify(hist)); displayHistory(); }
         function displayHistory() { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); let container = document.getElementById('historyList'); if (hist.length === 0) { container.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>'; return; } container.innerHTML = hist.map((item, idx) => `<div class="history-item" onclick="loadHistoryItem(${idx})"><div class="d-flex justify-content-between"><small>${item.timestamp}</small><span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">${item.mode === 'max' ? 'MAX' : 'MIN'}</span></div><div><strong>Прибыль: ${item.profit}</strong></div><small>Продукты: ${item.products.join(', ')}</small></div>`).join(''); }
