@@ -483,50 +483,67 @@ canvas#tspGraphCanvas {
     }
 }
 
-/* ===== МАТРИЦА РАССТОЯНИЙ (УЛУЧШЕННЫЙ ВИД) ===== */
+/* ===== МАТРИЦА РАССТОЯНИЙ – ТАБЛИЦА КАК В НАЧАЛЬНОМ ВАРИАНТЕ ===== */
+#distanceMatrixContainer {
+    overflow-x: auto;
+    margin: 15px 0;
+}
+
 #distanceMatrixContainer table {
     width: auto;
     margin: 0 auto;
-    background: rgba(30, 30, 45, 0.6);
+    background: rgba(30, 30, 45, 0.8);
     border-collapse: collapse;
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
-#distanceMatrixContainer table th,
-#distanceMatrixContainer table td {
+#distanceMatrixContainer th,
+#distanceMatrixContainer td {
     border: 1px solid #9b59b6;
-    padding: 10px 14px;
+    padding: 10px 12px;
     text-align: center;
     vertical-align: middle;
-    color: #e0e0e0;
-    font-size: 0.95rem;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
-#distanceMatrixContainer table th {
+#distanceMatrixContainer th {
     background: linear-gradient(135deg, #8e44ad, #9b59b6);
     color: white;
-    font-weight: 700;
+    font-weight: bold;
     font-size: 1rem;
+    padding: 12px 8px;
+}
+
+#distanceMatrixContainer td:first-child {
+    background: linear-gradient(135deg, #6c3483, #8e44ad);
+    color: white;
+    font-weight: bold;
 }
 
 #distanceMatrixContainer .matrix-input {
-    width: 75px;
+    width: 70px;
     text-align: center;
     background: rgba(64, 64, 64, 0.9);
     border: 1px solid #9b59b6;
     color: white;
     border-radius: 10px;
-    padding: 6px 8px;
-    margin: 0;
+    padding: 8px 5px;
     font-size: 0.9rem;
     transition: all 0.2s;
 }
 
 #distanceMatrixContainer .matrix-input:focus {
-    border-color: #e67e22;
+    border-color: #f39c12;
     outline: none;
-    box-shadow: 0 0 8px rgba(230, 126, 34, 0.5);
+    box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
+}
+
+#distanceMatrixContainer .matrix-input[disabled] {
+    background: #2c3e50;
+    border-color: #7f8c8d;
+    color: #bdc3c7;
 }
 
 /* ===== ВЫРАВНИВАНИЕ КНОПОК В СИМПЛЕКСЕ И ДВОЙСТВЕННОМ ===== */

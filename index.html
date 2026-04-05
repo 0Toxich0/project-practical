@@ -382,7 +382,29 @@
         let tspDistanceMatrix = [], tspCities = 5, tspBestRoute = [], tspBestDistance = Infinity, tspCanvas = null;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
         function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(9, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 5; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
-        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center"><thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th class="city-label">Город ${i + 1}</th>`; html += `</table></thead><tbody>`; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="city-label fw-bold">Город ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#333;"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`; } html += `</tr>`; } html += `</tbody></table>`; document.getElementById('distanceMatrixContainer').innerHTML = html; }
+        function renderDistanceMatrix() {
+            let html = '<table class="table table-bordered text-center">';
+            // Заголовок: пустая ячейка + номера городов
+            html += '<thead><tr><th></th>';
+            for (let i = 0; i < tspCities; i++) {
+                html += `<th>Город ${i + 1}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+            // Строки
+            for (let i = 0; i < tspCities; i++) {
+                html += `<tr><td class="fw-bold">Город ${i + 1}</td>`;
+                for (let j = 0; j < tspCities; j++) {
+                    if (i === j) {
+                        html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;"></td>`;
+                    } else {
+                        html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`;
+                    }
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            document.getElementById('distanceMatrixContainer').innerHTML = html;
+        }
         function updateDistance(i, j, val) { let v = Math.max(1, Math.min(100, parseInt(val) || 1)); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${j}_${i}`).value = v; drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 5; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${i}_${j}`).value = v; document.getElementById(`dist_${j}_${i}`).value = v; } drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function solveTSP() { let start = performance.now(); let limit = parseInt(document.getElementById('tspLimit').value) || 999999; document.getElementById('tspLimitDisplay').innerText = limit; let indices = [...Array(tspCities).keys()]; let bestRoute = [], bestDist = Infinity; let bestValidRoute = [], bestValidDist = Infinity; let checks = 0, validCount = 0; function permute(arr, s) { if (s === arr.length - 1) { checks++; let total = 0; for (let i = 0; i < arr.length - 1; i++) total += tspDistanceMatrix[arr[i]][arr[i + 1]]; total += tspDistanceMatrix[arr[arr.length - 1]][arr[0]]; if (total <= limit) { validCount++; if (total < bestValidDist) { bestValidDist = total; bestValidRoute = [...arr]; } } if (total < bestDist) { bestDist = total; bestRoute = [...arr]; } return; } for (let i = s; i < arr.length; i++) { [arr[s], arr[i]] = [arr[i], arr[s]]; permute(arr, s + 1);[arr[s], arr[i]] = [arr[i], arr[s]]; } } permute(indices, 0); let end = performance.now(); let finalRoute, finalDist, message; if (bestValidRoute.length > 0) { finalRoute = bestValidRoute; finalDist = bestValidDist; message = `Найден маршрут, не превышающий лимит ${limit} км.`; document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-flag-fill me-1"></i> Оптимальный маршрут (в рамках лимита)'; } else { finalRoute = bestRoute; finalDist = bestDist; message = `Ни один маршрут не укладывается в лимит ${limit} км. Показан кратчайший (${finalDist} км).`; document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Лучший маршрут (превышает лимит)'; } tspBestRoute = finalRoute; tspBestDistance = finalDist; document.getElementById('tspResults').style.display = 'block'; document.getElementById('tspOptimalPath').innerHTML = finalRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${finalRoute[0] + 1}`; document.getElementById('tspTotalDistance').innerText = finalDist; document.getElementById('tspChecks').innerText = checks; document.getElementById('tspValidCount').innerText = validCount; document.getElementById('tspTime').innerText = (end - start).toFixed(2); document.getElementById('tspLimitMessage').innerHTML = '<i class="bi bi-info-circle me-1"></i> ' + message; drawTSPGraph(finalRoute); }
