@@ -353,12 +353,14 @@
                 let hoursPercent = (usedHours / totalHours * 100).toFixed(1);
                 let materialPercent = (usedMat / totalMaterial * 100).toFixed(1);
 
-                // Исправление: устанавливаем ширину использованной части и остатка
+                // Получаем элементы полос
                 let hoursBar = document.getElementById('hoursBar');
                 let materialBar = document.getElementById('materialBar');
-                let hoursRemaining = document.querySelector('#hoursBar + .resource-bar-remaining') || hoursBar.nextElementSibling;
-                let materialRemaining = document.querySelector('#materialBar + .resource-bar-remaining') || materialBar.nextElementSibling;
+                // Находим соответствующие элементы "remaining" — они идут сразу после used внутри .resource-bar-container
+                let hoursRemaining = hoursBar.nextElementSibling;
+                let materialRemaining = materialBar.nextElementSibling;
 
+                // Устанавливаем ширину used и remaining
                 hoursBar.style.width = hoursPercent + '%';
                 hoursBar.innerText = hoursPercent + '%';
                 if (hoursRemaining) hoursRemaining.style.width = (100 - parseFloat(hoursPercent)) + '%';
@@ -378,7 +380,7 @@
                 const ctx1 = document.getElementById('resourceChart').getContext('2d'); resourceChart = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMaterial - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
                 const ctx2 = document.getElementById('efficiencyChart').getContext('2d'); efficiencyChart = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => (p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
                 saveToHistory(products, best, optProfit, mode, checks, (end - start).toFixed(2));
-        }
+            }
         function saveToHistory(products, best, profit, mode, checks, time) { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); hist.unshift({ timestamp: new Date().toLocaleString(), products: products.map(p => p.name), plan: best, profit, mode, checks, time }); if (hist.length > 10) hist.pop(); localStorage.setItem('calcHistory', JSON.stringify(hist)); displayHistory(); }
         function displayHistory() { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); let container = document.getElementById('historyList'); if (hist.length === 0) { container.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>'; return; } container.innerHTML = hist.map((item, idx) => `<div class="history-item" onclick="loadHistoryItem(${idx})"><div class="d-flex justify-content-between"><small>${item.timestamp}</small><span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">${item.mode === 'max' ? 'MAX' : 'MIN'}</span></div><div><strong>Прибыль: ${item.profit}</strong></div><small>Продукты: ${item.products.join(', ')}</small></div>`).join(''); }
         function loadHistoryItem(idx) { let hist = JSON.parse(localStorage.getItem('calcHistory') || '[]'); let item = hist[idx]; if (item) alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПлан: ${item.plan.join(', ')} ед.`); }

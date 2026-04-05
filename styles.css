@@ -88,6 +88,7 @@ body {
     color: #e0e0e0;
 }
 
+/* ===== СТИЛЬ ВКЛАДОК ===== */
 .nav-tabs {
     border-bottom: none;
     margin-bottom: 1.8rem;
@@ -121,7 +122,6 @@ body {
     box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
 }
 
-/* Стиль для подвкладок (Коммивояжёр, Симплекс, Двойственный) */
 #subTab.nav-tabs .nav-link {
     background: rgba(20, 20, 35, 0.8);
     border-radius: 30px;
@@ -133,6 +133,7 @@ body {
     background: linear-gradient(135deg, #9b59b6, #b96fcf);
 }
 
+/* ===== КНОПКИ ===== */
 .btn-calculate,
 .btn-add,
 .btn-remove,
@@ -214,6 +215,7 @@ body {
     }
 }
 
+/* ===== ПОЛОСЫ РЕСУРСОВ (исправлено) ===== */
 .resource-usage {
     display: flex;
     gap: 20px;
@@ -226,6 +228,9 @@ body {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 12px;
     padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
 }
 
 .resource-header {
@@ -233,6 +238,7 @@ body {
     justify-content: space-between;
     margin-bottom: 8px;
     font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .resource-bar-container {
@@ -254,8 +260,8 @@ body {
     color: white;
     font-weight: bold;
     font-size: 0.85rem;
-    transition: width 0.2s;
-    text-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+    transition: width 0.2s ease;
+    white-space: nowrap;
 }
 
 .resource-bar-remaining {
@@ -267,14 +273,17 @@ body {
     padding-right: 12px;
     color: #ccc;
     font-size: 0.85rem;
-    transition: width 0.2s;
+    transition: width 0.2s ease;
+    white-space: nowrap;
 }
 
+/* Сообщение о лимите — белый цвет */
 #tspLimitMessage {
     color: white !important;
     font-weight: 500;
 }
 
+/* Общие стили */
 .form-label {
     color: #e0e0e0;
     font-weight: 600;
