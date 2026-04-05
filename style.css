@@ -482,3 +482,47 @@
             padding: 10px;
         }
     }
+        #distanceMatrixContainer table {
+            width: auto;
+            margin: 0 auto;
+            background: rgba(30, 30, 45, 0.6);
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #distanceMatrixContainer table th,
+        #distanceMatrixContainer table td {
+            border: 1px solid #9b59b6;
+            padding: 10px 14px;
+            text-align: center;
+            vertical-align: middle;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        #distanceMatrixContainer table th {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        #distanceMatrixContainer .matrix-input {
+            width: 75px;
+            text-align: center;
+            background: rgba(64, 64, 64, 0.9);
+            border: 1px solid #9b59b6;
+            color: white;
+            border-radius: 10px;
+            padding: 6px 8px;
+            margin: 0;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        #distanceMatrixContainer .matrix-input:focus {
+            border-color: #e67e22;
+            outline: none;
+            box-shadow: 0 0 8px rgba(230, 126, 34, 0.5);
+        }
