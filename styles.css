@@ -88,63 +88,146 @@ body {
     color: #e0e0e0;
 }
 
-.btn-calculate {
-    background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    border-radius: 60px;
-    width: 100%;
-    font-weight: 700;
-    margin: 20px 0;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: block;
-    text-align: center;
-}
-
-.btn-calculate:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 35px rgba(155, 89, 182, 0.6);
-}
-
+/* КНОПКИ: компактные и выровненные в строку */
+.btn-calculate,
 .btn-add,
 .btn-remove,
 .btn-export {
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 60px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
+    border: none;
+    font-weight: 600;
+    border-radius: 60px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
     text-align: center;
+    white-space: nowrap;
+}
+
+.btn-calculate {
+    background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+    color: white;
+    font-size: 1rem;
+    padding: 12px 20px;
+    width: 100%;
 }
 
 .btn-add {
     background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+    color: white;
 }
 
 .btn-remove {
     background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+    color: white;
 }
 
 .btn-export {
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
 }
 
+.btn-calculate:hover,
 .btn-add:hover,
 .btn-remove:hover,
 .btn-export:hover {
     transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
 }
 
+/* Ряд с кнопками — одна строка (на больших экранах) */
+.button-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.button-row .btn-add,
+.button-row .btn-remove,
+.button-row .btn-export,
+.button-row .btn-calculate {
+    flex: 0 1 auto;
+    min-width: 130px;
+}
+
+/* Для узких экранов разрешаем перенос */
+@media (max-width: 640px) {
+    .button-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .button-row .btn-add,
+    .button-row .btn-remove,
+    .button-row .btn-export {
+        min-width: 110px;
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+}
+
+/* ПОЛОСЫ РЕСУРСОВ: полный закрас */
+.resource-usage {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.resource-item {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    padding: 12px;
+}
+
+.resource-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.resource-bar-container {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    height: 34px;
+    display: flex;
+    width: 100%;
+}
+
+.resource-bar-used {
+    background: linear-gradient(90deg, #9b59b6, #8e44ad);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 12px;
+    color: white;
+    font-weight: bold;
+    font-size: 0.85rem;
+    transition: width 0.2s;
+}
+
+.resource-bar-remaining {
+    background: rgba(255, 255, 255, 0.2);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 12px;
+    color: #ccc;
+    font-size: 0.85rem;
+}
+
+/* Общие стили форм */
 .form-label {
     color: #e0e0e0;
     font-weight: 600;
@@ -196,64 +279,6 @@ body {
 .profit-badge.negative {
     background: rgba(220, 53, 69, 0.8);
     color: #fff;
-}
-
-#profitLabel {
-    font-size: 0.8rem;
-    opacity: 0.8;
-    margin-top: 5px;
-}
-
-.resource-usage {
-    display: flex;
-    gap: 20px;
-    margin: 20px 0;
-    flex-wrap: wrap;
-}
-
-.resource-item {
-    flex: 1;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    padding: 12px;
-}
-
-.resource-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-weight: 600;
-}
-
-.resource-bar-container {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 20px;
-    overflow: hidden;
-    height: 30px;
-    display: flex;
-}
-
-.resource-bar-used {
-    background: linear-gradient(90deg, #9b59b6, #8e44ad);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 10px;
-    color: white;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-.resource-bar-remaining {
-    background: rgba(255, 255, 255, 0.2);
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 10px;
-    color: #ccc;
-    font-size: 0.8rem;
 }
 
 .stats-container {
@@ -327,11 +352,6 @@ body {
     vertical-align: middle;
 }
 
-.tsp-section,
-.simplex-section {
-    margin-top: 20px;
-}
-
 .tsp-card,
 .simplex-card {
     background: rgba(30, 30, 45, 0.8);
@@ -385,6 +405,7 @@ canvas#tspGraphCanvas {
     border-bottom: 1px solid #9b59b6;
     margin-bottom: 1.5rem;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .nav-tabs .nav-link {
@@ -395,7 +416,7 @@ canvas#tspGraphCanvas {
     margin-right: 5px;
     margin-bottom: 5px;
     transition: all 0.3s ease;
-    padding: 8px 16px;
+    padding: 8px 20px;
     border-radius: 8px 8px 0 0;
 }
 
@@ -425,19 +446,9 @@ canvas#tspGraphCanvas {
     transform: translateX(5px);
 }
 
-/* Центрирование кнопок в рядах */
-.row.justify-content-center .btn-add,
-.row.justify-content-center .btn-remove,
-.row.justify-content-center .btn-export,
-.row.justify-content-center .btn-calculate {
-    width: 100%;
-}
-
-/* Дополнительное выравнивание для мобильных */
 @media (max-width: 768px) {
     .matrix-input {
         width: 55px;
-        padding: 4px;
         font-size: 0.7rem;
     }
 
@@ -449,36 +460,12 @@ canvas#tspGraphCanvas {
         flex-direction: column;
     }
 
-    .btn-add,
-    .btn-remove,
-    .btn-export {
-        width: 100%;
-        margin-bottom: 8px;
-    }
-
-    .row.g-3>[class*="col-"] {
-        margin-bottom: 10px;
-    }
-
     .charts-container {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 576px) {
-    body {
+    .btn-calculate {
+        font-size: 0.9rem;
         padding: 10px;
-    }
-
-    .card-body {
-        padding: 15px;
-    }
-
-    .chart-container {
-        height: 220px;
-    }
-
-    .product-row .row {
-        flex-direction: column;
     }
 }

@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Оптимальные решения: ресурсы + коммивояжёр + симплекс</title>
-    <!-- Bootstrap 5 + Icons + Chart.js + SheetJS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -34,7 +33,7 @@
                                     методы</button></li>
                         </ul>
                         <div class="tab-content">
-                            <!-- ВКЛАДКА 1: ОПТИМИЗАЦИЯ РЕСУРСОВ -->
+                            <!-- ВКЛАДКА 1: ПРОИЗВОДСТВО -->
                             <div class="tab-pane fade show active" id="production">
                                 <div class="row mb-4">
                                     <div class="col-md-6"><label class="form-label">Общее количество
@@ -57,13 +56,11 @@
                                 </div>
                                 <h3 class="mb-3">Продукты</h3>
                                 <div id="productsContainer"></div>
-                                <div class="row mb-4 justify-content-center">
-                                    <div class="col-md-4 d-flex justify-content-center"><button class="btn-add w-100"
-                                            onclick="addProduct()"><i class="bi bi-plus-circle me-2"></i>Добавить
-                                            продукт</button></div>
-                                    <div class="col-md-4 d-flex justify-content-center"><button class="btn-remove w-100"
-                                            onclick="removeProduct()"><i class="bi bi-dash-circle me-2"></i>Удалить
-                                            последний</button></div>
+                                <div class="button-row">
+                                    <button class="btn-add" onclick="addProduct()"><i
+                                            class="bi bi-plus-circle me-1"></i>Добавить продукт</button>
+                                    <button class="btn-remove" onclick="removeProduct()"><i
+                                            class="bi bi-dash-circle me-1"></i>Удалить последний</button>
                                 </div>
                                 <div class="complexity-info"><i class="bi bi-info-circle"></i> <strong>Теоретическое
                                         число комбинаций:</strong> <span id="totalCombinations">0</span></div>
@@ -76,8 +73,8 @@
                                                     прибыль</span>
                                                 <div id="resultProducts"></div>
                                             </div>
-                                            <div class="profit-badge" id="profitBadge">
-                                                <i class="bi bi-currency-ruble"></i> <span id="optimalProfit">0</span>
+                                            <div class="profit-badge" id="profitBadge"><i
+                                                    class="bi bi-currency-ruble"></i> <span id="optimalProfit">0</span>
                                                 <div id="profitLabel">максимальная прибыль</div>
                                             </div>
                                         </div>
@@ -149,12 +146,12 @@
                                 <div id="error" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- ВКЛАДКА 2: КОММИВОЯЖЁР + СИМПЛЕКС + ДВОЙСТВЕННЫЙ -->
+                            <!-- ВКЛАДКА 2: МАТЕМАТИЧЕСКИЕ МЕТОДЫ -->
                             <div class="tab-pane fade" id="advanced">
                                 <ul class="nav nav-tabs mb-3" id="subTab" role="tablist">
                                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
-                                            data-bs-target="#tspTab"><i class="bi bi-truck me-1"></i> Коммивояжёр
-                                            (доставка)</button></li>
+                                            data-bs-target="#tspTab"><i class="bi bi-truck me-1"></i>
+                                            Коммивояжёр</button></li>
                                     <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
                                             data-bs-target="#simplexTab"><i class="bi bi-graph-up me-1"></i>
                                             Симплекс-метод</button></li>
@@ -169,11 +166,11 @@
                                             <h3><i class="bi bi-truck"></i> Задача коммивояжёра (логистика)</h3>
                                             <p>Поиск кратчайшего замкнутого маршрута через все города с учётом
                                                 ограниченного ресурса (лимит пробега).</p>
-                                            <div class="row g-3 mb-4 justify-content-center">
-                                                <div class="col-md-3"><label class="form-label">Количество городов
+                                            <div class="row g-2 mb-3 align-items-end">
+                                                <div class="col-md-3"><label class="form-label">Городов
                                                         (3–9):</label><input type="number" id="tspCitiesCount"
                                                         class="form-control" value="5" min="3" max="9"></div>
-                                                <div class="col-md-3"><label class="form-label">Лимит расстояния
+                                                <div class="col-md-3"><label class="form-label">Лимит
                                                         (км):</label><input type="number" id="tspLimit"
                                                         class="form-control" value="200" min="10"></div>
                                                 <div class="col-md-3"><button class="btn-add w-100"
@@ -182,22 +179,17 @@
                                                         матрицу</button></div>
                                                 <div class="col-md-3"><button class="btn-export w-100"
                                                         onclick="generateRandomDistances()"><i
-                                                            class="bi bi-shuffle me-1"></i>Случайные расстояния</button>
-                                                </div>
+                                                            class="bi bi-shuffle me-1"></i>Случайные</button></div>
                                             </div>
                                             <div class="tsp-card"><strong><i class="bi bi-table me-1"></i> Матрица
                                                     расстояний (симметричная, км)</strong>
                                                 <div id="distanceMatrixContainer" class="mt-3"></div>
                                             </div>
-                                            <div class="row g-3 mb-3 justify-content-center">
-                                                <div class="col-md-5"><button class="btn-calculate w-100"
-                                                        onclick="solveTSP()"><i
-                                                            class="bi bi-geo-alt-fill me-1"></i>Найти оптимальный
-                                                        маршрут</button></div>
-                                                <div class="col-md-5"><button class="btn-export w-100"
-                                                        onclick="exportTSPToJSON()"><i
-                                                            class="bi bi-file-earmark-code me-1"></i>Экспорт
-                                                        JSON</button></div>
+                                            <div class="button-row"><button class="btn-calculate"
+                                                    onclick="solveTSP()"><i class="bi bi-geo-alt-fill me-1"></i>Найти
+                                                    оптимальный маршрут</button><button class="btn-export"
+                                                    onclick="exportTSPToJSON()"><i
+                                                        class="bi bi-file-earmark-code me-1"></i>Экспорт JSON</button>
                                             </div>
                                             <div id="tspResults" class="mt-4" style="display: none;">
                                                 <div class="result-card">
@@ -244,9 +236,8 @@
                                     <div class="tab-pane fade" id="simplexTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-graph-up"></i> Симплекс-метод</h3>
-                                            <p>Форма: max/min c<sup>T</sup>x при Ax ≤ b, x ≥ 0. Решает задачи
-                                                распределения ресурсов (производство, транспорт).</p>
-                                            <div class="row g-3 mb-3 align-items-end justify-content-center">
+                                            <p>Форма: max/min c<sup>T</sup>x при Ax ≤ b, x ≥ 0.</p>
+                                            <div class="row g-2 mb-3 align-items-end">
                                                 <div class="col-md-2"><label class="form-label">Переменных
                                                         (n):</label><input type="number" id="simplexVars"
                                                         class="form-control" value="2" min="2" max="5"></div>
@@ -263,15 +254,15 @@
                                                 </div>
                                             </div>
                                             <div class="mode-selector-simplex mb-3"><label
-                                                    class="form-label">Направление оптимизации:</label>
+                                                    class="form-label">Направление:</label>
                                                 <div class="d-flex gap-3">
                                                     <div class="form-check"><input class="form-check-input" type="radio"
                                                             name="simplexDirection" id="simplexMax" value="max"
-                                                            checked><label class="form-check-label">Максимизация
-                                                            (прибыль)</label></div>
+                                                            checked><label class="form-check-label">Максимизация</label>
+                                                    </div>
                                                     <div class="form-check"><input class="form-check-input" type="radio"
                                                             name="simplexDirection" id="simplexMin" value="min"><label
-                                                            class="form-check-label">Минимизация (затраты)</label></div>
+                                                            class="form-check-label">Минимизация</label></div>
                                                 </div>
                                             </div>
                                             <div id="simplexInputArea" class="simplex-card"></div>
@@ -287,9 +278,8 @@
                                     <div class="tab-pane fade" id="dualTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-arrow-left-right"></i> Двойственный симплекс-метод</h3>
-                                            <p>Решение задачи min c<sup>T</sup>x при Ax ≥ b, x ≥ 0. Используется для
-                                                минимизации затрат при нижних границах ресурсов.</p>
-                                            <div class="row g-3 mb-3 align-items-end justify-content-center">
+                                            <p>Решение min c<sup>T</sup>x при Ax ≥ b, x ≥ 0.</p>
+                                            <div class="row g-2 mb-3 align-items-end">
                                                 <div class="col-md-2"><label class="form-label">Переменных
                                                         (n):</label><input type="number" id="dualVars"
                                                         class="form-control" value="2" min="2" max="5"></div>
@@ -323,42 +313,16 @@
     </div>
 
     <script>
-        // ========== 1. ОПТИМИЗАЦИЯ РЕСУРСОВ (ПОЛНЫЙ ПЕРЕБОР) ==========
+        // ---------- 1. ПРОИЗВОДСТВО ----------
         let productCount = 2;
         const maxProducts = 10;
         let resourceChart = null, efficiencyChart = null;
-        let currentBest = [], currentProducts = [], currentMode = 'max', currentProfit = 0, currentChecks = 0, currentTime = 0, currentSpeedup = 0;
         let productsData = [{ name: 'P1', labor: 4, material: 3, profit: 25 }, { name: 'P2', labor: 3, material: 4, profit: 30 }];
 
-        function saveCurrentProducts() {
-            for (let i = 0; i < productCount; i++) {
-                const n = document.getElementById(`name${i}`), l = document.getElementById(`labor${i}`), m = document.getElementById(`material${i}`), p = document.getElementById(`profit${i}`);
-                if (n && l && m && p) productsData[i] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) };
-            }
-        }
-        function renderProducts() {
-            const container = document.getElementById('productsContainer');
-            if (!container) return;
-            container.innerHTML = '';
-            for (let i = 0; i < productCount; i++) {
-                const d = productsData[i] || { name: `P${i + 1}`, labor: 0, material: 0, profit: 0 };
-                container.innerHTML += `<div class="product-row"><div class="row g-3"><div class="col-md-3"><label class="form-label">Название</label><input type="text" class="form-control" id="name${i}" value="${d.name}" onchange="updateProductData(${i})"></div><div class="col-md-3"><label class="form-label">Труд (ч)</label><input type="number" class="form-control" id="labor${i}" value="${d.labor}" min="1" onchange="updateProductData(${i}); updateComplexity()"></div><div class="col-md-3"><label class="form-label">Материал (кг)</label><input type="number" class="form-control" id="material${i}" value="${d.material}" min="1" onchange="updateProductData(${i}); updateComplexity()"></div><div class="col-md-3"><label class="form-label">Прибыль</label><input type="number" class="form-control" id="profit${i}" value="${d.profit}" onchange="updateProductData(${i})"></div></div></div>`;
-            }
-            updateComplexity();
-        }
-        function updateProductData(idx) {
-            const n = document.getElementById(`name${idx}`), l = document.getElementById(`labor${idx}`), m = document.getElementById(`material${idx}`), p = document.getElementById(`profit${idx}`);
-            if (n && l && m && p) productsData[idx] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) };
-        }
-        function updateComplexity() {
-            let totalHours = parseInt(document.getElementById('totalHours').value) || 0, totalMaterial = parseInt(document.getElementById('totalMaterial').value) || 0, comb = 1;
-            for (let i = 0; i < productCount; i++) {
-                let labor = parseInt(document.getElementById(`labor${i}`).value) || 1, material = parseInt(document.getElementById(`material${i}`).value) || 1;
-                let maxPossible = Math.min(Math.floor(totalHours / labor), Math.floor(totalMaterial / material));
-                comb *= (maxPossible + 1);
-            }
-            document.getElementById('totalCombinations').innerText = comb.toLocaleString();
-        }
+        function saveCurrentProducts() { for (let i = 0; i < productCount; i++) { const n = document.getElementById(`name${i}`), l = document.getElementById(`labor${i}`), m = document.getElementById(`material${i}`), p = document.getElementById(`profit${i}`); if (n && l && m && p) productsData[i] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; } }
+        function renderProducts() { const container = document.getElementById('productsContainer'); if (!container) return; container.innerHTML = ''; for (let i = 0; i < productCount; i++) { const d = productsData[i] || { name: `P${i + 1}`, labor: 0, material: 0, profit: 0 }; container.innerHTML += `<div class="product-row"><div class="row g-3"><div class="col-md-3"><label class="form-label">Название</label><input type="text" class="form-control" id="name${i}" value="${d.name}" onchange="updateProductData(${i})"></div><div class="col-md-3"><label class="form-label">Труд (ч)</label><input type="number" class="form-control" id="labor${i}" value="${d.labor}" min="1" onchange="updateProductData(${i}); updateComplexity()"></div><div class="col-md-3"><label class="form-label">Материал (кг)</label><input type="number" class="form-control" id="material${i}" value="${d.material}" min="1" onchange="updateProductData(${i}); updateComplexity()"></div><div class="col-md-3"><label class="form-label">Прибыль</label><input type="number" class="form-control" id="profit${i}" value="${d.profit}" onchange="updateProductData(${i})"></div></div></div>`; } updateComplexity(); }
+        function updateProductData(idx) { const n = document.getElementById(`name${idx}`), l = document.getElementById(`labor${idx}`), m = document.getElementById(`material${idx}`), p = document.getElementById(`profit${idx}`); if (n && l && m && p) productsData[idx] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; }
+        function updateComplexity() { let totalHours = parseInt(document.getElementById('totalHours').value) || 0, totalMaterial = parseInt(document.getElementById('totalMaterial').value) || 0, comb = 1; for (let i = 0; i < productCount; i++) { let labor = parseInt(document.getElementById(`labor${i}`).value) || 1, material = parseInt(document.getElementById(`material${i}`).value) || 1; let maxPossible = Math.min(Math.floor(totalHours / labor), Math.floor(totalMaterial / material)); comb *= (maxPossible + 1); } document.getElementById('totalCombinations').innerText = comb.toLocaleString(); }
         function addProduct() { if (productCount < maxProducts) { saveCurrentProducts(); productCount++; productsData.push({ name: `P${productCount}`, labor: 0, material: 0, profit: 0 }); renderProducts(); } else alert(`Максимум ${maxProducts} продуктов`); }
         function removeProduct() { if (productCount > 1) { saveCurrentProducts(); productCount--; productsData.pop(); renderProducts(); } }
         function getProductsData() { let arr = []; for (let i = 0; i < productCount; i++) arr.push({ name: document.getElementById(`name${i}`).value, labor: parseInt(document.getElementById(`labor${i}`).value), material: parseInt(document.getElementById(`material${i}`).value), profit: parseInt(document.getElementById(`profit${i}`).value) }); return arr; }
@@ -367,27 +331,19 @@
             if (totalHours <= 0 || totalMaterial <= 0) { showError('Ресурсы должны быть положительными'); return; }
             const products = getProductsData();
             for (let p of products) if (p.labor < 1 || p.material < 1) { showError('Труд и материал >0'); return; }
-            currentProducts = products; currentMode = mode;
             const maxCount = []; for (let i = 0; i < productCount; i++) maxCount[i] = Math.min(Math.floor(totalHours / products[i].labor), Math.floor(totalMaterial / products[i].material));
             const start = performance.now();
             let best = new Array(productCount).fill(0), cur = new Array(productCount).fill(0);
             let optProfit = mode === 'max' ? -Infinity : Infinity, checks = 0;
             function brute(idx, hours, material, profit) {
                 if (hours > totalHours || material > totalMaterial) return;
-                if (idx === productCount) {
-                    checks++;
-                    if (hours <= totalHours && material <= totalMaterial) {
-                        if ((mode === 'max' && profit > optProfit) || (mode === 'min' && profit < optProfit)) { optProfit = profit; best = [...cur]; }
-                    }
-                    return;
-                }
+                if (idx === productCount) { checks++; if (hours <= totalHours && material <= totalMaterial) { if ((mode === 'max' && profit > optProfit) || (mode === 'min' && profit < optProfit)) { optProfit = profit; best = [...cur]; } } return; }
                 for (let cnt = 0; cnt <= maxCount[idx]; cnt++) { cur[idx] = cnt; brute(idx + 1, hours + cnt * products[idx].labor, material + cnt * products[idx].material, profit + cnt * products[idx].profit); }
             }
             brute(0, 0, 0, 0);
             if ((mode === 'max' && optProfit === -Infinity) || (mode === 'min' && optProfit === Infinity)) { showError('Нет допустимых решений'); return; }
             const end = performance.now(); let totalComb = 1; for (let i = 0; i < productCount; i++) totalComb *= (maxCount[i] + 1);
             const speedup = (totalComb / checks).toFixed(2);
-            currentBest = best; currentProfit = optProfit; currentChecks = checks; currentTime = (end - start).toFixed(2); currentSpeedup = speedup;
             document.getElementById('results').style.display = 'block'; document.getElementById('error').style.display = 'none';
             document.getElementById('optimalProfit').innerText = optProfit; document.getElementById('checksCount').innerText = checks;
             document.getElementById('calcTime').innerText = (end - start).toFixed(2); document.getElementById('speedup').innerText = speedup;
@@ -396,22 +352,12 @@
             document.getElementById('totalHoursDisplay').innerText = totalHours; document.getElementById('totalMaterialDisplay').innerText = totalMaterial;
             let hoursPercent = (usedHours / totalHours * 100).toFixed(1);
             let materialPercent = (usedMat / totalMaterial * 100).toFixed(1);
-            let hoursBar = document.getElementById('hoursBar');
-            let materialBar = document.getElementById('materialBar');
-            hoursBar.style.width = hoursPercent + '%';
-            hoursBar.innerText = hoursPercent + '%';
-            materialBar.style.width = materialPercent + '%';
-            materialBar.innerText = materialPercent + '%';
-            let profitBadge = document.getElementById('profitBadge');
-            if (optProfit < 0) profitBadge.classList.add('negative');
-            else profitBadge.classList.remove('negative');
-            if (mode === 'max') {
-                document.getElementById('modeBadge').innerHTML = 'Максимальная прибыль';
-                document.getElementById('profitLabel').innerText = 'максимальная прибыль';
-            } else {
-                document.getElementById('modeBadge').innerHTML = 'Минимальная прибыль';
-                document.getElementById('profitLabel').innerText = 'минимальная прибыль';
-            }
+            let hoursBar = document.getElementById('hoursBar'); let materialBar = document.getElementById('materialBar');
+            hoursBar.style.width = hoursPercent + '%'; hoursBar.innerText = hoursPercent + '%';
+            materialBar.style.width = materialPercent + '%'; materialBar.innerText = materialPercent + '%';
+            let profitBadge = document.getElementById('profitBadge'); if (optProfit < 0) profitBadge.classList.add('negative'); else profitBadge.classList.remove('negative');
+            if (mode === 'max') { document.getElementById('modeBadge').innerHTML = 'Максимальная прибыль'; document.getElementById('profitLabel').innerText = 'максимальная прибыль'; }
+            else { document.getElementById('modeBadge').innerHTML = 'Минимальная прибыль'; document.getElementById('profitLabel').innerText = 'минимальная прибыль'; }
             let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
             document.getElementById('resultProducts').innerHTML = resHtml;
             let tabHtml = ''; for (let i = 0; i < productCount; i++) { let eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2); tabHtml += `<tr><td><strong>${products[i].name}</strong></td><td>${products[i].labor}</td><td>${products[i].material}</td><td>${products[i].profit}</td><td>${eff}</td><td class="fw-bold">${best[i]}</td></tr>`; }
@@ -427,249 +373,28 @@
         function clearHistory() { if (confirm('Очистить историю?')) { localStorage.removeItem('calcHistory'); displayHistory(); } }
         function showError(msg) { let errDiv = document.getElementById('error'); errDiv.style.display = 'block'; errDiv.innerText = msg; }
 
-        // ========== 2. КОММИВОЯЖЁР ==========
+        // ---------- 2. КОММИВОЯЖЁР ----------
         let tspDistanceMatrix = [], tspCities = 5, tspBestRoute = [], tspBestDistance = Infinity, tspCanvas = null;
-        let tspLimit = 200;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
-        function rebuildTSPMatrix() {
-            let n = parseInt(document.getElementById('tspCitiesCount').value);
-            n = Math.min(9, Math.max(3, n)); tspCities = n;
-            tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0));
-            for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 5; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; }
-            renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none';
-        }
-        function renderDistanceMatrix() {
-            let html = '<table class="table table-bordered text-center"><thead><tr><th></th>';
-            for (let i = 0; i < tspCities; i++) html += `<th class="city-label">Город ${i + 1}</th>`;
-            html += `</tr></thead><tbody>`;
-            for (let i = 0; i < tspCities; i++) {
-                html += `<tr><td class="city-label fw-bold">Город ${i + 1}</td>`;
-                for (let j = 0; j < tspCities; j++) {
-                    if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#333;"></td>`;
-                    else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`;
-                }
-                html += `</tr>`;
-            }
-            html += `</tbody></table>`;
-            document.getElementById('distanceMatrixContainer').innerHTML = html;
-        }
+        function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(9, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 5; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
+        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center"><thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th class="city-label">Город ${i + 1}</th>`; html += `<tr></thead><tbody>`; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="city-label fw-bold">Город ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#333;"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`; } html += `</tr>`; } html += `</tbody></table>`; document.getElementById('distanceMatrixContainer').innerHTML = html; }
         function updateDistance(i, j, val) { let v = Math.max(1, Math.min(100, parseInt(val) || 1)); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${j}_${i}`).value = v; drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 5; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${i}_${j}`).value = v; document.getElementById(`dist_${j}_${i}`).value = v; } drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
-        function solveTSP() {
-            let start = performance.now();
-            let limit = parseInt(document.getElementById('tspLimit').value) || 999999;
-            document.getElementById('tspLimitDisplay').innerText = limit;
-            let indices = [...Array(tspCities).keys()];
-            let bestRoute = [], bestDist = Infinity;
-            let bestValidRoute = [], bestValidDist = Infinity;
-            let checks = 0, validCount = 0;
-            function permute(arr, startIdx) {
-                if (startIdx === arr.length - 1) {
-                    checks++;
-                    let total = 0;
-                    for (let i = 0; i < arr.length - 1; i++) total += tspDistanceMatrix[arr[i]][arr[i + 1]];
-                    total += tspDistanceMatrix[arr[arr.length - 1]][arr[0]];
-                    if (total <= limit) {
-                        validCount++;
-                        if (total < bestValidDist) { bestValidDist = total; bestValidRoute = [...arr]; }
-                    }
-                    if (total < bestDist) { bestDist = total; bestRoute = [...arr]; }
-                    return;
-                }
-                for (let i = startIdx; i < arr.length; i++) { [arr[startIdx], arr[i]] = [arr[i], arr[startIdx]]; permute(arr, startIdx + 1);[arr[startIdx], arr[i]] = [arr[i], arr[startIdx]]; }
-            }
-            permute(indices, 0);
-            let end = performance.now();
-            let finalRoute, finalDist, message;
-            if (bestValidRoute.length > 0) {
-                finalRoute = bestValidRoute;
-                finalDist = bestValidDist;
-                message = `Найден маршрут, не превышающий лимит ${limit} км.`;
-                document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-flag-fill me-1"></i> Оптимальный маршрут (в рамках лимита)';
-            } else {
-                finalRoute = bestRoute;
-                finalDist = bestDist;
-                message = `Ни один маршрут не укладывается в лимит ${limit} км. Показан кратчайший (${finalDist} км).`;
-                document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Лучший маршрут (превышает лимит)';
-            }
-            tspBestRoute = finalRoute;
-            tspBestDistance = finalDist;
-            document.getElementById('tspResults').style.display = 'block';
-            document.getElementById('tspOptimalPath').innerHTML = finalRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${finalRoute[0] + 1}`;
-            document.getElementById('tspTotalDistance').innerText = finalDist;
-            document.getElementById('tspChecks').innerText = checks;
-            document.getElementById('tspValidCount').innerText = validCount;
-            document.getElementById('tspTime').innerText = (end - start).toFixed(2);
-            document.getElementById('tspLimitMessage').innerHTML = '<i class="bi bi-info-circle me-1"></i> ' + message;
-            drawTSPGraph(finalRoute);
-        }
-        function drawTSPGraph(route) {
-            if (!tspCanvas) return;
-            const ctx = tspCanvas.getContext('2d');
-            const w = tspCanvas.clientWidth, h = tspCanvas.clientHeight;
-            tspCanvas.width = w; tspCanvas.height = h;
-            ctx.clearRect(0, 0, w, h);
-            if (tspCities === 0) return;
-            const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2;
-            let points = [];
-            for (let i = 0; i < tspCities; i++) { let angle = i * angleStep - Math.PI / 2; points.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) }); }
-            for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.strokeStyle = "#555"; ctx.stroke(); ctx.fillStyle = "#aaa"; ctx.fillText(tspDistanceMatrix[i][j], (points[i].x + points[j].x) / 2, (points[i].y + points[j].y) / 2 - 5); }
-            for (let i = 0; i < tspCities; i++) { ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI); ctx.fillStyle = "#9b59b6"; ctx.fill(); ctx.fillStyle = "white"; ctx.font = "bold 16px 'Segoe UI'"; ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7); }
-            if (route && route.length > 1) { for (let k = 0; k < route.length; k++) { let from = route[k], to = route[(k + 1) % route.length]; ctx.beginPath(); ctx.moveTo(points[from].x, points[from].y); ctx.lineTo(points[to].x, points[to].y); ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 3; ctx.stroke(); } }
-        }
+        function solveTSP() { let start = performance.now(); let limit = parseInt(document.getElementById('tspLimit').value) || 999999; document.getElementById('tspLimitDisplay').innerText = limit; let indices = [...Array(tspCities).keys()]; let bestRoute = [], bestDist = Infinity; let bestValidRoute = [], bestValidDist = Infinity; let checks = 0, validCount = 0; function permute(arr, s) { if (s === arr.length - 1) { checks++; let total = 0; for (let i = 0; i < arr.length - 1; i++) total += tspDistanceMatrix[arr[i]][arr[i + 1]]; total += tspDistanceMatrix[arr[arr.length - 1]][arr[0]]; if (total <= limit) { validCount++; if (total < bestValidDist) { bestValidDist = total; bestValidRoute = [...arr]; } } if (total < bestDist) { bestDist = total; bestRoute = [...arr]; } return; } for (let i = s; i < arr.length; i++) { [arr[s], arr[i]] = [arr[i], arr[s]]; permute(arr, s + 1);[arr[s], arr[i]] = [arr[i], arr[s]]; } } permute(indices, 0); let end = performance.now(); let finalRoute, finalDist, message; if (bestValidRoute.length > 0) { finalRoute = bestValidRoute; finalDist = bestValidDist; message = `Найден маршрут, не превышающий лимит ${limit} км.`; document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-flag-fill me-1"></i> Оптимальный маршрут (в рамках лимита)'; } else { finalRoute = bestRoute; finalDist = bestDist; message = `Ни один маршрут не укладывается в лимит ${limit} км. Показан кратчайший (${finalDist} км).`; document.getElementById('tspResultBadge').innerHTML = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Лучший маршрут (превышает лимит)'; } tspBestRoute = finalRoute; tspBestDistance = finalDist; document.getElementById('tspResults').style.display = 'block'; document.getElementById('tspOptimalPath').innerHTML = finalRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${finalRoute[0] + 1}`; document.getElementById('tspTotalDistance').innerText = finalDist; document.getElementById('tspChecks').innerText = checks; document.getElementById('tspValidCount').innerText = validCount; document.getElementById('tspTime').innerText = (end - start).toFixed(2); document.getElementById('tspLimitMessage').innerHTML = '<i class="bi bi-info-circle me-1"></i> ' + message; drawTSPGraph(finalRoute); }
+        function drawTSPGraph(route) { if (!tspCanvas) return; const ctx = tspCanvas.getContext('2d'); const w = tspCanvas.clientWidth, h = tspCanvas.clientHeight; tspCanvas.width = w; tspCanvas.height = h; ctx.clearRect(0, 0, w, h); if (tspCities === 0) return; const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2; let points = []; for (let i = 0; i < tspCities; i++) { let angle = i * angleStep - Math.PI / 2; points.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) }); } for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.strokeStyle = "#555"; ctx.stroke(); ctx.fillStyle = "#aaa"; ctx.fillText(tspDistanceMatrix[i][j], (points[i].x + points[j].x) / 2, (points[i].y + points[j].y) / 2 - 5); } for (let i = 0; i < tspCities; i++) { ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI); ctx.fillStyle = "#9b59b6"; ctx.fill(); ctx.fillStyle = "white"; ctx.font = "bold 16px 'Segoe UI'"; ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7); } if (route && route.length > 1) { for (let k = 0; k < route.length; k++) { let from = route[k], to = route[(k + 1) % route.length]; ctx.beginPath(); ctx.moveTo(points[from].x, points[from].y); ctx.lineTo(points[to].x, points[to].y); ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 3; ctx.stroke(); } } }
         function exportTSPToJSON() { let data = { cities: tspCities, matrix: tspDistanceMatrix, route: tspBestRoute, distance: tspBestDistance }; let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tsp_result.json'; a.click(); }
 
-        // ========== 3. СИМПЛЕКС-МЕТОД ==========
+        // ---------- 3. СИМПЛЕКС ----------
         let simplexVars = 2, simplexCons = 2;
-        function buildSimplexInput() {
-            let n = parseInt(document.getElementById('simplexVars').value);
-            let m = parseInt(document.getElementById('simplexCons').value);
-            simplexVars = n; simplexCons = m;
-            let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`;
-            for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`;
-            html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`;
-            for (let i = 0; i < m; i++) {
-                html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`;
-                for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`;
-                html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}">`;
-                html += `</div>`;
-            }
-            document.getElementById('simplexInputArea').innerHTML = html;
-            document.getElementById('simplexResult').style.display = 'none';
-        }
-        function solveSimplex() {
-            let n = simplexVars, m = simplexCons;
-            let c = [], A = [], b = [];
-            for (let j = 0; j < n; j++) c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0);
-            for (let i = 0; i < m; i++) {
-                let row = [];
-                for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0);
-                A.push(row);
-                b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0);
-            }
-            let direction = document.querySelector('input[name="simplexDirection"]:checked').value;
-            if (direction === 'min') c = c.map(ci => -ci);
-            let tableau = [];
-            for (let i = 0; i < m; i++) {
-                let row = [...A[i], ...Array(m).fill(0), b[i]];
-                row[n + i] = 1;
-                tableau.push(row);
-            }
-            let objRow = c.map(ci => -ci);
-            objRow.push(...Array(m).fill(0), 0);
-            tableau.push(objRow);
-            let steps = [], iter = 0;
-            while (true) {
-                let pivotCol = -1;
-                for (let j = 0; j < n + m; j++) if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j;
-                if (pivotCol == -1) break;
-                let minRatio = Infinity, pivotRow = -1;
-                for (let i = 0; i < m; i++) {
-                    if (tableau[i][pivotCol] > 1e-9) {
-                        let ratio = tableau[i][n + m] / tableau[i][pivotCol];
-                        if (ratio < minRatio) { minRatio = ratio; pivotRow = i; }
-                    }
-                }
-                if (pivotRow == -1) { steps.push("Задача неограничена"); break; }
-                let pivotVal = tableau[pivotRow][pivotCol];
-                for (let j = 0; j <= n + m; j++) tableau[pivotRow][j] /= pivotVal;
-                for (let i = 0; i <= m; i++) if (i != pivotRow) {
-                    let factor = tableau[i][pivotCol];
-                    for (let j = 0; j <= n + m; j++) tableau[i][j] -= factor * tableau[pivotRow][j];
-                }
-                steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`);
-            }
-            let x = Array(n).fill(0);
-            for (let j = 0; j < n; j++) {
-                let basicRow = -1;
-                for (let i = 0; i < m; i++) if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k < n + m; k++) if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; }
-                if (basicRow != -1) x[j] = tableau[basicRow][n + m];
-            }
-            let optValue = tableau[m][n + m];
-            if (direction === 'min') optValue = -optValue;
-            document.getElementById('simplexResult').style.display = 'block';
-            let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение';
-            document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`;
-            document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций";
-        }
+        function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}">`; html += `</div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
+        function solveSimplex() { let n = simplexVars, m = simplexCons; let c = [], A = [], b = []; for (let j = 0; j < n; j++) c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0); } let direction = document.querySelector('input[name="simplexDirection"]:checked').value; if (direction === 'min') c = c.map(ci => -ci); let tableau = []; for (let i = 0; i < m; i++) { let row = [...A[i], ...Array(m).fill(0), b[i]]; row[n + i] = 1; tableau.push(row); } let objRow = c.map(ci => -ci); objRow.push(...Array(m).fill(0), 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotCol = -1; for (let j = 0; j < n + m; j++) if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j; if (pivotCol == -1) break; let minRatio = Infinity, pivotRow = -1; for (let i = 0; i < m; i++) { if (tableau[i][pivotCol] > 1e-9) { let ratio = tableau[i][n + m] / tableau[i][pivotCol]; if (ratio < minRatio) { minRatio = ratio; pivotRow = i; } } } if (pivotRow == -1) { steps.push("Задача неограничена"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + m; j++) tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++) if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + m; j++) tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++) if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k < n + m; k++) if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + m]; } let optValue = tableau[m][n + m]; if (direction === 'min') optValue = -optValue; document.getElementById('simplexResult').style.display = 'block'; let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение'; document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций"; }
 
-        // ========== 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС ==========
+        // ---------- 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС ----------
         let dualVars = 2, dualCons = 2;
-        function buildDualInput() {
-            let n = parseInt(document.getElementById('dualVars').value);
-            let m = parseInt(document.getElementById('dualCons').value);
-            dualVars = n; dualCons = m;
-            let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`;
-            for (let j = 0; j < n; j++) html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`;
-            html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`;
-            for (let i = 0; i < m; i++) {
-                html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`;
-                for (let j = 0; j < n; j++) html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`;
-                html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}">`;
-                html += `</div>`;
-            }
-            document.getElementById('dualInputArea').innerHTML = html;
-            document.getElementById('dualResult').style.display = 'none';
-        }
-        function solveDualSimplex() {
-            let n = dualVars, m = dualCons;
-            let c = [], A = [], b = [];
-            for (let j = 0; j < n; j++) c.push(parseFloat(document.getElementById(`dual_c${j}`).value) || 0);
-            for (let i = 0; i < m; i++) {
-                let row = [];
-                for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`dual_a${i}_${j}`).value) || 0);
-                A.push(row);
-                b.push(parseFloat(document.getElementById(`dual_b${i}`).value) || 0);
-            }
-            let tableau = [];
-            for (let i = 0; i < m; i++) {
-                let row = A[i].map(a => -a);
-                row.push(1);
-                row.push(-b[i]);
-                tableau.push(row);
-            }
-            let objRow = c.map(ci => ci);
-            objRow.push(0, 0);
-            tableau.push(objRow);
-            let steps = [], iter = 0;
-            while (true) {
-                let pivotRow = -1;
-                for (let i = 0; i < m; i++) if (tableau[i][n + 1] < -1e-9 && (pivotRow == -1 || tableau[i][n + 1] < tableau[pivotRow][n + 1])) pivotRow = i;
-                if (pivotRow == -1) break;
-                let pivotCol = -1;
-                for (let j = 0; j <= n; j++) {
-                    if (tableau[pivotRow][j] < -1e-9) {
-                        let ratio = tableau[m][j] / tableau[pivotRow][j];
-                        if (pivotCol == -1 || ratio < tableau[m][pivotCol] / tableau[pivotRow][pivotCol]) pivotCol = j;
-                    }
-                }
-                if (pivotCol == -1) { steps.push("Задача несовместна"); break; }
-                let pivotVal = tableau[pivotRow][pivotCol];
-                for (let j = 0; j <= n + 1; j++) tableau[pivotRow][j] /= pivotVal;
-                for (let i = 0; i <= m; i++) if (i != pivotRow) {
-                    let factor = tableau[i][pivotCol];
-                    for (let j = 0; j <= n + 1; j++) tableau[i][j] -= factor * tableau[pivotRow][j];
-                }
-                steps.push(`Итерация ${++iter}: ведущая строка ${pivotRow + 1}, столбец ${pivotCol + 1}`);
-            }
-            let x = Array(n).fill(0);
-            for (let j = 0; j < n; j++) {
-                let basicRow = -1;
-                for (let i = 0; i < m; i++) if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k <= n; k++) if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; }
-                if (basicRow != -1) x[j] = tableau[basicRow][n + 1];
-            }
-            let optValue = tableau[m][n + 1];
-            document.getElementById('dualResult').style.display = 'block';
-            document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`;
-            document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден";
-        }
+        function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}">`; html += `</div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
+        function solveDualSimplex() { let n = dualVars, m = dualCons; let c = [], A = [], b = []; for (let j = 0; j < n; j++) c.push(parseFloat(document.getElementById(`dual_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`dual_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`dual_b${i}`).value) || 0); } let tableau = []; for (let i = 0; i < m; i++) { let row = A[i].map(a => -a); row.push(1); row.push(-b[i]); tableau.push(row); } let objRow = c.map(ci => ci); objRow.push(0, 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotRow = -1; for (let i = 0; i < m; i++) if (tableau[i][n + 1] < -1e-9 && (pivotRow == -1 || tableau[i][n + 1] < tableau[pivotRow][n + 1])) pivotRow = i; if (pivotRow == -1) break; let pivotCol = -1; for (let j = 0; j <= n; j++) { if (tableau[pivotRow][j] < -1e-9) { let ratio = tableau[m][j] / tableau[pivotRow][j]; if (pivotCol == -1 || ratio < tableau[m][pivotCol] / tableau[pivotRow][pivotCol]) pivotCol = j; } } if (pivotCol == -1) { steps.push("Задача несовместна"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + 1; j++) tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++) if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + 1; j++) tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущая строка ${pivotRow + 1}, столбец ${pivotCol + 1}`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++) if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k <= n; k++) if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + 1]; } let optValue = tableau[m][n + 1]; document.getElementById('dualResult').style.display = 'block'; document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден"; }
 
-        window.onload = function () {
-            renderProducts();
-            initTSP();
-            buildSimplexInput();
-            buildDualInput();
-        };
+        window.onload = function () { renderProducts(); initTSP(); buildSimplexInput(); buildDualInput(); };
     </script>
 </body>
 
