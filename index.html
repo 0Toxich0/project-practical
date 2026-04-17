@@ -11,204 +11,579 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
-            background: linear-gradient(135deg, #1a2a3a 0%, #0f1a24 100%);
-            font-family: 'Segoe UI', Roboto, system-ui;
-            color: #eef4ff;
+            background: linear-gradient(135deg, #0f0c1f 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            margin: 0;
+            padding: 15px;
+            animation: gradientShift 15s ease infinite;
+            background-size: 400% 400%;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+            width: 100%;
         }
 
         .calculator-card {
-            background: rgba(18, 25, 35, 0.85);
-            backdrop-filter: blur(6px);
-            border-radius: 2rem;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(45, 45, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             overflow: hidden;
-            margin-top: 2rem;
-            margin-bottom: 2rem;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideInUp 0.8s ease;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(155, 89, 182, 0.4);
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
         .card-header {
-            background: linear-gradient(90deg, #2c3e50, #1e2a36);
-            border-bottom: 1px solid #9b59b6;
-            padding: 1.5rem;
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: clamp(20px, 5vw, 35px);
+            text-align: center;
         }
 
         .card-header h1 {
-            font-size: 1.6rem;
             margin: 0;
+            font-size: clamp(1.2rem, 4vw, 2rem);
             font-weight: 700;
         }
 
+        .card-header p {
+            margin: 10px 0 0;
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            opacity: 0.95;
+        }
+
+        .card-body {
+            padding: clamp(15px, 4vw, 35px);
+            background: rgba(45, 45, 45, 0.98);
+            color: #e0e0e0;
+        }
+
+        /* --- ВКЛАДКИ (НОВЫЙ СТИЛЬ) --- */
+        .nav-tabs {
+            border-bottom: none;
+            margin-bottom: 1.8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
         .nav-tabs .nav-link {
-            color: #ccdeee;
+            color: #d0d0d0;
+            background: rgba(30, 30, 45, 0.7);
             border: none;
-            font-weight: 500;
-            background: transparent;
+            border-radius: 40px;
+            padding: 10px 24px;
+            margin: 0;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .nav-tabs .nav-link:hover {
+            background: rgba(155, 89, 182, 0.6);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .nav-tabs .nav-link.active {
-            background: #2c3e50;
-            color: #f0f3f8;
-            border-bottom: 3px solid #9b59b6;
-        }
-
-        .product-row,
-        .simplex-card,
-        .tsp-card {
-            background: #1e2a36;
-            border-radius: 1.2rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border: 1px solid #2c3e50;
-        }
-
-        .btn-add,
-        .btn-calculate,
-        .btn-export,
-        .btn-remove {
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            margin-right: 0.5rem;
-        }
-
-        .btn-add {
-            background: #27ae60;
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
             color: white;
+            box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+        }
+
+        #subTab.nav-tabs .nav-link {
+            background: rgba(20, 20, 35, 0.8);
+            border-radius: 30px;
+            padding: 6px 18px;
+            font-size: 0.9rem;
+        }
+
+        #subTab.nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #9b59b6, #b96fcf);
+        }
+
+        /* --- КНОПКИ --- */
+        .btn-calculate,
+        .btn-add,
+        .btn-remove,
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            font-weight: 600;
+            border-radius: 60px;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .btn-calculate {
-            background: #9b59b6;
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            font-size: 1rem;
+            padding: 12px 20px;
+            width: 100%;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+        }
+
+        .btn-remove {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
             color: white;
         }
 
         .btn-export {
-            background: #2980b9;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
             color: white;
         }
 
-        .btn-remove {
-            background: #e67e22;
-            color: white;
-        }
-
-        .result-card {
-            background: #0f1a1f;
-            border-left: 6px solid #9b59b6;
-            border-radius: 1rem;
-            padding: 1rem;
-        }
-
-        .profit-badge {
-            background: #2c3e50;
-            border-radius: 2rem;
-            padding: 0.6rem 1.2rem;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .resource-bar-container {
-            background: #2c3e50;
-            border-radius: 1rem;
-            height: 28px;
-            width: 100%;
-            overflow: hidden;
-        }
-
-        .resource-bar-used {
-            background: linear-gradient(90deg, #9b59b6, #e67e22);
-            width: 0%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding-right: 10px;
-            color: white;
-            font-weight: bold;
-            border-radius: 1rem;
-            transition: width 0.3s;
-        }
-
-        .stats-container {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin: 1rem 0;
-        }
-
-        .checks-info {
-            background: #1a2a34;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-        }
-
-        .matrix-input {
-            background: #2c3e50;
-            border: 1px solid #3e5a6c;
-            color: white;
-            border-radius: 8px;
-            width: 70px;
-            text-align: center;
-        }
-
-        .tsp-canvas-container canvas {
-            background: #0f1a24;
-            border-radius: 1rem;
-            width: 100%;
-            height: auto;
-            margin-top: 1rem;
-            border: 1px solid #2c3e50;
-        }
-
-        .history-item {
-            background: #1e2a34;
-            border-radius: 1rem;
-            padding: 0.6rem 1rem;
-            margin-bottom: 0.5rem;
-            cursor: pointer;
-            transition: 0.1s;
-        }
-
-        .history-item:hover {
-            background: #2c3e50;
-        }
-
-        .mode-selector-simplex label,
-        .mode-selector label {
-            color: #ddd;
-        }
-
-        .table {
-            color: #eef4ff;
-        }
-
-        .table th {
-            border-bottom-color: #2c3e50;
-        }
-
-        .table td {
-            border-color: #2c3e50;
-        }
-
-        .badge.bg-info {
-            background-color: #2980b9 !important;
-        }
-
-        .tsp-result-badge {
-            background: #1e2a36;
-            border-radius: 2rem;
-            padding: 0.5rem 1rem;
-            font-weight: bold;
+        .btn-calculate:hover,
+        .btn-add:hover,
+        .btn-remove:hover,
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
         }
 
         .button-row {
-            margin: 1rem 0;
             display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .button-row .btn-add,
+        .button-row .btn-remove,
+        .button-row .btn-export,
+        .button-row .btn-calculate {
+            flex: 0 1 auto;
+            min-width: 130px;
+        }
+
+        @media (max-width: 640px) {
+            .button-row {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .button-row .btn-add,
+            .button-row .btn-remove,
+            .button-row .btn-export {
+                min-width: 110px;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+
+        .resource-usage {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
             flex-wrap: wrap;
-            gap: 10px;
+        }
+
+        .resource-item {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            min-width: 200px;
+        }
+
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .resource-bar-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            overflow: hidden;
+            height: 34px;
+            width: 100%;
+        }
+
+        .resource-bar-used {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.85rem;
+            transition: width 0.2s ease;
+            white-space: nowrap;
+            width: 0%;
+        }
+
+        /* СООБЩЕНИЕ О ЛИМИТЕ — БЕЛЫЙ ЦВЕТ */
+        #tspLimitMessage {
+            color: white !important;
+            font-weight: 500;
+        }
+
+        /* ОБЩИЕ СТИЛИ ФОРМ */
+        .form-label {
+            color: #e0e0e0;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-control {
+            background: rgba(64, 64, 64, 0.8);
+            border: 2px solid #4a4a4a;
+            color: #e0e0e0;
+            border-radius: 12px;
+            padding: 10px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #9b59b6;
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.3);
+            outline: none;
+        }
+
+        .product-row {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #9b59b6;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .profit-badge {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 60px;
+            padding: 12px 24px;
+            display: inline-block;
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .profit-badge.negative {
+            background: rgba(220, 53, 69, 0.8);
+            color: #fff;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .checks-info {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #9b59b6;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .chart-container {
+            background: rgba(54, 54, 54, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .chart-container canvas {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 15px;
+        }
+
+        .table {
+            color: #e0e0e0;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .table thead th {
+            background: linear-gradient(135deg, #8e44ad 0%, #9b59b6 100%);
+            color: white;
+            padding: 12px 8px;
+            font-weight: 600;
+            border: none;
+        }
+
+        .table tbody tr {
+            border-bottom: 1px solid #4a4a4a;
+            transition: background 0.2s;
+        }
+
+        .table tbody tr:hover {
+            background: rgba(155, 89, 182, 0.2);
+        }
+
+        .table td,
+        .table th {
+            padding: 10px 8px;
+            vertical-align: middle;
+        }
+
+        .tsp-card,
+        .simplex-card {
+            background: rgba(30, 30, 45, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #9b59b6;
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+
+        .matrix-input {
+            width: 70px;
+            text-align: center;
+            background: rgba(64, 64, 64, 0.9);
+            border: 1px solid #9b59b6;
+            color: white;
+            border-radius: 8px;
+            padding: 6px;
+        }
+
+        .tsp-result-badge {
+            background: #9b59b6;
+            border-radius: 40px;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .tsp-canvas-container {
+            background: #1e1e2a;
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #9b59b6;
+            text-align: center;
+        }
+
+        canvas#tspGraphCanvas {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            aspect-ratio: 600/400;
+            background: #0f0f1a;
+            border-radius: 16px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .history-item {
+            background: rgba(54, 54, 54, 0.9);
+            border: 1px solid #9b59b6;
+            border-radius: 10px;
+            padding: 12px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 8px;
+        }
+
+        .history-item:hover {
+            background: rgba(155, 89, 182, 0.3);
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 768px) {
+            .matrix-input {
+                width: 55px;
+                font-size: 0.7rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .resource-usage {
+                flex-direction: column;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-calculate {
+                font-size: 0.9rem;
+                padding: 10px;
+            }
+        }
+
+        /* ===== МАТРИЦА РАССТОЯНИЙ – ТАБЛИЦА КАК В НАЧАЛЬНОМ ВАРИАНТЕ ===== */
+        #distanceMatrixContainer {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        #distanceMatrixContainer table {
+            width: auto;
+            margin: 0 auto;
+            background: rgba(30, 30, 45, 0.8);
+            border-collapse: collapse;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #distanceMatrixContainer th,
+        #distanceMatrixContainer td {
+            border: 1px solid #9b59b6;
+            padding: 10px 12px;
+            text-align: center;
+            vertical-align: middle;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        #distanceMatrixContainer th {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            padding: 12px 8px;
+        }
+
+        #distanceMatrixContainer td:first-child {
+            background: linear-gradient(135deg, #6c3483, #8e44ad);
+            color: white;
+            font-weight: bold;
+        }
+
+        #distanceMatrixContainer .matrix-input {
+            width: 70px;
+            text-align: center;
+            background: rgba(64, 64, 64, 0.9);
+            border: 1px solid #9b59b6;
+            color: white;
+            border-radius: 10px;
+            padding: 8px 5px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        #distanceMatrixContainer .matrix-input:focus {
+            border-color: #f39c12;
+            outline: none;
+            box-shadow: 0 0 8px rgba(243, 156, 18, 0.5);
+        }
+
+        #distanceMatrixContainer .matrix-input[disabled] {
+            background: #2c3e50;
+            border-color: #7f8c8d;
+            color: #bdc3c7;
+        }
+
+        /* ===== ВЫРАВНИВАНИЕ КНОПОК В СИМПЛЕКСЕ И ДВОЙСТВЕННОМ ===== */
+        #simplexTab .btn-add,
+        #simplexTab .btn-calculate,
+        #dualTab .btn-add,
+        #dualTab .btn-calculate {
+            width: 100%;
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            padding: 8px 12px;
+        }
+
+        @media (max-width: 640px) {
+
+            #simplexTab .btn-add,
+            #simplexTab .btn-calculate,
+            #dualTab .btn-add,
+            #dualTab .btn-calculate {
+                white-space: normal;
+                font-size: 0.8rem;
+                padding: 6px 8px;
+                min-height: auto;
+            }
         }
     </style>
 </head>
@@ -340,7 +715,7 @@
                                 <div id="error" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- МАТЕМАТИЧЕСКИЕ МЕТОДЫ: переделанный КОММИВОЯЖЁР (градиентный 2-opt) -->
+                            <!-- МАТЕМАТИЧЕСКИЕ МЕТОДЫ -->
                             <div class="tab-pane fade" id="advanced">
                                 <ul class="nav nav-tabs mb-3" id="subTab" role="tablist">
                                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
@@ -354,7 +729,7 @@
                                             Двойственный симплекс</button></li>
                                 </ul>
                                 <div class="tab-content">
-                                    <!-- КОММИВОЯЖЁР -->
+                                    <!-- TSP -->
                                     <div class="tab-pane fade show active" id="tspTab">
                                         <div class="tsp-section">
                                             <h3><i class="bi bi-truck"></i> Задача коммивояжёра (градиентная
@@ -427,8 +802,7 @@
                                                     height="400"></canvas></div>
                                         </div>
                                     </div>
-
-                                    <!-- Симплекс и двойственный -->
+                                    <!-- Симплекс -->
                                     <div class="tab-pane fade" id="simplexTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-graph-up"></i> Симплекс-метод</h3>
@@ -469,6 +843,7 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- Двойственный -->
                                     <div class="tab-pane fade" id="dualTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-arrow-left-right"></i> Двойственный симплекс-метод</h3>
@@ -519,7 +894,7 @@
         function addProduct() { if (productCount < maxProducts) { saveCurrentProducts(); productCount++; productsData.push({ name: `P${productCount}`, labor: 0, material: 0, profit: 0 }); renderProducts(); } else alert(`Максимум ${maxProducts} продуктов`); }
         function removeProduct() { if (productCount > 1) { saveCurrentProducts(); productCount--; productsData.pop(); renderProducts(); } }
         function getProductsData() { let arr = []; for (let i = 0; i < productCount; i++) arr.push({ name: document.getElementById(`name${i}`).value, labor: parseInt(document.getElementById(`labor${i}`).value), material: parseInt(document.getElementById(`material${i}`).value), profit: parseInt(document.getElementById(`profit${i}`).value) }); return arr; }
-        function calculateOptimum() { /* ... полная копия оригинальной функции (оставлена для работоспособности) */
+        function calculateOptimum() {
             const totalHours = parseInt(document.getElementById('totalHours').value), totalMaterial = parseInt(document.getElementById('totalMaterial').value), mode = document.querySelector('input[name="optimizationMode"]:checked').value;
             if (totalHours <= 0 || totalMaterial <= 0) { showError('Ресурсы должны быть положительными'); return; }
             const products = getProductsData();
@@ -559,7 +934,7 @@
         function clearHistory() { if (confirm('Очистить историю?')) { localStorage.removeItem('calcHistory'); displayHistory(); } }
         function showError(msg) { let errDiv = document.getElementById('error'); errDiv.style.display = 'block'; errDiv.innerText = msg; }
 
-        // ========== КОММИВОЯЖЁР — ГРАДИЕНТНЫЙ 2-OPT (локальный спуск) ==========
+        // ========== КОММИВОЯЖЁР — ГРАДИЕНТНЫЙ 2-OPT ==========
         let tspDistanceMatrix = [], tspCities = 6, tspBestRoute = [], tspBestDistance = Infinity, tspCanvas = null;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
         function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(12, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 40) + 8; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
@@ -567,112 +942,9 @@
         function updateDistance(i, j, val) { let v = Math.max(1, Math.min(200, parseInt(val) || 1)); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${j}_${i}`).value = v; drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 40) + 8; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${i}_${j}`).value = v; document.getElementById(`dist_${j}_${i}`).value = v; } drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function totalDistance(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
-        // 2-opt улучшение (градиентный спуск)
-        function twoOptImprove(route, maxSteps = 5000) {
-            let best = [...route];
-            let bestDist = totalDistance(best);
-            let improved = true;
-            let steps = 0;
-            let evaluations = 0;
-            while (improved && steps < maxSteps) {
-                improved = false;
-                for (let i = 1; i < best.length - 1; i++) {
-                    for (let k = i + 1; k < best.length; k++) {
-                        let newRoute = [...best];
-                        newRoute.splice(i, k - i + 1, ...best.slice(i, k + 1).reverse());
-                        let newDist = totalDistance(newRoute);
-                        evaluations++;
-                        if (newDist < bestDist - 1e-6) {
-                            best = newRoute;
-                            bestDist = newDist;
-                            improved = true;
-                            steps++;
-                            break;
-                        }
-                    }
-                    if (improved) break;
-                }
-            }
-            return { route: best, distance: bestDist, evaluations };
-        }
-        function generateInitialRoutes(count, greedyFactor = true) {
-            let routes = [];
-            if (greedyFactor) {
-                let unvisited = [...Array(tspCities).keys()];
-                let greedy = [0];
-                unvisited.splice(unvisited.indexOf(0), 1);
-                while (unvisited.length) {
-                    let last = greedy[greedy.length - 1];
-                    let nearest = unvisited.reduce((a, b) => (tspDistanceMatrix[last][a] < tspDistanceMatrix[last][b] ? a : b));
-                    greedy.push(nearest);
-                    unvisited.splice(unvisited.indexOf(nearest), 1);
-                }
-                routes.push(greedy);
-            }
-            for (let i = 0; i < count; i++) {
-                let rand = [...Array(tspCities).keys()];
-                for (let j = rand.length - 1; j > 0; j--) { let r = Math.floor(Math.random() * (j + 1));[rand[j], rand[r]] = [rand[r], rand[j]]; }
-                routes.push(rand);
-            }
-            return routes;
-        }
-        function solveTSP() {
-            const startTime = performance.now();
-            const limit = parseInt(document.getElementById('tspLimit').value) || 999999;
-            document.getElementById('tspLimitDisplay').innerText = limit;
-            const n = tspCities;
-            if (n < 2) return;
-            let bestFeasibleRoute = null;
-            let bestFeasibleDist = Infinity;
-            let bestOverallRoute = null;
-            let bestOverallDist = Infinity;
-            let totalEvaluations = 0;
-            let feasibleCount = 0;
-            const restarts = Math.min(800, Math.max(200, n * 30));
-            const initials = generateInitialRoutes(restarts, true);
-            for (let init of initials) {
-                const improved = twoOptImprove(init, 3000);
-                totalEvaluations += improved.evaluations;
-                const dist = improved.distance;
-                if (dist < bestOverallDist - 1e-6) {
-                    bestOverallDist = dist;
-                    bestOverallRoute = [...improved.route];
-                }
-                if (dist <= limit + 1e-6) {
-                    feasibleCount++;
-                    if (dist < bestFeasibleDist - 1e-6) {
-                        bestFeasibleDist = dist;
-                        bestFeasibleRoute = [...improved.route];
-                    }
-                }
-            }
-            let finalRoute, finalDist, message, badgeText;
-            if (bestFeasibleRoute) {
-                finalRoute = bestFeasibleRoute;
-                finalDist = bestFeasibleDist;
-                message = `Градиентный 2-opt: найден допустимый маршрут (длина ${finalDist} км ≤ лимит ${limit} км).`;
-                badgeText = '<i class="bi bi-check-circle-fill me-1"></i> Допустимый оптимум (2-opt)';
-            } else if (bestOverallRoute) {
-                finalRoute = bestOverallRoute;
-                finalDist = bestOverallDist;
-                message = `Ни один маршрут не укладывается в лимит ${limit} км. Показан кратчайший (${finalDist} км).`;
-                badgeText = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Лучший (превышает лимит)';
-            } else {
-                showError('Ошибка генерации маршрутов');
-                return;
-            }
-            tspBestRoute = finalRoute;
-            tspBestDistance = finalDist;
-            document.getElementById('tspResults').style.display = 'block';
-            document.getElementById('tspOptimalPath').innerHTML = finalRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${finalRoute[0] + 1}`;
-            document.getElementById('tspTotalDistance').innerText = finalDist;
-            document.getElementById('tspChecks').innerText = totalEvaluations;
-            document.getElementById('tspValidCount').innerText = feasibleCount;
-            document.getElementById('tspTime').innerText = (performance.now() - startTime).toFixed(2);
-            document.getElementById('tspLimitMessage').innerHTML = `<i class="bi bi-info-circle me-1"></i> ${message} (градиентный спуск по 2-opt соседям)`;
-            document.getElementById('tspResultBadge').innerHTML = badgeText;
-            drawTSPGraph(finalRoute);
-        }
+        function twoOptImprove(route, maxSteps = 5000) { let best = [...route]; let bestDist = totalDistance(best); let improved = true; let steps = 0; let evaluations = 0; while (improved && steps < maxSteps) { improved = false; for (let i = 1; i < best.length - 1; i++) { for (let k = i + 1; k < best.length; k++) { let newRoute = [...best]; newRoute.splice(i, k - i + 1, ...best.slice(i, k + 1).reverse()); let newDist = totalDistance(newRoute); evaluations++; if (newDist < bestDist - 1e-6) { best = newRoute; bestDist = newDist; improved = true; steps++; break; } } if (improved) break; } } return { route: best, distance: bestDist, evaluations }; }
+        function generateInitialRoutes(count, greedyFactor = true) { let routes = []; if (greedyFactor) { let unvisited = [...Array(tspCities).keys()]; let greedy = [0]; unvisited.splice(unvisited.indexOf(0), 1); while (unvisited.length) { let last = greedy[greedy.length - 1]; let nearest = unvisited.reduce((a, b) => (tspDistanceMatrix[last][a] < tspDistanceMatrix[last][b] ? a : b)); greedy.push(nearest); unvisited.splice(unvisited.indexOf(nearest), 1); } routes.push(greedy); } for (let i = 0; i < count; i++) { let rand = [...Array(tspCities).keys()]; for (let j = rand.length - 1; j > 0; j--) { let r = Math.floor(Math.random() * (j + 1));[rand[j], rand[r]] = [rand[r], rand[j]]; } routes.push(rand); } return routes; }
+        function solveTSP() { const startTime = performance.now(); const limit = parseInt(document.getElementById('tspLimit').value) || 999999; document.getElementById('tspLimitDisplay').innerText = limit; const n = tspCities; if (n < 2) return; let bestFeasibleRoute = null, bestFeasibleDist = Infinity, bestOverallRoute = null, bestOverallDist = Infinity, totalEvaluations = 0, feasibleCount = 0; const restarts = Math.min(800, Math.max(200, n * 30)); const initials = generateInitialRoutes(restarts, true); for (let init of initials) { const improved = twoOptImprove(init, 3000); totalEvaluations += improved.evaluations; const dist = improved.distance; if (dist < bestOverallDist - 1e-6) { bestOverallDist = dist; bestOverallRoute = [...improved.route]; } if (dist <= limit + 1e-6) { feasibleCount++; if (dist < bestFeasibleDist - 1e-6) { bestFeasibleDist = dist; bestFeasibleRoute = [...improved.route]; } } } let finalRoute, finalDist, message, badgeText; if (bestFeasibleRoute) { finalRoute = bestFeasibleRoute; finalDist = bestFeasibleDist; message = `Градиентный 2-opt: найден допустимый маршрут (длина ${finalDist} км ≤ лимит ${limit} км).`; badgeText = '<i class="bi bi-check-circle-fill me-1"></i> Допустимый оптимум (2-opt)'; } else if (bestOverallRoute) { finalRoute = bestOverallRoute; finalDist = bestOverallDist; message = `Ни один маршрут не укладывается в лимит ${limit} км. Показан кратчайший (${finalDist} км).`; badgeText = '<i class="bi bi-exclamation-triangle-fill me-1"></i> Лучший (превышает лимит)'; } else { showError('Ошибка генерации маршрутов'); return; } tspBestRoute = finalRoute; tspBestDistance = finalDist; document.getElementById('tspResults').style.display = 'block'; document.getElementById('tspOptimalPath').innerHTML = finalRoute.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${finalRoute[0] + 1}`; document.getElementById('tspTotalDistance').innerText = finalDist; document.getElementById('tspChecks').innerText = totalEvaluations; document.getElementById('tspValidCount').innerText = feasibleCount; document.getElementById('tspTime').innerText = (performance.now() - startTime).toFixed(2); document.getElementById('tspLimitMessage').innerHTML = `<i class="bi bi-info-circle me-1"></i> ${message} (градиентный спуск по 2-opt соседям)`; document.getElementById('tspResultBadge').innerHTML = badgeText; drawTSPGraph(finalRoute); }
         function drawTSPGraph(route) { if (!tspCanvas) return; const ctx = tspCanvas.getContext('2d'); const w = tspCanvas.clientWidth, h = tspCanvas.clientHeight; tspCanvas.width = w; tspCanvas.height = h; ctx.clearRect(0, 0, w, h); if (tspCities === 0) return; const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2; let points = []; for (let i = 0; i < tspCities; i++) { let angle = i * angleStep - Math.PI / 2; points.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) }); } for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.strokeStyle = "#555"; ctx.stroke(); ctx.fillStyle = "#aaa"; ctx.fillText(tspDistanceMatrix[i][j], (points[i].x + points[j].x) / 2, (points[i].y + points[j].y) / 2 - 5); } for (let i = 0; i < tspCities; i++) { ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI); ctx.fillStyle = "#9b59b6"; ctx.fill(); ctx.fillStyle = "white"; ctx.font = "bold 16px 'Segoe UI'"; ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7); } if (route && route.length > 1) { for (let k = 0; k < route.length; k++) { let from = route[k], to = route[(k + 1) % route.length]; ctx.beginPath(); ctx.moveTo(points[from].x, points[from].y); ctx.lineTo(points[to].x, points[to].y); ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 3; ctx.stroke(); } } }
         function exportTSPToJSON() { let data = { cities: tspCities, matrix: tspDistanceMatrix, route: tspBestRoute, distance: tspBestDistance, method: "gradient_2opt" }; let blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'tsp_gradient_result.json'; a.click(); }
 
@@ -681,7 +953,7 @@
         function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
         function solveSimplex() { let n = simplexVars, m = simplexCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0); } let direction = document.querySelector('input[name="simplexDirection"]:checked').value; if (direction === 'min') c = c.map(ci => -ci); let tableau = []; for (let i = 0; i < m; i++) { let row = [...A[i], ...Array(m).fill(0), b[i]]; row[n + i] = 1; tableau.push(row); } let objRow = c.map(ci => -ci); objRow.push(...Array(m).fill(0), 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotCol = -1; for (let j = 0; j < n + m; j++)if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j; if (pivotCol == -1) break; let minRatio = Infinity, pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][pivotCol] > 1e-9) { let ratio = tableau[i][n + m] / tableau[i][pivotCol]; if (ratio < minRatio) { minRatio = ratio; pivotRow = i; } } if (pivotRow == -1) { steps.push("Задача неограничена"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k < n + m; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + m]; } let optValue = tableau[m][n + m]; if (direction === 'min') optValue = -optValue; document.getElementById('simplexResult').style.display = 'block'; let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение'; document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций"; }
         let dualVars = 2, dualCons = 2;
-        function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++)html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++)html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
+        function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
         function solveDualSimplex() { let n = dualVars, m = dualCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`dual_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`dual_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`dual_b${i}`).value) || 0); } let tableau = []; for (let i = 0; i < m; i++) { let row = A[i].map(a => -a); row.push(1); row.push(-b[i]); tableau.push(row); } let objRow = c.map(ci => ci); objRow.push(0, 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][n + 1] < -1e-9 && (pivotRow == -1 || tableau[i][n + 1] < tableau[pivotRow][n + 1])) pivotRow = i; if (pivotRow == -1) break; let pivotCol = -1; for (let j = 0; j <= n; j++) { if (tableau[pivotRow][j] < -1e-9) { let ratio = tableau[m][j] / tableau[pivotRow][j]; if (pivotCol == -1 || ratio < tableau[m][pivotCol] / tableau[pivotRow][pivotCol]) pivotCol = j; } } if (pivotCol == -1) { steps.push("Задача несовместна"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + 1; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + 1; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущая строка ${pivotRow + 1}, столбец ${pivotCol + 1}`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k <= n; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + 1]; } let optValue = tableau[m][n + 1]; document.getElementById('dualResult').style.display = 'block'; document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден"; }
 
         window.onload = function () { renderProducts(); initTSP(); buildSimplexInput(); buildDualInput(); displayHistory(); };
