@@ -458,15 +458,6 @@
             padding: 8px 5px;
         }
 
-        #simplexTab .btn-add,
-        #simplexTab .btn-calculate,
-        #dualTab .btn-add,
-        #dualTab .btn-calculate {
-            width: 100%;
-            min-height: 48px;
-        }
-
-        /* Белый текст для шагов симплекса */
         .simplex-steps,
         #simplexSteps,
         #dualSteps {
@@ -475,6 +466,36 @@
 
         .text-secondary {
             color: #d1d1d1 !important;
+        }
+
+        .resource-item {
+            margin-bottom: 15px;
+        }
+
+        .resource-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .resource-bar-container {
+            background-color: #3a3a4a;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 30px;
+        }
+
+        .resource-bar-used {
+            background: linear-gradient(90deg, #9b59b6, #8e44ad);
+            width: 0%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: bold;
+            transition: width 0.3s;
         }
     </style>
 </head>
@@ -615,11 +636,14 @@
                             <div class="tab-pane fade" id="tspTabMain">
                                 <div class="tsp-section">
                                     <h3><i class="bi bi-diagram-3"></i> Оптимизация последовательности операций</h3>
-                                    <p><strong>Градиентный метод</strong>— это итерационная процедура, которая постепенно улучшает порядок выполнения операций. Алгоритм представляет возможную
-                                    последовательность в виде матрицы «операция–позиция» и вычисляет, как изменение этой матрицы влияет на общее время
-                                    перехода. На каждом шаге он корректирует значения в сторону уменьшения времени, соблюдая ограничения (каждая операция на
-                                    одной позиции, каждая позиция занята одной операцией). Метод не требует полного перебора всех вариантов и находит
-                                    локально-оптимальный порядок, близкий к наилучшему.</p>
+                                    <p><strong>Градиентный метод</strong> — это итерационная процедура, которая
+                                        постепенно улучшает порядок выполнения операций. Алгоритм представляет возможную
+                                        последовательность в виде матрицы «операция–позиция» и вычисляет, как изменение
+                                        этой матрицы влияет на общее время перехода. На каждом шаге он корректирует
+                                        значения в сторону уменьшения времени, соблюдая ограничения (каждая операция на
+                                        одной позиции, каждая позиция занята одной операцией). Метод не требует полного
+                                        перебора всех вариантов и находит локально-оптимальный порядок, близкий к
+                                        наилучшему.</p>
                                     <div class="row g-2 mb-3 align-items-end">
                                         <div class="col-md-4"><label class="form-label">Количество операций
                                                 (3–8):</label><input type="number" id="tspCitiesCount"
@@ -693,7 +717,7 @@
                                     <div class="tab-pane fade show active" id="simplexTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-graph-up"></i> Симплекс-метод</h3>
-                                            <p>max/min c<sup>T</sup>x при Ax ≤ b, x ≥ 0.</p>
+                                            <p>max/min c<sup>T</sup>x при Ax ≤ b, x ≥ 0 (b ≥ 0).</p>
                                             <div class="row g-2 mb-3 align-items-end">
                                                 <div class="col-md-2"><label class="form-label">Переменных
                                                         (n):</label><input type="number" id="simplexVars"
@@ -734,7 +758,7 @@
                                     <div class="tab-pane fade" id="dualTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-arrow-left-right"></i> Двойственный симплекс-метод</h3>
-                                            <p>min c<sup>T</sup>x при Ax ≥ b, x ≥ 0.</p>
+                                            <p>min c<sup>T</sup>x при Ax ≥ b, x ≥ 0 (b может быть любым).</p>
                                             <div class="row g-2 mb-3 align-items-end">
                                                 <div class="col-md-2"><label class="form-label">Переменных
                                                         (n):</label><input type="number" id="dualVars"
@@ -816,7 +840,7 @@
             document.getElementById('tableBodyProd').innerHTML = tabHtml;
             if (prodChartResource) prodChartResource.destroy(); if (prodChartEfficiency) prodChartEfficiency.destroy();
             let ctx1 = document.getElementById('resourceChartProd').getContext('2d'); prodChartResource = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMat - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
-            let ctx2 = document.getElementById('efficiencyChartProd').getContext('2d'); prodChartEfficiency = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => (p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
+            let ctx2 = document.getElementById('efficiencyChartProd').getContext('2d'); prodChartEfficiency = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => +(p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
             let hist = JSON.parse(localStorage.getItem('calcHistoryProd') || '[]'); hist.unshift({ timestamp: new Date().toLocaleString(), products: products.map(p => p.name), plan: best, profit: optProfit, mode, checks, time: (end - start).toFixed(2) }); if (hist.length > 10) hist.pop(); localStorage.setItem('calcHistoryProd', JSON.stringify(hist)); displayHistoryProd();
         }
         function displayHistoryProd() { let hist = JSON.parse(localStorage.getItem('calcHistoryProd') || '[]'); let container = document.getElementById('historyListProd'); if (hist.length === 0) { container.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>'; return; } container.innerHTML = hist.map((item, idx) => `<div class="history-item" onclick="loadHistoryProd(${idx})"><div class="d-flex justify-content-between"><small>${item.timestamp}</small><span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">${item.mode === 'max' ? 'MAX' : 'MIN'}</span></div><div><strong>Прибыль: ${item.profit}</strong></div><small>Продукты: ${item.products.join(', ')}</small></div>`).join(''); }
@@ -827,8 +851,29 @@
         // 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД)
         let tspDistanceMatrix = [], tspCities = 5, tspCanvas = null;
         let tspBestRoute = [], tspBestDistance = Infinity;
-        function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
-        function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(8, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
+        let lastTSPRoute = [];
+        function initTSP() {
+            const canvas = document.getElementById('tspGraphCanvas');
+            canvas.width = 600;
+            canvas.height = 400;
+            tspCanvas = canvas;
+            rebuildTSPMatrix();
+        }
+        function rebuildTSPMatrix() {
+            let n = parseInt(document.getElementById('tspCitiesCount').value);
+            n = Math.min(8, Math.max(3, n));
+            tspCities = n;
+            tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0));
+            for (let i = 0; i < n; i++)
+                for (let j = i + 1; j < n; j++) {
+                    let v = Math.floor(Math.random() * 30) + 10;
+                    tspDistanceMatrix[i][j] = v;
+                    tspDistanceMatrix[j][i] = v;
+                }
+            renderDistanceMatrix();
+            drawTSPGraph(lastTSPRoute); // перерисовываем с последним маршрутом (если есть)
+            document.getElementById('tspResults').style.display = 'none';
+        }
         function renderDistanceMatrix() {
             let html = '<table class="table table-bordered text-center">';
             html += '<thead><tr><th></th>';
@@ -854,7 +899,7 @@
             tspDistanceMatrix[j][i] = v;
             let otherField = document.getElementById(`dist_${j}_${i}`);
             if (otherField) otherField.value = v;
-            drawTSPGraph([]);
+            drawTSPGraph(lastTSPRoute);
             document.getElementById('tspResults').style.display = 'none';
         }
         function generateRandomDistances() {
@@ -868,7 +913,7 @@
                     let field2 = document.getElementById(`dist_${j}_${i}`);
                     if (field2) field2.value = v;
                 }
-            drawTSPGraph([]);
+            drawTSPGraph(lastTSPRoute);
             document.getElementById('tspResults').style.display = 'none';
         }
         function totalTime(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
@@ -878,7 +923,6 @@
             const limit = parseInt(document.getElementById('tspLimit').value) || 999999;
             const N = tspCities;
             if (N < 2) return;
-
             const A = 500.0, B = 500.0, C = 1.0, maxIter = 2000, dt = 0.001;
             let V = Array(N).fill().map(() => Array(N).fill(0.5 + (Math.random() - 0.5) * 0.1));
             let energyHistory = [];
@@ -925,7 +969,6 @@
                 }
                 if (maxChange < 1e-6 && iter > 100) break;
             }
-
             let route = new Array(N);
             let used = new Array(N).fill(false);
             for (let pos = 0; pos < N; pos++) {
@@ -939,13 +982,12 @@
                 if (bestOp !== -1) { route[pos] = bestOp; used[bestOp] = true; }
             }
             for (let i = 0; i < N; i++) if (!used[i]) { for (let pos = 0; pos < N; pos++) if (route[pos] === undefined) { route[pos] = i; used[i] = true; break; } }
-
             let totalTimeVal = totalTime(route);
             let feasible = (totalTimeVal <= limit);
             tspBestRoute = route;
             tspBestDistance = totalTimeVal;
+            lastTSPRoute = route.slice(); // сохраняем для перерисовки
             const endTime = performance.now();
-
             document.getElementById('tspResults').style.display = 'block';
             document.getElementById('tspOptimalPath').innerHTML = route.map(c => `Операция ${c + 1}`).join(' → ') + ` → Операция ${route[0] + 1}`;
             document.getElementById('tspTotalDistance').innerText = totalTimeVal;
@@ -958,12 +1000,10 @@
             document.getElementById('tspResultBadge').innerHTML = feasible ? '<i class="bi bi-check-circle-fill me-1"></i> Допустимая последовательность' : '<i class="bi bi-exclamation-triangle-fill me-1"></i> Последовательность (превышает лимит)';
             drawTSPGraph(route);
         }
-
         function drawTSPGraph(route) {
             if (!tspCanvas) return;
             const ctx = tspCanvas.getContext('2d');
-            const w = tspCanvas.clientWidth, h = tspCanvas.clientHeight;
-            tspCanvas.width = w; tspCanvas.height = h;
+            const w = tspCanvas.width, h = tspCanvas.height;
             ctx.clearRect(0, 0, w, h);
             if (tspCities === 0) return;
             const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2;
@@ -1005,11 +1045,142 @@
 
         // 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ
         let simplexVars = 2, simplexCons = 2;
-        function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
-        function solveSimplex() { let n = simplexVars, m = simplexCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0); } let direction = document.querySelector('input[name="simplexDirection"]:checked').value; if (direction === 'min') c = c.map(ci => -ci); let tableau = []; for (let i = 0; i < m; i++) { let row = [...A[i], ...Array(m).fill(0), b[i]]; row[n + i] = 1; tableau.push(row); } let objRow = c.map(ci => -ci); objRow.push(...Array(m).fill(0), 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotCol = -1; for (let j = 0; j < n + m; j++)if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j; if (pivotCol == -1) break; let minRatio = Infinity, pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][pivotCol] > 1e-9) { let ratio = tableau[i][n + m] / tableau[i][pivotCol]; if (ratio < minRatio) { minRatio = ratio; pivotRow = i; } } if (pivotRow == -1) { steps.push("Задача неограничена"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k < n + m; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + m]; } let optValue = tableau[m][n + m]; if (direction === 'min') optValue = -optValue; document.getElementById('simplexResult').style.display = 'block'; let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение'; document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций"; }
+        function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0 (b ≥ 0)</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
+        function solveSimplex() {
+            let n = simplexVars, m = simplexCons, c = [], A = [], b = [];
+            for (let j = 0; j < n; j++) c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0);
+            for (let i = 0; i < m; i++) {
+                let row = [];
+                for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0);
+                A.push(row);
+                let bi = parseFloat(document.getElementById(`simplex_b${i}`).value) || 0;
+                if (bi < 0) { alert(`Ограничение ${i + 1} имеет отрицательную правую часть (${bi}). Для симплекс-метода необходимо b ≥ 0. Пожалуйста, умножьте ограничение на -1 (изменив знак неравенства на ≥) или введите неотрицательное b.`); return; }
+                b.push(bi);
+            }
+            let direction = document.querySelector('input[name="simplexDirection"]:checked').value;
+            if (direction === 'min') c = c.map(ci => -ci);
+            let tableau = [];
+            for (let i = 0; i < m; i++) {
+                let row = [...A[i], ...Array(m).fill(0), b[i]];
+                row[n + i] = 1;
+                tableau.push(row);
+            }
+            let objRow = c.map(ci => -ci);
+            objRow.push(...Array(m).fill(0), 0);
+            tableau.push(objRow);
+            let steps = [], iter = 0;
+            while (true) {
+                let pivotCol = -1;
+                for (let j = 0; j < n + m; j++) if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j;
+                if (pivotCol == -1) break;
+                let minRatio = Infinity, pivotRow = -1;
+                for (let i = 0; i < m; i++) if (tableau[i][pivotCol] > 1e-9) {
+                    let ratio = tableau[i][n + m] / tableau[i][pivotCol];
+                    if (ratio < minRatio) { minRatio = ratio; pivotRow = i; }
+                }
+                if (pivotRow == -1) { steps.push("Задача неограничена"); break; }
+                let pivotVal = tableau[pivotRow][pivotCol];
+                for (let j = 0; j <= n + m; j++) tableau[pivotRow][j] /= pivotVal;
+                for (let i = 0; i <= m; i++) if (i != pivotRow) {
+                    let factor = tableau[i][pivotCol];
+                    for (let j = 0; j <= n + m; j++) tableau[i][j] -= factor * tableau[pivotRow][j];
+                }
+                steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`);
+            }
+            let x = Array(n).fill(0);
+            for (let j = 0; j < n; j++) {
+                let basicRow = -1;
+                for (let i = 0; i < m; i++) if (Math.abs(tableau[i][j] - 1) < 1e-9) {
+                    let ok = true;
+                    for (let k = 0; k < n + m; k++) if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false;
+                    if (ok) basicRow = i;
+                }
+                if (basicRow != -1) x[j] = tableau[basicRow][n + m];
+            }
+            let optValue = tableau[m][n + m];
+            if (direction === 'min') optValue = -optValue;
+            document.getElementById('simplexResult').style.display = 'block';
+            let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение';
+            document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`;
+            document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций";
+        }
         let dualVars = 2, dualCons = 2;
-        function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++)html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++)html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
-        function solveDualSimplex() { let n = dualVars, m = dualCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`dual_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`dual_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`dual_b${i}`).value) || 0); } let tableau = []; for (let i = 0; i < m; i++) { let row = A[i].map(a => -a); row.push(1); row.push(-b[i]); tableau.push(row); } let objRow = c.map(ci => ci); objRow.push(0, 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][n + 1] < -1e-9 && (pivotRow == -1 || tableau[i][n + 1] < tableau[pivotRow][n + 1])) pivotRow = i; if (pivotRow == -1) break; let pivotCol = -1; for (let j = 0; j <= n; j++) { if (tableau[pivotRow][j] < -1e-9) { let ratio = tableau[m][j] / tableau[pivotRow][j]; if (pivotCol == -1 || ratio < tableau[m][pivotCol] / tableau[pivotRow][pivotCol]) pivotCol = j; } } if (pivotCol == -1) { steps.push("Задача несовместна"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + 1; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + 1; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущая строка ${pivotRow + 1}, столбец ${pivotCol + 1}`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k <= n; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + 1]; } let optValue = tableau[m][n + 1]; document.getElementById('dualResult').style.display = 'block'; document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден"; }
+        function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
+
+        function solveDualSimplex() {
+            let n = dualVars, m = dualCons;
+            let c = [], A = [], b = [];
+            for (let j = 0; j < n; j++) c.push(parseFloat(document.getElementById(`dual_c${j}`).value) || 0);
+            for (let i = 0; i < m; i++) {
+                let row = [];
+                for (let j = 0; j < n; j++) row.push(parseFloat(document.getElementById(`dual_a${i}_${j}`).value) || 0);
+                A.push(row);
+                b.push(parseFloat(document.getElementById(`dual_b${i}`).value) || 0);
+            }
+            // Преобразуем к виду -Ax ≤ -b, добавляем переменные s_i ≥ 0: -Ax + s = -b
+            // Таблица: [ -A | I | -b ]
+            // Целевая строка: [ c | 0 | 0 ] (минимизация)
+            let tableau = [];
+            for (let i = 0; i < m; i++) {
+                let row = [];
+                for (let j = 0; j < n; j++) row.push(-A[i][j]);
+                for (let s = 0; s < m; s++) row.push(s === i ? 1 : 0);
+                row.push(-b[i]);
+                tableau.push(row);
+            }
+            let objRow = c.slice();               // коэффициенты при x
+            for (let s = 0; s < m; s++) objRow.push(0); // переменные
+            objRow.push(0);                       // значение целевой функции
+            tableau.push(objRow);
+            let steps = [], iter = 0;
+            while (true) {
+                // Выбор разрешающей строки: среди базисных переменных (первые m строк) ищем самую отрицательную правую часть
+                let pivotRow = -1;
+                for (let i = 0; i < m; i++) {
+                    if (tableau[i][n + m] < -1e-9 && (pivotRow === -1 || tableau[i][n + m] < tableau[pivotRow][n + m]))
+                        pivotRow = i;
+                }
+                if (pivotRow === -1) break;
+                // Выбор разрешающего столбца: среди отрицательных элементов в строке pivotRow
+                let pivotCol = -1;
+                for (let j = 0; j < n + m; j++) {
+                    if (tableau[pivotRow][j] < -1e-9) {
+                        let ratio = tableau[m][j] / tableau[pivotRow][j];
+                        if (pivotCol === -1 || ratio < tableau[m][pivotCol] / tableau[pivotRow][pivotCol])
+                            pivotCol = j;
+                    }
+                }
+                if (pivotCol === -1) {
+                    steps.push("Задача несовместна (нет допустимых решений)");
+                    break;
+                }
+                let pivotVal = tableau[pivotRow][pivotCol];
+                for (let j = 0; j <= n + m; j++) tableau[pivotRow][j] /= pivotVal;
+                for (let i = 0; i <= m; i++) {
+                    if (i !== pivotRow) {
+                        let factor = tableau[i][pivotCol];
+                        for (let j = 0; j <= n + m; j++) tableau[i][j] -= factor * tableau[pivotRow][j];
+                    }
+                }
+                steps.push(`Итерация ${++iter}: ведущая строка ${pivotRow + 1}, столбец ${pivotCol + 1}`);
+            }
+            let x = Array(n).fill(0);
+            for (let j = 0; j < n; j++) {
+                let basicRow = -1;
+                for (let i = 0; i < m; i++) {
+                    if (Math.abs(tableau[i][j] - 1) < 1e-9) {
+                        let ok = true;
+                        for (let k = 0; k < n + m; k++) if (k !== j && Math.abs(tableau[i][k]) > 1e-9) ok = false;
+                        if (ok) basicRow = i;
+                    }
+                }
+                if (basicRow !== -1) x[j] = tableau[basicRow][n + m];
+            }
+            let optValue = tableau[m][n + m];
+            document.getElementById('dualResult').style.display = 'block';
+            document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`;
+            document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден";
+        }
 
         window.onload = function () { renderProducts(); initTSP(); buildSimplexInput(); buildDualInput(); displayHistoryProd(); };
     </script>
