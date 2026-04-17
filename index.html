@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Оптимальные решения: перебор (производство + инвестиции) + симплекс</title>
+    <title>Оптимальные решения: градиентный TSP + симплекс + ресурсы</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        /* ========== ПОЛНОСТЬЮ ОБЪЕДИНЁННЫЙ СТИЛЬ ========== */
+        /* ========== ОБЩИЙ СТИЛЬ (объединённый) ========== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -250,8 +250,7 @@
             outline: none;
         }
 
-        .product-row,
-        .project-row {
+        .product-row {
             background: rgba(54, 54, 54, 0.9);
             border-radius: 15px;
             padding: 15px;
@@ -347,6 +346,7 @@
             vertical-align: middle;
         }
 
+        .tsp-card,
         .simplex-card {
             background: rgba(30, 30, 45, 0.8);
             border-radius: 20px;
@@ -354,6 +354,45 @@
             border: 1px solid #9b59b6;
             margin-top: 20px;
             overflow-x: auto;
+        }
+
+        .matrix-input {
+            width: 70px;
+            text-align: center;
+            background: rgba(64, 64, 64, 0.9);
+            border: 1px solid #9b59b6;
+            color: white;
+            border-radius: 8px;
+            padding: 6px;
+        }
+
+        .tsp-result-badge {
+            background: #9b59b6;
+            border-radius: 40px;
+            padding: 12px 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .tsp-canvas-container {
+            background: #1e1e2a;
+            border-radius: 20px;
+            padding: 10px;
+            margin-top: 20px;
+            border: 1px solid #9b59b6;
+            text-align: center;
+        }
+
+        canvas#tspGraphCanvas {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            aspect-ratio: 600/400;
+            background: #0f0f1a;
+            border-radius: 16px;
+            margin: 0 auto;
+            display: block;
         }
 
         .history-item {
@@ -372,9 +411,52 @@
         }
 
         @media (max-width: 768px) {
+            .matrix-input {
+                width: 55px;
+                font-size: 0.7rem;
+            }
+
             .stats-container {
                 grid-template-columns: 1fr;
             }
+        }
+
+        #distanceMatrixContainer table {
+            width: auto;
+            margin: 0 auto;
+            background: rgba(30, 30, 45, 0.8);
+            border-collapse: collapse;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        #distanceMatrixContainer th,
+        #distanceMatrixContainer td {
+            border: 1px solid #9b59b6;
+            padding: 10px 12px;
+            text-align: center;
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        #distanceMatrixContainer th {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            color: white;
+        }
+
+        #distanceMatrixContainer td:first-child {
+            background: linear-gradient(135deg, #6c3483, #8e44ad);
+            color: white;
+            font-weight: bold;
+        }
+
+        #distanceMatrixContainer .matrix-input {
+            width: 70px;
+            text-align: center;
+            background: rgba(64, 64, 64, 0.9);
+            border: 1px solid #9b59b6;
+            color: white;
+            border-radius: 10px;
+            padding: 8px 5px;
         }
 
         #simplexTab .btn-add,
@@ -393,9 +475,9 @@
             <div class="col-lg-10 col-md-12">
                 <div class="calculator-card">
                     <div class="card-header">
-                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения: перебор (производство +
-                            инвестиции)</h1>
-                        <p>Производство (перебор) | Инвестиционные проекты (перебор) | Симплекс | Двойственный симплекс
+                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения: градиентный TSP + симплекс
+                        </h1>
+                        <p>Производство (перебор) | Коммивояжёр (градиент Хопфилда) | Симплекс | Двойственный симплекс
                         </p>
                     </div>
                     <div class="card-body">
@@ -404,8 +486,8 @@
                                     data-bs-target="#production"><i class="bi bi-box-seam me-1"></i> Производство
                                     (перебор)</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#investment"><i class="bi bi-pie-chart me-1"></i> Инвестиции
-                                    (перебор)</button></li>
+                                    data-bs-target="#tspTabMain"><i class="bi bi-map me-1"></i> Коммивояжёр
+                                    (градиент)</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
                                     data-bs-target="#advanced"><i class="bi bi-graph-up me-1"></i>
                                     Симплекс-методы</button></li>
@@ -519,118 +601,76 @@
                                 <div id="errorProd" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- ========== 2. ИНВЕСТИЦИОННЫЕ ПРОЕКТЫ (полный перебор, аналогичный производству) ========== -->
-                            <div class="tab-pane fade" id="investment">
-                                <div class="row mb-4">
-                                    <div class="col-md-6"><label class="form-label">Бюджет часов
-                                            (человеко-часов):</label><input type="number" id="invBudgetHours"
-                                            class="form-control" value="50" min="1" onchange="updateComplexityInv()">
+                            <!-- ========== 2. КОММИВОЯЖЁР (ГРАДИЕНТНЫЙ МЕТОД - НЕЙРОСЕТЬ ХОПФИЛДА) ========== -->
+                            <div class="tab-pane fade" id="tspTabMain">
+                                <div class="tsp-section">
+                                    <h3><i class="bi bi-map"></i> Задача коммивояжёра (градиентный спуск)</h3>
+                                    <p><strong>Метод:</strong> нейросеть Хопфилда. Минимизация энергии
+                                        <code>E = A/2 * Σ(ΣVxi - 1)² + B/2 * Σ(ΣVxi - 1)² + C/2 * ΣΣ Vxi * Vxj * d_ij</code>
+                                        градиентным спуском. Не перебирает маршруты, а находит локальный минимум
+                                        непрерывной функции.</p>
+                                    <div class="row g-2 mb-3 align-items-end">
+                                        <div class="col-md-3"><label class="form-label">Городов (3–8):</label><input
+                                                type="number" id="tspCitiesCount" class="form-control" value="5" min="3"
+                                                max="8" onchange="rebuildTSPMatrix()"></div>
+                                        <div class="col-md-3"><label class="form-label">Лимит (км):</label><input
+                                                type="number" id="tspLimit" class="form-control" value="200" min="10">
+                                        </div>
+                                        <div class="col-md-3"><button class="btn-add w-100"
+                                                onclick="rebuildTSPMatrix()"><i
+                                                    class="bi bi-grid-3x3-gap-fill me-1"></i>Построить матрицу</button>
+                                        </div>
+                                        <div class="col-md-3"><button class="btn-export w-100"
+                                                onclick="generateRandomDistances()"><i
+                                                    class="bi bi-shuffle me-1"></i>Случайные</button></div>
                                     </div>
-                                    <div class="col-md-6"><label class="form-label">Бюджет материалов (усл.
-                                            ед.):</label><input type="number" id="invBudgetMaterial"
-                                            class="form-control" value="60" min="1" onchange="updateComplexityInv()">
+                                    <div class="tsp-card"><strong><i class="bi bi-table me-1"></i> Матрица расстояний
+                                            (симметричная, км)</strong>
+                                        <div id="distanceMatrixContainer" class="mt-3"></div>
                                     </div>
-                                </div>
-                                <div class="mode-selector mb-3"><label class="form-label">Режим расчёта:</label>
-                                    <div class="d-flex gap-3">
-                                        <div class="form-check"><input class="form-check-input" type="radio"
-                                                name="invMode" id="invModeMax" value="max" checked><label
-                                                class="form-check-label">Максимизация прибыли</label></div>
-                                        <div class="form-check"><input class="form-check-input" type="radio"
-                                                name="invMode" id="invModeMin" value="min"><label
-                                                class="form-check-label">Минимизация прибыли</label></div>
-                                    </div>
-                                </div>
-                                <h3 class="mb-3">Инвестиционные проекты</h3>
-                                <div id="projectsContainer"></div>
-                                <div class="button-row"><button class="btn-add" onclick="addProject()"><i
-                                            class="bi bi-plus-circle me-1"></i>Добавить проект</button><button
-                                        class="btn-remove" onclick="removeProject()"><i
-                                            class="bi bi-dash-circle me-1"></i>Удалить последний</button></div>
-                                <div class="complexity-info"><i class="bi bi-info-circle"></i> <strong>Теоретическое
-                                        число комбинаций (2^n):</strong> <span id="totalCombinationsInv">0</span></div>
-                                <button class="btn-calculate" onclick="calculateOptimumInv()"><i
-                                        class="bi bi-search me-2"></i> Найти оптимальный портфель</button>
-                                <div id="resultsInv" style="display: none;">
-                                    <div class="result-card mb-4">
-                                        <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                            <div><span class="badge bg-success" id="modeBadgeInv">Максимальная
-                                                    прибыль</span>
-                                                <div id="resultProjectsInv"></div>
+                                    <button class="btn-calculate" onclick="solveTSPGradient()"><i
+                                            class="bi bi-cpu me-2"></i> Запустить градиентный спуск (Hopfield)</button>
+                                    <div id="tspResults" class="mt-4" style="display: none;">
+                                        <div class="result-card">
+                                            <div class="d-flex flex-wrap justify-content-between">
+                                                <div><span class="badge bg-info" id="tspResultBadge"><i
+                                                            class="bi bi-flag-fill me-1"></i> Маршрут (градиент)</span>
+                                                    <div id="tspOptimalPath" class="mt-2"></div>
+                                                </div>
+                                                <div class="tsp-result-badge"><i class="bi bi-rulers me-1"></i> Длина:
+                                                    <span id="tspTotalDistance">0</span> км</div>
                                             </div>
-                                            <div class="profit-badge" id="profitBadgeInv"><i
-                                                    class="bi bi-currency-ruble"></i> <span
-                                                    id="optimalProfitInv">0</span>
-                                                <div id="profitLabelInv">максимальная прибыль</div>
+                                            <div class="stats-container mt-3">
+                                                <div class="checks-info"><strong><i class="bi bi-arrow-repeat me-1"></i>
+                                                        ИТЕРАЦИЙ</strong>
+                                                    <div><span id="tspIterations">0</span></div>
+                                                </div>
+                                                <div class="checks-info"><strong><i class="bi bi-check-circle me-1"></i>
+                                                        ДОПУСТИМ (≤ лимита)</strong>
+                                                    <div><span id="tspValidFlag">—</span></div>
+                                                </div>
+                                                <div class="checks-info"><strong><i
+                                                            class="bi bi-hourglass-split me-1"></i> ВРЕМЯ</strong>
+                                                    <div><span id="tspTime">0</span> мс</div>
+                                                </div>
+                                                <div class="checks-info"><strong><i class="bi bi-graph-down me-1"></i>
+                                                        КОНЕЧНАЯ ЭНЕРГИЯ</strong>
+                                                    <div><span id="tspEnergy">0</span></div>
+                                                </div>
                                             </div>
+                                            <div class="mt-2 small" id="tspLimitMessage"><i
+                                                    class="bi bi-info-circle me-1"></i> Градиентный спуск оптимизирует
+                                                энергию сети Хопфилда.</div>
                                         </div>
                                     </div>
-                                    <div class="resource-usage">
-                                        <div class="resource-item">
-                                            <div class="resource-header"><span><i class="bi bi-clock"></i> Использовано
-                                                    часов</span><span><span id="usedHoursInv">0</span> / <span
-                                                        id="totalHoursDisplayInv">0</span></span></div>
-                                            <div class="resource-bar-container">
-                                                <div class="resource-bar-used" id="hoursBarInv">0%</div>
-                                            </div>
-                                        </div>
-                                        <div class="resource-item">
-                                            <div class="resource-header"><span><i class="bi bi-box-seam"></i>
-                                                    Использовано материалов</span><span><span
-                                                        id="usedMaterialInv">0</span> / <span
-                                                        id="totalMaterialDisplayInv">0</span></span></div>
-                                            <div class="resource-bar-container">
-                                                <div class="resource-bar-used" id="materialBarInv">0%</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="stats-container">
-                                        <div class="checks-info"><i class="bi bi-diagram-3"></i><strong>ПРОВЕРЕНО
-                                                КОМБИНАЦИЙ</strong>
-                                            <div><span id="checksCountInv">0</span></div>
-                                        </div>
-                                        <div class="checks-info"><i
-                                                class="bi bi-hourglass-split"></i><strong>ВРЕМЯ</strong>
-                                            <div><span id="calcTimeInv">0</span> мс</div>
-                                        </div>
-                                        <div class="checks-info"><i
-                                                class="bi bi-lightning-charge"></i><strong>УСКОРЕНИЕ</strong>
-                                            <div><span id="speedupInv">0</span> x</div>
-                                        </div>
-                                    </div>
-                                    <div class="charts-container">
-                                        <div class="chart-container"><canvas id="resourceChartInv"></canvas></div>
-                                        <div class="chart-container"><canvas id="efficiencyChartInv"></canvas></div>
-                                    </div>
-                                    <div class="mt-4">
-                                        <h5>Детальный расчёт проектов</h5>
-                                        <div class="table-responsive">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>ПРОЕКТ</th>
-                                                        <th>ТРЕБУЕТ ЧАСОВ</th>
-                                                        <th>ТРЕБУЕТ МАТЕРИАЛОВ</th>
-                                                        <th>ПРИБЫЛЬ</th>
-                                                        <th>ЭФФЕКТИВН.</th>
-                                                        <th>ВКЛЮЧИТЬ</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tableBodyInv"></tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+                                    <div class="tsp-canvas-container"><strong><i class="bi bi-map me-1"></i> Карта
+                                            маршрутов</strong><br><small>Красные линии — найденный
+                                            маршрут</small><canvas id="tspGraphCanvas" width="600"
+                                            height="400"></canvas></div>
                                 </div>
-                                <div class="mt-4">
-                                    <h5>История расчётов (инвестиции)</h5>
-                                    <div id="historyListInv"></div><button class="btn-remove mt-2"
-                                        onclick="clearHistoryInv()"><i class="bi bi-trash me-2"></i>Очистить
-                                        историю</button>
-                                </div>
-                                <div id="errorInv" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- ========== 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ (без изменений) ========== -->
+                            <!-- ========== 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ ========== -->
                             <div class="tab-pane fade" id="advanced">
                                 <ul class="nav nav-tabs mb-3" id="subTab" role="tablist">
                                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
@@ -773,86 +813,131 @@
         function clearHistoryProd() { if (confirm('Очистить историю производства?')) { localStorage.removeItem('calcHistoryProd'); displayHistoryProd(); } }
         function showErrorProd(msg) { let err = document.getElementById('errorProd'); err.style.display = 'block'; err.innerText = msg; }
 
-        // ==================== 2. ИНВЕСТИЦИИ (полный перебор 0/1, аналог производства) ====================
-        let projectCount = 3;
-        const maxProjects = 8;
-        let invChartResource = null, invChartEfficiency = null;
-        let projectsData = [
-            { name: 'Проект A', labor: 12, material: 10, profit: 45 },
-            { name: 'Проект B', labor: 8, material: 15, profit: 40 },
-            { name: 'Проект C', labor: 20, material: 25, profit: 70 }
-        ];
-        function saveProjects() { for (let i = 0; i < projectCount; i++) { let n = document.getElementById(`inv_name${i}`), l = document.getElementById(`inv_labor${i}`), m = document.getElementById(`inv_material${i}`), p = document.getElementById(`inv_profit${i}`); if (n && l && m && p) projectsData[i] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; } }
-        function renderProjects() { let container = document.getElementById('projectsContainer'); if (!container) return; container.innerHTML = ''; for (let i = 0; i < projectCount; i++) { let d = projectsData[i] || { name: `Проект ${i + 1}`, labor: 0, material: 0, profit: 0 }; container.innerHTML += `<div class="project-row"><div class="row g-3"><div class="col-md-3"><label class="form-label">Название</label><input type="text" class="form-control" id="inv_name${i}" value="${d.name}" onchange="updateProjectData(${i})"></div><div class="col-md-3"><label class="form-label">Требует часов</label><input type="number" class="form-control" id="inv_labor${i}" value="${d.labor}" min="1" onchange="updateProjectData(${i}); updateComplexityInv()"></div><div class="col-md-3"><label class="form-label">Требует материалов</label><input type="number" class="form-control" id="inv_material${i}" value="${d.material}" min="1" onchange="updateProjectData(${i}); updateComplexityInv()"></div><div class="col-md-3"><label class="form-label">Прибыль</label><input type="number" class="form-control" id="inv_profit${i}" value="${d.profit}" onchange="updateProjectData(${i})"></div></div></div>`; } updateComplexityInv(); }
-        function updateProjectData(idx) { let n = document.getElementById(`inv_name${idx}`), l = document.getElementById(`inv_labor${idx}`), m = document.getElementById(`inv_material${idx}`), p = document.getElementById(`inv_profit${idx}`); if (n && l && m && p) projectsData[idx] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; }
-        function updateComplexityInv() { let totalComb = Math.pow(2, projectCount); document.getElementById('totalCombinationsInv').innerText = totalComb.toLocaleString(); }
-        function addProject() { if (projectCount < maxProjects) { saveProjects(); projectCount++; projectsData.push({ name: `Проект ${projectCount}`, labor: 0, material: 0, profit: 0 }); renderProjects(); } else alert(`Максимум ${maxProjects} проектов`); }
-        function removeProject() { if (projectCount > 1) { saveProjects(); projectCount--; projectsData.pop(); renderProjects(); } }
-        function getProjects() { let arr = []; for (let i = 0; i < projectCount; i++) arr.push({ name: document.getElementById(`inv_name${i}`).value, labor: parseInt(document.getElementById(`inv_labor${i}`).value), material: parseInt(document.getElementById(`inv_material${i}`).value), profit: parseInt(document.getElementById(`inv_profit${i}`).value) }); return arr; }
-        function calculateOptimumInv() {
-            let budgetHours = parseInt(document.getElementById('invBudgetHours').value), budgetMat = parseInt(document.getElementById('invBudgetMaterial').value), mode = document.querySelector('input[name="invMode"]:checked').value;
-            if (budgetHours <= 0 || budgetMat <= 0) { showErrorInv('Бюджеты должны быть >0'); return; }
-            let projects = getProjects(); for (let p of projects) if (p.labor < 1 || p.material < 1) { showErrorInv('Требования проектов >0'); return; }
-            let start = performance.now();
-            let bestMask = 0, bestProfit = mode === 'max' ? -Infinity : Infinity;
-            let totalComb = Math.pow(2, projectCount);
-            let checks = 0, validCount = 0;
-            for (let mask = 0; mask < totalComb; mask++) {
-                checks++;
-                let hours = 0, mat = 0, profit = 0;
-                for (let i = 0; i < projectCount; i++) {
-                    if (mask & (1 << i)) {
-                        hours += projects[i].labor;
-                        mat += projects[i].material;
-                        profit += projects[i].profit;
-                    }
-                }
-                if (hours <= budgetHours && mat <= budgetMat) {
-                    validCount++;
-                    if ((mode === 'max' && profit > bestProfit) || (mode === 'min' && profit < bestProfit)) {
-                        bestProfit = profit;
-                        bestMask = mask;
-                    }
-                }
-            }
-            if ((mode === 'max' && bestProfit === -Infinity) || (mode === 'min' && bestProfit === Infinity)) { showErrorInv('Нет допустимых портфелей'); return; }
-            let end = performance.now();
-            let speedup = (totalComb / checks).toFixed(2);
-            document.getElementById('resultsInv').style.display = 'block'; document.getElementById('errorInv').style.display = 'none';
-            document.getElementById('optimalProfitInv').innerText = bestProfit; document.getElementById('checksCountInv').innerText = checks;
-            document.getElementById('calcTimeInv').innerText = (end - start).toFixed(2); document.getElementById('speedupInv').innerText = speedup;
-            let usedHours = 0, usedMat = 0, selected = [];
-            for (let i = 0; i < projectCount; i++) {
-                if (bestMask & (1 << i)) {
-                    selected.push(projects[i].name);
-                    usedHours += projects[i].labor;
-                    usedMat += projects[i].material;
-                }
-            }
-            document.getElementById('usedHoursInv').innerText = usedHours; document.getElementById('usedMaterialInv').innerText = usedMat;
-            document.getElementById('totalHoursDisplayInv').innerText = budgetHours; document.getElementById('totalMaterialDisplayInv').innerText = budgetMat;
-            let hp = (usedHours / budgetHours * 100).toFixed(1), mp = (usedMat / budgetMat * 100).toFixed(1);
-            document.getElementById('hoursBarInv').style.width = hp + '%'; document.getElementById('hoursBarInv').innerText = hp + '%';
-            document.getElementById('materialBarInv').style.width = mp + '%'; document.getElementById('materialBarInv').innerText = mp + '%';
-            if (bestProfit < 0) document.getElementById('profitBadgeInv').classList.add('negative'); else document.getElementById('profitBadgeInv').classList.remove('negative');
-            if (mode === 'max') { document.getElementById('modeBadgeInv').innerHTML = 'Максимальная прибыль'; document.getElementById('profitLabelInv').innerText = 'максимальная прибыль'; }
-            else { document.getElementById('modeBadgeInv').innerHTML = 'Минимальная прибыль'; document.getElementById('profitLabelInv').innerText = 'минимальная прибыль'; }
-            let resHtml = selected.map(s => `<div><strong>${s}</strong> — включён</div>`).join('');
-            if (resHtml === '') resHtml = '<div>Ни один проект не выбран</div>';
-            document.getElementById('resultProjectsInv').innerHTML = resHtml;
-            let tabHtml = ''; for (let i = 0; i < projectCount; i++) { let eff = (projects[i].profit / (projects[i].labor + projects[i].material)).toFixed(2); let included = (bestMask & (1 << i)) ? '✔️ Да' : '—'; tabHtml += `<tr><td><strong>${projects[i].name}</strong></td><td>${projects[i].labor}</td><td>${projects[i].material}</td><td>${projects[i].profit}</td><td>${eff}</td><td class="fw-bold">${included}</td></tr>`; }
-            document.getElementById('tableBodyInv').innerHTML = tabHtml;
-            if (invChartResource) invChartResource.destroy(); if (invChartEfficiency) invChartEfficiency.destroy();
-            let ctx1 = document.getElementById('resourceChartInv').getContext('2d'); invChartResource = new Chart(ctx1, { type: 'bar', data: { labels: ['Часы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [budgetHours - usedHours, budgetMat - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
-            let ctx2 = document.getElementById('efficiencyChartInv').getContext('2d'); invChartEfficiency = new Chart(ctx2, { type: 'doughnut', data: { labels: projects.map(p => p.name), datasets: [{ data: projects.map(p => (p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
-            let hist = JSON.parse(localStorage.getItem('calcHistoryInv') || '[]'); hist.unshift({ timestamp: new Date().toLocaleString(), projects: projects.map(p => p.name), selected: selected, profit: bestProfit, mode, checks, time: (end - start).toFixed(2) }); if (hist.length > 10) hist.pop(); localStorage.setItem('calcHistoryInv', JSON.stringify(hist)); displayHistoryInv();
-        }
-        function displayHistoryInv() { let hist = JSON.parse(localStorage.getItem('calcHistoryInv') || '[]'); let container = document.getElementById('historyListInv'); if (hist.length === 0) { container.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>'; return; } container.innerHTML = hist.map((item, idx) => `<div class="history-item" onclick="loadHistoryInv(${idx})"><div class="d-flex justify-content-between"><small>${item.timestamp}</small><span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">${item.mode === 'max' ? 'MAX' : 'MIN'}</span></div><div><strong>Прибыль: ${item.profit}</strong></div><small>Проекты: ${item.selected.join(', ') || 'нет'}</small></div>`).join(''); }
-        function loadHistoryInv(idx) { let hist = JSON.parse(localStorage.getItem('calcHistoryInv') || '[]'); let item = hist[idx]; if (item) alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nВыбранные проекты: ${item.selected.join(', ')}`); }
-        function clearHistoryInv() { if (confirm('Очистить историю инвестиций?')) { localStorage.removeItem('calcHistoryInv'); displayHistoryInv(); } }
-        function showErrorInv(msg) { let err = document.getElementById('errorInv'); err.style.display = 'block'; err.innerText = msg; }
+        // ==================== 2. КОММИВОЯЖЁР - ГРАДИЕНТНЫЙ МЕТОД (НЕЙРОСЕТЬ ХОПФИЛДА) ====================
+        let tspDistanceMatrix = [], tspCities = 5, tspCanvas = null;
+        let tspBestRoute = [], tspBestDistance = Infinity;
+        function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
+        function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(8, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
+        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Город ${i + 1}</th>`; html += '</tr></thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Город ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`; } html += '</tr>'; } html += '</tbody></table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
+        function updateDistance(i, j, val) { let v = Math.max(1, Math.min(500, parseInt(val) || 1)); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${j}_${i}`).value = v; drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
+        function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${i}_${j}`).value = v; document.getElementById(`dist_${j}_${i}`).value = v; } drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
+        function totalDistance(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
 
-        // ==================== 3. СИМПЛЕКС (оригинал) ====================
+        // Градиентный метод: нейросеть Хопфилда для TSP
+        function solveTSPGradient() {
+            const startTime = performance.now();
+            const limit = parseInt(document.getElementById('tspLimit').value) || 999999;
+            const N = tspCities;
+            if (N < 2) return;
+
+            // Параметры сети
+            const A = 500.0;   // штраф за строки/столбцы
+            const B = 500.0;
+            const C = 1.0;     // коэффициент длины маршрута
+            const maxIter = 2000;
+            const dt = 0.001;
+
+            // Инициализация нейронов V[x][i] (город x, позиция i)
+            let V = Array(N).fill().map(() => Array(N).fill(0.0));
+            // случайные небольшие значения
+            for (let i = 0; i < N; i++)
+                for (let j = 0; j < N; j++)
+                    V[i][j] = 0.5 + (Math.random() - 0.5) * 0.1;
+
+            let energyHistory = [];
+            let iter;
+            for (iter = 0; iter < maxIter; iter++) {
+                // Вычисляем энергию и градиент
+                let dV = Array(N).fill().map(() => Array(N).fill(0.0));
+                let energy = 0;
+
+                // Штрафы строк: каждый город встречается ровно один раз
+                for (let x = 0; x < N; x++) {
+                    let sumRow = 0;
+                    for (let i = 0; i < N; i++) sumRow += V[x][i];
+                    let diff = sumRow - 1;
+                    energy += 0.5 * A * diff * diff;
+                    for (let i = 0; i < N; i++) dV[x][i] -= A * diff;
+                }
+                // Штрафы столбцов: на каждой позиции ровно один город
+                for (let i = 0; i < N; i++) {
+                    let sumCol = 0;
+                    for (let x = 0; x < N; x++) sumCol += V[x][i];
+                    let diff = sumCol - 1;
+                    energy += 0.5 * B * diff * diff;
+                    for (let x = 0; x < N; x++) dV[x][i] -= B * diff;
+                }
+                // Целевая функция: длина маршрута (C * sum_{x,y,i} V[x][i] * V[y][i+1] * d_xy)
+                for (let x = 0; x < N; x++) {
+                    for (let y = 0; y < N; y++) {
+                        if (x === y) continue;
+                        for (let i = 0; i < N; i++) {
+                            let j = (i + 1) % N;
+                            let contrib = C * tspDistanceMatrix[x][y] * V[x][i] * V[y][j];
+                            energy += contrib;
+                            dV[x][i] += C * tspDistanceMatrix[x][y] * V[y][j];
+                            dV[y][j] += C * tspDistanceMatrix[x][y] * V[x][i];
+                        }
+                    }
+                }
+                energyHistory.push(energy);
+
+                // Обновление состояний по градиенту (спуск)
+                let maxChange = 0;
+                for (let x = 0; x < N; x++) {
+                    for (let i = 0; i < N; i++) {
+                        let delta = -dV[x][i] * dt;
+                        V[x][i] += delta;
+                        if (V[x][i] < 0) V[x][i] = 0;
+                        if (V[x][i] > 1) V[x][i] = 1;
+                        maxChange = Math.max(maxChange, Math.abs(delta));
+                    }
+                }
+                if (maxChange < 1e-6 && iter > 100) break;
+            }
+
+            // Декодирование маршрута из матрицы V: для каждой позиции выбираем город с max V
+            let route = new Array(N);
+            let used = new Array(N).fill(false);
+            for (let i = 0; i < N; i++) {
+                let bestCity = -1, bestVal = -1;
+                for (let x = 0; x < N; x++) {
+                    if (!used[x] && V[x][i] > bestVal) {
+                        bestVal = V[x][i];
+                        bestCity = x;
+                    }
+                }
+                if (bestCity !== -1) {
+                    route[i] = bestCity;
+                    used[bestCity] = true;
+                }
+            }
+            // если какой-то город не назначен (ошибка), достроим
+            for (let x = 0; x < N; x++) if (!used[x]) { for (let i = 0; i < N; i++) if (route[i] === undefined) { route[i] = x; used[x] = true; break; } }
+
+            let dist = totalDistance(route);
+            let feasible = (dist <= limit);
+
+            tspBestRoute = route;
+            tspBestDistance = dist;
+            const endTime = performance.now();
+
+            document.getElementById('tspResults').style.display = 'block';
+            document.getElementById('tspOptimalPath').innerHTML = route.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${route[0] + 1}`;
+            document.getElementById('tspTotalDistance').innerText = dist;
+            document.getElementById('tspIterations').innerText = iter;
+            document.getElementById('tspValidFlag').innerHTML = feasible ? '✅ Да' : '❌ Нет';
+            document.getElementById('tspTime').innerText = (endTime - startTime).toFixed(2);
+            document.getElementById('tspEnergy').innerText = energyHistory[energyHistory.length - 1].toFixed(2);
+            let msg = feasible ? `Маршрут укладывается в лимит ${limit} км.` : `Маршрут не укладывается в лимит ${limit} км (длина ${dist} км).`;
+            document.getElementById('tspLimitMessage').innerHTML = `<i class="bi bi-info-circle me-1"></i> ${msg} Градиентный спуск завершён за ${iter} итераций.`;
+            document.getElementById('tspResultBadge').innerHTML = feasible ? '<i class="bi bi-check-circle-fill me-1"></i> Допустимый маршрут (градиент)' : '<i class="bi bi-exclamation-triangle-fill me-1"></i> Маршрут (превышает лимит)';
+            drawTSPGraph(route);
+        }
+
+        function drawTSPGraph(route) { if (!tspCanvas) return; const ctx = tspCanvas.getContext('2d'); const w = tspCanvas.clientWidth, h = tspCanvas.clientHeight; tspCanvas.width = w; tspCanvas.height = h; ctx.clearRect(0, 0, w, h); if (tspCities === 0) return; const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2; let points = []; for (let i = 0; i < tspCities; i++) { let angle = i * angleStep - Math.PI / 2; points.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) }); } for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.strokeStyle = "#555"; ctx.stroke(); ctx.fillStyle = "#aaa"; ctx.fillText(tspDistanceMatrix[i][j], (points[i].x + points[j].x) / 2, (points[i].y + points[j].y) / 2 - 5); } for (let i = 0; i < tspCities; i++) { ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI); ctx.fillStyle = "#9b59b6"; ctx.fill(); ctx.fillStyle = "white"; ctx.font = "bold 16px 'Segoe UI'"; ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7); } if (route && route.length > 1) { for (let k = 0; k < route.length; k++) { let from = route[k], to = route[(k + 1) % route.length]; ctx.beginPath(); ctx.moveTo(points[from].x, points[from].y); ctx.lineTo(points[to].x, points[to].y); ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 3; ctx.stroke(); } } }
+
+        // ==================== 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ ====================
         let simplexVars = 2, simplexCons = 2;
         function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
         function solveSimplex() { let n = simplexVars, m = simplexCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0); } let direction = document.querySelector('input[name="simplexDirection"]:checked').value; if (direction === 'min') c = c.map(ci => -ci); let tableau = []; for (let i = 0; i < m; i++) { let row = [...A[i], ...Array(m).fill(0), b[i]]; row[n + i] = 1; tableau.push(row); } let objRow = c.map(ci => -ci); objRow.push(...Array(m).fill(0), 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotCol = -1; for (let j = 0; j < n + m; j++)if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j; if (pivotCol == -1) break; let minRatio = Infinity, pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][pivotCol] > 1e-9) { let ratio = tableau[i][n + m] / tableau[i][pivotCol]; if (ratio < minRatio) { minRatio = ratio; pivotRow = i; } } if (pivotRow == -1) { steps.push("Задача неограничена"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k < n + m; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + m]; } let optValue = tableau[m][n + m]; if (direction === 'min') optValue = -optValue; document.getElementById('simplexResult').style.display = 'block'; let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение'; document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций"; }
@@ -860,7 +945,7 @@
         function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++)html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++)html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
         function solveDualSimplex() { let n = dualVars, m = dualCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`dual_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`dual_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`dual_b${i}`).value) || 0); } let tableau = []; for (let i = 0; i < m; i++) { let row = A[i].map(a => -a); row.push(1); row.push(-b[i]); tableau.push(row); } let objRow = c.map(ci => ci); objRow.push(0, 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][n + 1] < -1e-9 && (pivotRow == -1 || tableau[i][n + 1] < tableau[pivotRow][n + 1])) pivotRow = i; if (pivotRow == -1) break; let pivotCol = -1; for (let j = 0; j <= n; j++) { if (tableau[pivotRow][j] < -1e-9) { let ratio = tableau[m][j] / tableau[pivotRow][j]; if (pivotCol == -1 || ratio < tableau[m][pivotCol] / tableau[pivotRow][pivotCol]) pivotCol = j; } } if (pivotCol == -1) { steps.push("Задача несовместна"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + 1; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + 1; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущая строка ${pivotRow + 1}, столбец ${pivotCol + 1}`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k <= n; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + 1]; } let optValue = tableau[m][n + 1]; document.getElementById('dualResult').style.display = 'block'; document.getElementById('dualSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> Минимальное значение целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('dualSteps').innerHTML = steps.join('<br>') || "Оптимум найден"; }
 
-        window.onload = function () { renderProducts(); renderProjects(); buildSimplexInput(); buildDualInput(); displayHistoryProd(); displayHistoryInv(); };
+        window.onload = function () { renderProducts(); initTSP(); buildSimplexInput(); buildDualInput(); displayHistoryProd(); };
     </script>
 </body>
 
