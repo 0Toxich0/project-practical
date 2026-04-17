@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Оптимальные решения: градиентный TSP + симплекс + ресурсы</title>
+    <title>Оптимальные решения: градиентная оптимизация последовательности + симплекс</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -475,10 +475,10 @@
             <div class="col-lg-10 col-md-12">
                 <div class="calculator-card">
                     <div class="card-header">
-                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения: градиентный TSP + симплекс
-                        </h1>
-                        <p>Производство (перебор) | Коммивояжёр (градиент Хопфилда) | Симплекс | Двойственный симплекс
-                        </p>
+                        <h1><i class="bi bi-calculator-fill me-2"></i>Оптимальные решения: градиентная оптимизация +
+                            симплекс</h1>
+                        <p>Производство (перебор) | Последовательность операций (градиент) | Симплекс | Двойственный
+                            симплекс</p>
                     </div>
                     <div class="card-body">
                         <ul class="nav nav-tabs mb-4" id="mainTab" role="tablist">
@@ -486,8 +486,8 @@
                                     data-bs-target="#production"><i class="bi bi-box-seam me-1"></i> Производство
                                     (перебор)</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#tspTabMain"><i class="bi bi-map me-1"></i> Коммивояжёр
-                                    (градиент)</button></li>
+                                    data-bs-target="#tspTabMain"><i class="bi bi-diagram-3 me-1"></i> Последовательность
+                                    операций (градиент)</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
                                     data-bs-target="#advanced"><i class="bi bi-graph-up me-1"></i>
                                     Симплекс-методы</button></li>
@@ -601,44 +601,46 @@
                                 <div id="errorProd" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- ========== 2. КОММИВОЯЖЁР (ГРАДИЕНТНЫЙ МЕТОД - НЕЙРОСЕТЬ ХОПФИЛДА) ========== -->
+                            <!-- ========== 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД) ========== -->
                             <div class="tab-pane fade" id="tspTabMain">
                                 <div class="tsp-section">
-                                    <h3><i class="bi bi-map"></i> Задача коммивояжёра (градиентный спуск)</h3>
-                                    <p><strong>Метод:</strong> нейросеть Хопфилда. Минимизация энергии
-                                        <code>E = A/2 * Σ(ΣVxi - 1)² + B/2 * Σ(ΣVxi - 1)² + C/2 * ΣΣ Vxi * Vxj * d_ij</code>
-                                        градиентным спуском. Не перебирает маршруты, а находит локальный минимум
-                                        непрерывной функции.</p>
+                                    <h3><i class="bi bi-diagram-3"></i> Оптимизация последовательности операций</h3>
+                                    <p><strong>Градиентный метод:</strong> минимизация целевой функции
+                                        <code>E = A/2·Σ(ΣVxi - 1)² + B/2·Σ(ΣVxi - 1)² + C·ΣΣ Vxi·Vyj·d_ij</code> с
+                                        помощью градиентного спуска. Не требует перебора вариантов, находит
+                                        локально-оптимальный порядок выполнения операций.</p>
                                     <div class="row g-2 mb-3 align-items-end">
-                                        <div class="col-md-3"><label class="form-label">Городов (3–8):</label><input
-                                                type="number" id="tspCitiesCount" class="form-control" value="5" min="3"
-                                                max="8" onchange="rebuildTSPMatrix()"></div>
-                                        <div class="col-md-3"><label class="form-label">Лимит (км):</label><input
-                                                type="number" id="tspLimit" class="form-control" value="200" min="10">
-                                        </div>
+                                        <div class="col-md-3"><label class="form-label">Количество операций
+                                                (3–8):</label><input type="number" id="tspCitiesCount"
+                                                class="form-control" value="5" min="3" max="8"
+                                                onchange="rebuildTSPMatrix()"></div>
+                                        <div class="col-md-3"><label class="form-label">Лимит времени
+                                                (мин):</label><input type="number" id="tspLimit" class="form-control"
+                                                value="200" min="10"></div>
                                         <div class="col-md-3"><button class="btn-add w-100"
                                                 onclick="rebuildTSPMatrix()"><i
                                                     class="bi bi-grid-3x3-gap-fill me-1"></i>Построить матрицу</button>
                                         </div>
                                         <div class="col-md-3"><button class="btn-export w-100"
                                                 onclick="generateRandomDistances()"><i
-                                                    class="bi bi-shuffle me-1"></i>Случайные</button></div>
+                                                    class="bi bi-shuffle me-1"></i>Случайные времена</button></div>
                                     </div>
-                                    <div class="tsp-card"><strong><i class="bi bi-table me-1"></i> Матрица расстояний
-                                            (симметричная, км)</strong>
+                                    <div class="tsp-card"><strong><i class="bi bi-table me-1"></i> Матрица времени
+                                            перехода (симметричная, мин)</strong>
                                         <div id="distanceMatrixContainer" class="mt-3"></div>
                                     </div>
                                     <button class="btn-calculate" onclick="solveTSPGradient()"><i
-                                            class="bi bi-cpu me-2"></i> Запустить градиентный спуск (Hopfield)</button>
+                                            class="bi bi-cpu me-2"></i> Запустить градиентный спуск</button>
                                     <div id="tspResults" class="mt-4" style="display: none;">
                                         <div class="result-card">
                                             <div class="d-flex flex-wrap justify-content-between">
                                                 <div><span class="badge bg-info" id="tspResultBadge"><i
-                                                            class="bi bi-flag-fill me-1"></i> Маршрут (градиент)</span>
+                                                            class="bi bi-flag-fill me-1"></i> Оптимальная
+                                                        последовательность</span>
                                                     <div id="tspOptimalPath" class="mt-2"></div>
                                                 </div>
-                                                <div class="tsp-result-badge"><i class="bi bi-rulers me-1"></i> Длина:
-                                                    <span id="tspTotalDistance">0</span> км</div>
+                                                <div class="tsp-result-badge"><i class="bi bi-stopwatch me-1"></i>
+                                                    Время: <span id="tspTotalDistance">0</span> мин</div>
                                             </div>
                                             <div class="stats-container mt-3">
                                                 <div class="checks-info"><strong><i class="bi bi-arrow-repeat me-1"></i>
@@ -646,7 +648,7 @@
                                                     <div><span id="tspIterations">0</span></div>
                                                 </div>
                                                 <div class="checks-info"><strong><i class="bi bi-check-circle me-1"></i>
-                                                        ДОПУСТИМ (≤ лимита)</strong>
+                                                        В ЛИМИТЕ</strong>
                                                     <div><span id="tspValidFlag">—</span></div>
                                                 </div>
                                                 <div class="checks-info"><strong><i
@@ -660,12 +662,12 @@
                                             </div>
                                             <div class="mt-2 small" id="tspLimitMessage"><i
                                                     class="bi bi-info-circle me-1"></i> Градиентный спуск оптимизирует
-                                                энергию сети Хопфилда.</div>
+                                                последовательность выполнения операций.</div>
                                         </div>
                                     </div>
-                                    <div class="tsp-canvas-container"><strong><i class="bi bi-map me-1"></i> Карта
-                                            маршрутов</strong><br><small>Красные линии — найденный
-                                            маршрут</small><canvas id="tspGraphCanvas" width="600"
+                                    <div class="tsp-canvas-container"><strong><i class="bi bi-diagram-3 me-1"></i> Схема
+                                            переходов</strong><br><small>Красные линии — оптимальный
+                                            порядок</small><canvas id="tspGraphCanvas" width="600"
                                             height="400"></canvas></div>
                                 </div>
                             </div>
@@ -813,33 +815,32 @@
         function clearHistoryProd() { if (confirm('Очистить историю производства?')) { localStorage.removeItem('calcHistoryProd'); displayHistoryProd(); } }
         function showErrorProd(msg) { let err = document.getElementById('errorProd'); err.style.display = 'block'; err.innerText = msg; }
 
-        // ==================== 2. КОММИВОЯЖЁР - ГРАДИЕНТНЫЙ МЕТОД (НЕЙРОСЕТЬ ХОПФИЛДА) ====================
+        // ==================== 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД) ====================
         let tspDistanceMatrix = [], tspCities = 5, tspCanvas = null;
         let tspBestRoute = [], tspBestDistance = Infinity;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
         function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(8, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
-        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Город ${i + 1}</th>`; html += '</tr></thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Город ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`; } html += '</tr>'; } html += '</tbody></table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
+        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Операция ${i + 1}</th>`; html += '</tr></thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Операция ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)"></td>`; } html += '</tr>'; } html += '</tbody></table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
         function updateDistance(i, j, val) { let v = Math.max(1, Math.min(500, parseInt(val) || 1)); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${j}_${i}`).value = v; drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; document.getElementById(`dist_${i}_${j}`).value = v; document.getElementById(`dist_${j}_${i}`).value = v; } drawTSPGraph([]); document.getElementById('tspResults').style.display = 'none'; }
-        function totalDistance(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
+        function totalTime(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
 
-        // Градиентный метод: нейросеть Хопфилда для TSP
+        // Градиентный метод (без упоминания нейросети)
         function solveTSPGradient() {
             const startTime = performance.now();
             const limit = parseInt(document.getElementById('tspLimit').value) || 999999;
             const N = tspCities;
             if (N < 2) return;
 
-            // Параметры сети
-            const A = 500.0;   // штраф за строки/столбцы
+            // Параметры оптимизации
+            const A = 500.0;   // штраф за нарушение уникальности операций
             const B = 500.0;
-            const C = 1.0;     // коэффициент длины маршрута
+            const C = 1.0;     // вес времени перехода
             const maxIter = 2000;
             const dt = 0.001;
 
-            // Инициализация нейронов V[x][i] (город x, позиция i)
+            // Матрица решений V[i][pos] (операция i выполняется на позиции pos)
             let V = Array(N).fill().map(() => Array(N).fill(0.0));
-            // случайные небольшие значения
             for (let i = 0; i < N; i++)
                 for (let j = 0; j < N; j++)
                     V[i][j] = 0.5 + (Math.random() - 0.5) * 0.1;
@@ -847,91 +848,90 @@
             let energyHistory = [];
             let iter;
             for (iter = 0; iter < maxIter; iter++) {
-                // Вычисляем энергию и градиент
                 let dV = Array(N).fill().map(() => Array(N).fill(0.0));
                 let energy = 0;
 
-                // Штрафы строк: каждый город встречается ровно один раз
-                for (let x = 0; x < N; x++) {
+                // Штраф: каждая операция выполняется ровно один раз
+                for (let i = 0; i < N; i++) {
                     let sumRow = 0;
-                    for (let i = 0; i < N; i++) sumRow += V[x][i];
+                    for (let pos = 0; pos < N; pos++) sumRow += V[i][pos];
                     let diff = sumRow - 1;
                     energy += 0.5 * A * diff * diff;
-                    for (let i = 0; i < N; i++) dV[x][i] -= A * diff;
+                    for (let pos = 0; pos < N; pos++) dV[i][pos] -= A * diff;
                 }
-                // Штрафы столбцов: на каждой позиции ровно один город
-                for (let i = 0; i < N; i++) {
+                // Штраф: на каждой позиции ровно одна операция
+                for (let pos = 0; pos < N; pos++) {
                     let sumCol = 0;
-                    for (let x = 0; x < N; x++) sumCol += V[x][i];
+                    for (let i = 0; i < N; i++) sumCol += V[i][pos];
                     let diff = sumCol - 1;
                     energy += 0.5 * B * diff * diff;
-                    for (let x = 0; x < N; x++) dV[x][i] -= B * diff;
+                    for (let i = 0; i < N; i++) dV[i][pos] -= B * diff;
                 }
-                // Целевая функция: длина маршрута (C * sum_{x,y,i} V[x][i] * V[y][i+1] * d_xy)
-                for (let x = 0; x < N; x++) {
-                    for (let y = 0; y < N; y++) {
-                        if (x === y) continue;
-                        for (let i = 0; i < N; i++) {
-                            let j = (i + 1) % N;
-                            let contrib = C * tspDistanceMatrix[x][y] * V[x][i] * V[y][j];
+                // Целевая функция: суммарное время перехода
+                for (let i = 0; i < N; i++) {
+                    for (let j = 0; j < N; j++) {
+                        if (i === j) continue;
+                        for (let pos = 0; pos < N; pos++) {
+                            let nextPos = (pos + 1) % N;
+                            let contrib = C * tspDistanceMatrix[i][j] * V[i][pos] * V[j][nextPos];
                             energy += contrib;
-                            dV[x][i] += C * tspDistanceMatrix[x][y] * V[y][j];
-                            dV[y][j] += C * tspDistanceMatrix[x][y] * V[x][i];
+                            dV[i][pos] += C * tspDistanceMatrix[i][j] * V[j][nextPos];
+                            dV[j][nextPos] += C * tspDistanceMatrix[i][j] * V[i][pos];
                         }
                     }
                 }
                 energyHistory.push(energy);
 
-                // Обновление состояний по градиенту (спуск)
+                // Градиентный спуск
                 let maxChange = 0;
-                for (let x = 0; x < N; x++) {
-                    for (let i = 0; i < N; i++) {
-                        let delta = -dV[x][i] * dt;
-                        V[x][i] += delta;
-                        if (V[x][i] < 0) V[x][i] = 0;
-                        if (V[x][i] > 1) V[x][i] = 1;
+                for (let i = 0; i < N; i++) {
+                    for (let pos = 0; pos < N; pos++) {
+                        let delta = -dV[i][pos] * dt;
+                        V[i][pos] += delta;
+                        if (V[i][pos] < 0) V[i][pos] = 0;
+                        if (V[i][pos] > 1) V[i][pos] = 1;
                         maxChange = Math.max(maxChange, Math.abs(delta));
                     }
                 }
                 if (maxChange < 1e-6 && iter > 100) break;
             }
 
-            // Декодирование маршрута из матрицы V: для каждой позиции выбираем город с max V
+            // Декодирование последовательности: для каждой позиции выбираем операцию с max V
             let route = new Array(N);
             let used = new Array(N).fill(false);
-            for (let i = 0; i < N; i++) {
-                let bestCity = -1, bestVal = -1;
-                for (let x = 0; x < N; x++) {
-                    if (!used[x] && V[x][i] > bestVal) {
-                        bestVal = V[x][i];
-                        bestCity = x;
+            for (let pos = 0; pos < N; pos++) {
+                let bestOp = -1, bestVal = -1;
+                for (let i = 0; i < N; i++) {
+                    if (!used[i] && V[i][pos] > bestVal) {
+                        bestVal = V[i][pos];
+                        bestOp = i;
                     }
                 }
-                if (bestCity !== -1) {
-                    route[i] = bestCity;
-                    used[bestCity] = true;
+                if (bestOp !== -1) {
+                    route[pos] = bestOp;
+                    used[bestOp] = true;
                 }
             }
-            // если какой-то город не назначен (ошибка), достроим
-            for (let x = 0; x < N; x++) if (!used[x]) { for (let i = 0; i < N; i++) if (route[i] === undefined) { route[i] = x; used[x] = true; break; } }
+            // если какая-то операция не назначена (на всякий случай)
+            for (let i = 0; i < N; i++) if (!used[i]) { for (let pos = 0; pos < N; pos++) if (route[pos] === undefined) { route[pos] = i; used[i] = true; break; } }
 
-            let dist = totalDistance(route);
-            let feasible = (dist <= limit);
+            let totalTimeVal = totalTime(route);
+            let feasible = (totalTimeVal <= limit);
 
             tspBestRoute = route;
-            tspBestDistance = dist;
+            tspBestDistance = totalTimeVal;
             const endTime = performance.now();
 
             document.getElementById('tspResults').style.display = 'block';
-            document.getElementById('tspOptimalPath').innerHTML = route.map(c => `Город ${c + 1}`).join(' → ') + ` → Город ${route[0] + 1}`;
-            document.getElementById('tspTotalDistance').innerText = dist;
+            document.getElementById('tspOptimalPath').innerHTML = route.map(c => `Операция ${c + 1}`).join(' → ') + ` → Операция ${route[0] + 1}`;
+            document.getElementById('tspTotalDistance').innerText = totalTimeVal;
             document.getElementById('tspIterations').innerText = iter;
             document.getElementById('tspValidFlag').innerHTML = feasible ? '✅ Да' : '❌ Нет';
             document.getElementById('tspTime').innerText = (endTime - startTime).toFixed(2);
             document.getElementById('tspEnergy').innerText = energyHistory[energyHistory.length - 1].toFixed(2);
-            let msg = feasible ? `Маршрут укладывается в лимит ${limit} км.` : `Маршрут не укладывается в лимит ${limit} км (длина ${dist} км).`;
+            let msg = feasible ? `Последовательность укладывается в лимит ${limit} мин.` : `Последовательность не укладывается в лимит ${limit} мин (время ${totalTimeVal} мин).`;
             document.getElementById('tspLimitMessage').innerHTML = `<i class="bi bi-info-circle me-1"></i> ${msg} Градиентный спуск завершён за ${iter} итераций.`;
-            document.getElementById('tspResultBadge').innerHTML = feasible ? '<i class="bi bi-check-circle-fill me-1"></i> Допустимый маршрут (градиент)' : '<i class="bi bi-exclamation-triangle-fill me-1"></i> Маршрут (превышает лимит)';
+            document.getElementById('tspResultBadge').innerHTML = feasible ? '<i class="bi bi-check-circle-fill me-1"></i> Допустимая последовательность' : '<i class="bi bi-exclamation-triangle-fill me-1"></i> Последовательность (превышает лимит)';
             drawTSPGraph(route);
         }
 
