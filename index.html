@@ -11,7 +11,6 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-        /* ========== ОБЩИЙ СТИЛЬ (объединённый) ========== */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -504,7 +503,7 @@
                                     Симплекс-методы</button></li>
                         </ul>
                         <div class="tab-content">
-                            <!-- ========== 1. ПРОИЗВОДСТВО (полный перебор) ========== -->
+                            <!-- 1. ПРОИЗВОДСТВО -->
                             <div class="tab-pane fade show active" id="production">
                                 <div class="row mb-4">
                                     <div class="col-md-6"><label class="form-label">Общее количество
@@ -612,14 +611,15 @@
                                 <div id="errorProd" class="alert-danger mt-3" style="display: none;"></div>
                             </div>
 
-                            <!-- ========== 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД) ========== -->
+                            <!-- 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД) -->
                             <div class="tab-pane fade" id="tspTabMain">
                                 <div class="tsp-section">
                                     <h3><i class="bi bi-diagram-3"></i> Оптимизация последовательности операций</h3>
-                                    <p><strong>Градиентный метод:</strong> минимизация целевой функции
-                                        <code>E = A/2·Σ(ΣVxi - 1)² + B/2·Σ(ΣVxi - 1)² + C·ΣΣ Vxi·Vyj·d_ij</code> с
-                                        помощью градиентного спуска. Не требует перебора вариантов, находит
-                                        локально-оптимальный порядок выполнения операций.</p>
+                                    <p><strong>Градиентный метод</strong>— это итерационная процедура, которая постепенно улучшает порядок выполнения операций. Алгоритм представляет возможную
+                                    последовательность в виде матрицы «операция–позиция» и вычисляет, как изменение этой матрицы влияет на общее время
+                                    перехода. На каждом шаге он корректирует значения в сторону уменьшения времени, соблюдая ограничения (каждая операция на
+                                    одной позиции, каждая позиция занята одной операцией). Метод не требует полного перебора всех вариантов и находит
+                                    локально-оптимальный порядок, близкий к наилучшему.</p>
                                     <div class="row g-2 mb-3 align-items-end">
                                         <div class="col-md-4"><label class="form-label">Количество операций
                                                 (3–8):</label><input type="number" id="tspCitiesCount"
@@ -679,7 +679,7 @@
                                 </div>
                             </div>
 
-                            <!-- ========== 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ ========== -->
+                            <!-- 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ -->
                             <div class="tab-pane fade" id="advanced">
                                 <ul class="nav nav-tabs mb-3" id="subTab" role="tablist">
                                     <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
@@ -770,7 +770,7 @@
     </div>
 
     <script>
-        // ==================== 1. ПРОИЗВОДСТВО (полный перебор) ====================
+        // 1. ПРОИЗВОДСТВО
         let productCount = 2;
         const maxProducts = 10;
         let prodChartResource = null, prodChartEfficiency = null;
@@ -824,7 +824,7 @@
         function clearHistoryProd() { if (confirm('Очистить историю производства?')) { localStorage.removeItem('calcHistoryProd'); displayHistoryProd(); } }
         function showErrorProd(msg) { let err = document.getElementById('errorProd'); err.style.display = 'block'; err.innerText = msg; }
 
-        // ==================== 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД) ====================
+        // 2. ПОСЛЕДОВАТЕЛЬНОСТЬ ОПЕРАЦИЙ (ГРАДИЕНТНЫЙ МЕТОД)
         let tspDistanceMatrix = [], tspCities = 5, tspCanvas = null;
         let tspBestRoute = [], tspBestDistance = Infinity;
         function initTSP() { tspCanvas = document.getElementById('tspGraphCanvas'); rebuildTSPMatrix(); }
@@ -950,7 +950,7 @@
             document.getElementById('tspOptimalPath').innerHTML = route.map(c => `Операция ${c + 1}`).join(' → ') + ` → Операция ${route[0] + 1}`;
             document.getElementById('tspTotalDistance').innerText = totalTimeVal;
             document.getElementById('tspIterations').innerText = iter;
-            document.getElementById('tspValidFlag').innerHTML = feasible ? '✅ Да' : '❌ Нет';
+            document.getElementById('tspValidFlag').innerHTML = feasible ? 'Да' : 'Нет';
             document.getElementById('tspTime').innerText = (endTime - startTime).toFixed(2);
             document.getElementById('tspEnergy').innerText = energyHistory[energyHistory.length - 1].toFixed(2);
             let msg = feasible ? `Последовательность укладывается в лимит ${limit} мин.` : `Последовательность не укладывается в лимит ${limit} мин (время ${totalTimeVal} мин).`;
@@ -1003,7 +1003,7 @@
             }
         }
 
-        // ==================== 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ ====================
+        // 3. СИМПЛЕКС И ДВОЙСТВЕННЫЙ
         let simplexVars = 2, simplexCons = 2;
         function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
         function solveSimplex() { let n = simplexVars, m = simplexCons, c = [], A = [], b = []; for (let j = 0; j < n; j++)c.push(parseFloat(document.getElementById(`simplex_c${j}`).value) || 0); for (let i = 0; i < m; i++) { let row = []; for (let j = 0; j < n; j++)row.push(parseFloat(document.getElementById(`simplex_a${i}_${j}`).value) || 0); A.push(row); b.push(parseFloat(document.getElementById(`simplex_b${i}`).value) || 0); } let direction = document.querySelector('input[name="simplexDirection"]:checked').value; if (direction === 'min') c = c.map(ci => -ci); let tableau = []; for (let i = 0; i < m; i++) { let row = [...A[i], ...Array(m).fill(0), b[i]]; row[n + i] = 1; tableau.push(row); } let objRow = c.map(ci => -ci); objRow.push(...Array(m).fill(0), 0); tableau.push(objRow); let steps = [], iter = 0; while (true) { let pivotCol = -1; for (let j = 0; j < n + m; j++)if (tableau[m][j] < 0 && (pivotCol == -1 || tableau[m][j] < tableau[m][pivotCol])) pivotCol = j; if (pivotCol == -1) break; let minRatio = Infinity, pivotRow = -1; for (let i = 0; i < m; i++)if (tableau[i][pivotCol] > 1e-9) { let ratio = tableau[i][n + m] / tableau[i][pivotCol]; if (ratio < minRatio) { minRatio = ratio; pivotRow = i; } } if (pivotRow == -1) { steps.push("Задача неограничена"); break; } let pivotVal = tableau[pivotRow][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[pivotRow][j] /= pivotVal; for (let i = 0; i <= m; i++)if (i != pivotRow) { let factor = tableau[i][pivotCol]; for (let j = 0; j <= n + m; j++)tableau[i][j] -= factor * tableau[pivotRow][j]; } steps.push(`Итерация ${++iter}: ведущий элемент (${pivotRow + 1},${pivotCol + 1})`); } let x = Array(n).fill(0); for (let j = 0; j < n; j++) { let basicRow = -1; for (let i = 0; i < m; i++)if (Math.abs(tableau[i][j] - 1) < 1e-9) { let ok = true; for (let k = 0; k < n + m; k++)if (k != j && Math.abs(tableau[i][k]) > 1e-9) ok = false; if (ok) basicRow = i; } if (basicRow != -1) x[j] = tableau[basicRow][n + m]; } let optValue = tableau[m][n + m]; if (direction === 'min') optValue = -optValue; document.getElementById('simplexResult').style.display = 'block'; let dirText = direction === 'max' ? 'максимальное значение' : 'минимальное значение'; document.getElementById('simplexSolution').innerHTML = `<strong>Оптимальное решение:</strong><br> x* = [${x.map(v => v.toFixed(4)).join(', ')}]<br> ${dirText} целевой функции: ${optValue.toFixed(4)}<br>`; document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций"; }
