@@ -344,7 +344,6 @@
             padding: 10px 8px;
             vertical-align: middle;
             border: 1px solid #5a5a6e;
-            /* Явные границы ячеек */
         }
 
         .tsp-card,
@@ -501,6 +500,14 @@
             width: auto;
             min-width: 70px;
         }
+
+        .export-buttons {
+            margin-top: 15px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 
@@ -605,6 +612,14 @@
                                     <div class="charts-container">
                                         <div class="chart-container"><canvas id="resourceChartProd"></canvas></div>
                                         <div class="chart-container"><canvas id="efficiencyChartProd"></canvas></div>
+                                    </div>
+                                    <div class="export-buttons">
+                                        <button class="btn-export" onclick="exportToXLSX()"><i
+                                                class="bi bi-file-earmark-excel"></i> Excel (XLSX)</button>
+                                        <button class="btn-export" onclick="exportToJSON()"><i
+                                                class="bi bi-filetype-json"></i> JSON</button>
+                                        <button class="btn-export" onclick="exportToTXT()"><i
+                                                class="bi bi-file-text"></i> TXT</button>
                                     </div>
                                     <div class="mt-4">
                                         <h5>Детальный расчёт</h5>
@@ -775,11 +790,13 @@
     </div>
 
     <script>
-        // 1. ПРОИЗВОДСТВО
+        // ПРОИЗВОДСТВО
         let productCount = 2;
         const maxProducts = 10;
         let prodChartResource = null, prodChartEfficiency = null;
         let productsData = [{ name: 'P1', labor: 4, material: 3, profit: 25 }, { name: 'P2', labor: 3, material: 4, profit: 30 }];
+        let lastProdResult = null; // для экспорта
+
         function saveProducts() { for (let i = 0; i < productCount; i++) { let n = document.getElementById(`p_name${i}`), l = document.getElementById(`p_labor${i}`), m = document.getElementById(`p_material${i}`), p = document.getElementById(`p_profit${i}`); if (n && l && m && p) productsData[i] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; } }
         function renderProducts() { let container = document.getElementById('productsContainer'); if (!container) return; container.innerHTML = ''; for (let i = 0; i < productCount; i++) { let d = productsData[i] || { name: `P${i + 1}`, labor: 0, material: 0, profit: 0 }; container.innerHTML += `<div class="product-row"><div class="row g-3"><div class="col-md-3"><label class="form-label">Название</label><input type="text" class="form-control" id="p_name${i}" value="${d.name}" onchange="updateProductData(${i})"></div><div class="col-md-3"><label class="form-label">Труд (ч)</label><input type="number" class="form-control" id="p_labor${i}" value="${d.labor}" min="1" onchange="updateProductData(${i}); updateComplexityProd()"></div><div class="col-md-3"><label class="form-label">Материал (кг)</label><input type="number" class="form-control" id="p_material${i}" value="${d.material}" min="1" onchange="updateProductData(${i}); updateComplexityProd()"></div><div class="col-md-3"><label class="form-label">Прибыль</label><input type="number" class="form-control" id="p_profit${i}" value="${d.profit}" onchange="updateProductData(${i})"></div></div></div>`; } updateComplexityProd(); }
         function updateProductData(idx) { let n = document.getElementById(`p_name${idx}`), l = document.getElementById(`p_labor${idx}`), m = document.getElementById(`p_material${idx}`), p = document.getElementById(`p_profit${idx}`); if (n && l && m && p) productsData[idx] = { name: n.value, labor: parseInt(l.value), material: parseInt(m.value), profit: parseInt(p.value) }; }
@@ -816,7 +833,6 @@
             else { document.getElementById('modeBadgeProd').innerHTML = 'Минимальная прибыль'; document.getElementById('profitLabelProd').innerText = 'минимальная прибыль'; }
             let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
             document.getElementById('resultProductsProd').innerHTML = resHtml;
-            // Формирование таблицы с использованием DOM (гарантирует правильную структуру)
             const tbody = document.getElementById('tableBodyProd');
             tbody.innerHTML = '';
             for (let i = 0; i < productCount; i++) {
@@ -833,18 +849,87 @@
             let ctx1 = document.getElementById('resourceChartProd').getContext('2d'); prodChartResource = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMat - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
             let ctx2 = document.getElementById('efficiencyChartProd').getContext('2d'); prodChartEfficiency = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => +(p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
             let hist = JSON.parse(localStorage.getItem('calcHistoryProd') || '[]'); hist.unshift({ timestamp: new Date().toLocaleString(), products: products.map(p => p.name), plan: best, profit: optProfit, mode, checks, time: (end - start).toFixed(2) }); if (hist.length > 10) hist.pop(); localStorage.setItem('calcHistoryProd', JSON.stringify(hist)); displayHistoryProd();
+            // Сохраняем результат для экспорта
+            lastProdResult = { products, best, optProfit, usedHours, usedMat, totalHours, totalMat, mode, checks, time: (end - start).toFixed(2) };
         }
         function displayHistoryProd() { let hist = JSON.parse(localStorage.getItem('calcHistoryProd') || '[]'); let container = document.getElementById('historyListProd'); if (hist.length === 0) { container.innerHTML = '<div class="text-secondary">Нет сохранённых расчётов</div>'; return; } container.innerHTML = hist.map((item, idx) => `<div class="history-item" onclick="loadHistoryProd(${idx})"><div class="d-flex justify-content-between"><small>${item.timestamp}</small><span class="badge ${item.mode === 'max' ? 'bg-success' : 'bg-danger'}">${item.mode === 'max' ? 'MAX' : 'MIN'}</span></div><div><strong>Прибыль: ${item.profit}</strong></div><small>Продукты: ${item.products.join(', ')}</small></div>`).join(''); }
         function loadHistoryProd(idx) { let hist = JSON.parse(localStorage.getItem('calcHistoryProd') || '[]'); let item = hist[idx]; if (item) alert(`Расчёт от ${item.timestamp}\nПрибыль: ${item.profit}\nПлан: ${item.plan.join(', ')} ед.`); }
         function clearHistoryProd() { if (confirm('Очистить историю производства?')) { localStorage.removeItem('calcHistoryProd'); displayHistoryProd(); } }
         function showErrorProd(msg) { let err = document.getElementById('errorProd'); err.style.display = 'block'; err.innerText = msg; }
 
-        // 2. КОММИВОЯЖЁР
+        // ЭКСПОРТ
+        function exportToXLSX() {
+            if (!lastProdResult) { alert('Сначала выполните расчёт!'); return; }
+            const { products, best, optProfit, usedHours, usedMat, totalHours, totalMat, mode, checks, time } = lastProdResult;
+            const data = [
+                ['Параметр', 'Значение'],
+                ['Режим', mode === 'max' ? 'Максимизация' : 'Минимизация'],
+                ['Оптимальная прибыль', optProfit],
+                ['Использовано часов', usedHours],
+                ['Всего часов', totalHours],
+                ['Использовано материалов', usedMat],
+                ['Всего материалов', totalMat],
+                ['Проверено комбинаций', checks],
+                ['Время расчёта (мс)', time],
+                []
+            ];
+            data.push(['Продукт', 'Труд (ч)', 'Материал (кг)', 'Прибыль', 'Эффективность', 'Оптимум']);
+            for (let i = 0; i < products.length; i++) {
+                const eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
+                data.push([products[i].name, products[i].labor, products[i].material, products[i].profit, eff, best[i]]);
+            }
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Оптимальное_решение');
+            XLSX.writeFile(wb, `optimal_solution_${new Date().toISOString().slice(0, 19)}.xlsx`);
+        }
+        function exportToJSON() {
+            if (!lastProdResult) { alert('Сначала выполните расчёт!'); return; }
+            const data = {
+                timestamp: new Date().toISOString(),
+                ...lastProdResult,
+                products: lastProdResult.products.map((p, idx) => ({ ...p, optimal_quantity: lastProdResult.best[idx] }))
+            };
+            delete data.best; // уже включено в products
+            const jsonStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `optimal_solution_${new Date().toISOString().slice(0, 19)}.json`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+        function exportToTXT() {
+            if (!lastProdResult) { alert('Сначала выполните расчёт!'); return; }
+            const { products, best, optProfit, usedHours, usedMat, totalHours, totalMat, mode, checks, time } = lastProdResult;
+            let text = `ОПТИМАЛЬНОЕ РЕШЕНИЕ (${mode === 'max' ? 'Максимизация' : 'Минимизация'})\n`;
+            text += `=============================================\n`;
+            text += `Оптимальная прибыль: ${optProfit}\n`;
+            text += `Использование ресурсов:\n`;
+            text += `  Часы: ${usedHours} / ${totalHours} (${(usedHours / totalHours * 100).toFixed(1)}%)\n`;
+            text += `  Материалы: ${usedMat} / ${totalMat} (${(usedMat / totalMat * 100).toFixed(1)}%)\n`;
+            text += `Статистика: проверено комбинаций ${checks}, время ${time} мс\n\n`;
+            text += `ДЕТАЛЬНЫЙ ПЛАН:\n`;
+            text += `---------------------------------------------\n`;
+            text += `Продукт | Труд | Материал | Прибыль | Эффективность | Количество\n`;
+            for (let i = 0; i < products.length; i++) {
+                const eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
+                text += `${products[i].name.padEnd(7)} | ${products[i].labor} | ${products[i].material} | ${products[i].profit} | ${eff} | ${best[i]}\n`;
+            }
+            const blob = new Blob([text], { type: 'text/plain' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `optimal_solution_${new Date().toISOString().slice(0, 19)}.txt`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        }
+
+        // КОММИВОЯЖЁР
         let tspDistanceMatrix = [], tspCities = 5, tspCanvas = null;
         let lastTSPRoute = [];
         function initTSP() { const canvas = document.getElementById('tspGraphCanvas'); canvas.width = 600; canvas.height = 400; tspCanvas = canvas; rebuildTSPMatrix(); }
         function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(8, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph(lastTSPRoute); document.getElementById('tspResults').style.display = 'none'; }
-        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Операция ${i + 1}</th>`; html += '<tr></thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Операция ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;" min="0"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)" min="0" step="1"></td>`; } html += '</tr>'; } html += '</tbody></table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
+        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Операция ${i + 1}</th>`; html += '</tr></thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Операция ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;" min="0"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)" min="0" step="1"></td>`; } html += '</tr>'; } html += '</tbody></table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
         function updateDistance(i, j, val) { let v = parseInt(val); if (isNaN(v)) v = 0; if (v < 0) v = 0; v = Math.min(v, 1000); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; let otherField = document.getElementById(`dist_${j}_${i}`); if (otherField) otherField.value = v; drawTSPGraph(lastTSPRoute); document.getElementById('tspResults').style.display = 'none'; }
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; let field = document.getElementById(`dist_${i}_${j}`); if (field) field.value = v; let field2 = document.getElementById(`dist_${j}_${i}`); if (field2) field2.value = v; } drawTSPGraph(lastTSPRoute); document.getElementById('tspResults').style.display = 'none'; }
         function totalTime(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
@@ -876,7 +961,7 @@
         }
         function drawTSPGraph(route) { if (!tspCanvas) return; const ctx = tspCanvas.getContext('2d'); const w = tspCanvas.width, h = tspCanvas.height; ctx.clearRect(0, 0, w, h); if (tspCities === 0) return; const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2; let points = []; for (let i = 0; i < tspCities; i++) { let angle = i * angleStep - Math.PI / 2; points.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) }); } for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.strokeStyle = "#555"; ctx.stroke(); ctx.fillStyle = "#aaa"; ctx.fillText(tspDistanceMatrix[i][j], (points[i].x + points[j].x) / 2, (points[i].y + points[j].y) / 2 - 5); } for (let i = 0; i < tspCities; i++) { ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI); ctx.fillStyle = "#9b59b6"; ctx.fill(); ctx.fillStyle = "white"; ctx.font = "bold 16px 'Segoe UI'"; ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7); } if (route && route.length > 1) { for (let k = 0; k < route.length; k++) { let from = route[k], to = route[(k + 1) % route.length]; ctx.beginPath(); ctx.moveTo(points[from].x, points[from].y); ctx.lineTo(points[to].x, points[to].y); ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 3; ctx.stroke(); } } }
 
-        // 3. СИМПЛЕКС (≤, max) 
+        // СИМПЛЕКС (≤, max)
         let simplexVars = 2, simplexCons = 2;
         function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0 (b ≥ 0)</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
         function solveSimplex() {
@@ -902,7 +987,7 @@
             document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций";
         }
 
-        // 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС (≥, min) 
+        // ДВОЙСТВЕННЫЙ СИМПЛЕКС (≥, min)
         let dualVars = 2, dualCons = 2;
         function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
         function solveDualSimplex() {
