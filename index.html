@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Оптимальные решения: Коммивояжёр и граф + симплекс и двойственный метод</title>
+    <title>Оптимальные решения: Коммивояжёр + симплекс</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -327,7 +327,7 @@
             color: white;
             padding: 12px 8px;
             font-weight: 600;
-            border: none;
+            border: 1px solid #6c3483;
         }
 
         .table tbody tr {
@@ -343,6 +343,8 @@
         .table th {
             padding: 10px 8px;
             vertical-align: middle;
+            border: 1px solid #5a5a6e;
+            /* Явные границы ячеек */
         }
 
         .tsp-card,
@@ -517,13 +519,14 @@
                                     data-bs-target="#production"><i class="bi bi-box-seam me-1"></i> Производство
                                     (перебор)</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
-                                    data-bs-target="#tspTabMain"><i class="bi bi-diagram-3 me-1"></i> Коммивояжёр</button></li>
+                                    data-bs-target="#tspTabMain"><i class="bi bi-diagram-3 me-1"></i>
+                                    Коммивояжёр</button></li>
                             <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
                                     data-bs-target="#advanced"><i class="bi bi-graph-up me-1"></i>
                                     Симплекс-методы</button></li>
                         </ul>
                         <div class="tab-content">
-                            <!-- 1. ПРОИЗВОДСТВО  -->
+                            <!-- 1. ПРОИЗВОДСТВО -->
                             <div class="tab-pane fade show active" id="production">
                                 <div class="row mb-4">
                                     <div class="col-md-6"><label class="form-label">Общее количество
@@ -705,7 +708,6 @@
                                             Двойственный (≥, min)</button></li>
                                 </ul>
                                 <div class="tab-content">
-                                    <!-- Симплекс (≤, max) -->
                                     <div class="tab-pane fade show active" id="simplexTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-graph-up"></i> Симплекс-метод (максимизация, ≤)</h3>
@@ -734,7 +736,6 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <!-- Двойственный (≥, min) -->
                                     <div class="tab-pane fade" id="dualTab">
                                         <div class="simplex-section">
                                             <h3><i class="bi bi-arrow-left-right"></i> Двойственный симплекс-метод
@@ -774,7 +775,7 @@
     </div>
 
     <script>
-        //  1. ПРОИЗВОДСТВО 
+        // 1. ПРОИЗВОДСТВО
         let productCount = 2;
         const maxProducts = 10;
         let prodChartResource = null, prodChartEfficiency = null;
@@ -811,13 +812,23 @@
             let hp = (usedHours / totalHours * 100).toFixed(1), mp = (usedMat / totalMat * 100).toFixed(1);
             document.getElementById('hoursBarProd').style.width = hp + '%'; document.getElementById('hoursBarProd').innerText = hp + '%';
             document.getElementById('materialBarProd').style.width = mp + '%'; document.getElementById('materialBarProd').innerText = mp + '%';
-            if (optProfit < 0) document.getElementById('profitBadgeProd').classList.add('negative'); else document.getElementById('profitBadgeProd').classList.remove('negative');
             if (mode === 'max') { document.getElementById('modeBadgeProd').innerHTML = 'Максимальная прибыль'; document.getElementById('profitLabelProd').innerText = 'максимальная прибыль'; }
             else { document.getElementById('modeBadgeProd').innerHTML = 'Минимальная прибыль'; document.getElementById('profitLabelProd').innerText = 'минимальная прибыль'; }
             let resHtml = ''; for (let i = 0; i < productCount; i++) resHtml += `<div><strong>${products[i].name}:</strong> ${best[i]} ед.</div>`;
             document.getElementById('resultProductsProd').innerHTML = resHtml;
-            let tabHtml = ''; for (let i = 0; i < productCount; i++) { let eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2); tabHtml += `<tr><td><strong>${products[i].name}</strong></td><td>${products[i].labor}</td><tr><td>${products[i].material}</td><td>${products[i].profit}</td><td>${eff}</td><td class="fw-bold">${best[i]}</td>`; }
-            document.getElementById('tableBodyProd').innerHTML = tabHtml;
+            // Формирование таблицы с использованием DOM (гарантирует правильную структуру)
+            const tbody = document.getElementById('tableBodyProd');
+            tbody.innerHTML = '';
+            for (let i = 0; i < productCount; i++) {
+                const eff = (products[i].profit / (products[i].labor + products[i].material)).toFixed(2);
+                const row = tbody.insertRow();
+                row.insertCell(0).innerHTML = `<strong>${products[i].name}</strong>`;
+                row.insertCell(1).innerText = products[i].labor;
+                row.insertCell(2).innerText = products[i].material;
+                row.insertCell(3).innerText = products[i].profit;
+                row.insertCell(4).innerText = eff;
+                row.insertCell(5).innerHTML = `<span class="fw-bold">${best[i]}</span>`;
+            }
             if (prodChartResource) prodChartResource.destroy(); if (prodChartEfficiency) prodChartEfficiency.destroy();
             let ctx1 = document.getElementById('resourceChartProd').getContext('2d'); prodChartResource = new Chart(ctx1, { type: 'bar', data: { labels: ['Трудовые ресурсы', 'Материалы'], datasets: [{ label: 'Использовано', data: [usedHours, usedMat], backgroundColor: ['#9b59b6', '#2ecc71'] }, { label: 'Остаток', data: [totalHours - usedHours, totalMat - usedMat], backgroundColor: ['rgba(155,89,182,0.3)', 'rgba(46,204,113,0.3)'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#fff' } } } } });
             let ctx2 = document.getElementById('efficiencyChartProd').getContext('2d'); prodChartEfficiency = new Chart(ctx2, { type: 'doughnut', data: { labels: products.map(p => p.name), datasets: [{ data: products.map(p => +(p.profit / (p.labor + p.material)).toFixed(2)), backgroundColor: ['#9b59b6', '#3498db', '#e74c3c', '#f1c40f', '#2ecc71'] }] }, options: { responsive: true, plugins: { legend: { labels: { color: '#fff' } } } } });
@@ -828,12 +839,12 @@
         function clearHistoryProd() { if (confirm('Очистить историю производства?')) { localStorage.removeItem('calcHistoryProd'); displayHistoryProd(); } }
         function showErrorProd(msg) { let err = document.getElementById('errorProd'); err.style.display = 'block'; err.innerText = msg; }
 
-        //  2. КОММИВОЯЖЁР
+        // 2. КОММИВОЯЖЁР
         let tspDistanceMatrix = [], tspCities = 5, tspCanvas = null;
         let lastTSPRoute = [];
         function initTSP() { const canvas = document.getElementById('tspGraphCanvas'); canvas.width = 600; canvas.height = 400; tspCanvas = canvas; rebuildTSPMatrix(); }
         function rebuildTSPMatrix() { let n = parseInt(document.getElementById('tspCitiesCount').value); n = Math.min(8, Math.max(3, n)); tspCities = n; tspDistanceMatrix = Array(n).fill().map(() => Array(n).fill(0)); for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; } renderDistanceMatrix(); drawTSPGraph(lastTSPRoute); document.getElementById('tspResults').style.display = 'none'; }
-        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Операция ${i + 1}</th>`; html += '</thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Операция ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;" min="0"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)" min="0" step="1"></td>`; } html += '</tr>'; } html += '</tbody><table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
+        function renderDistanceMatrix() { let html = '<table class="table table-bordered text-center">'; html += '<thead><tr><th></th>'; for (let i = 0; i < tspCities; i++) html += `<th>Операция ${i + 1}</th>`; html += '<tr></thead><tbody>'; for (let i = 0; i < tspCities; i++) { html += `<tr><td class="fw-bold">Операция ${i + 1}</td>`; for (let j = 0; j < tspCities; j++) { if (i === j) html += `<td><input type="number" class="matrix-input" value="0" disabled style="background:#2c3e50;" min="0"></td>`; else html += `<td><input type="number" class="matrix-input" id="dist_${i}_${j}" value="${tspDistanceMatrix[i][j]}" onchange="updateDistance(${i},${j},this.value)" min="0" step="1"></td>`; } html += '</tr>'; } html += '</tbody></table>'; document.getElementById('distanceMatrixContainer').innerHTML = html; }
         function updateDistance(i, j, val) { let v = parseInt(val); if (isNaN(v)) v = 0; if (v < 0) v = 0; v = Math.min(v, 1000); tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; let otherField = document.getElementById(`dist_${j}_${i}`); if (otherField) otherField.value = v; drawTSPGraph(lastTSPRoute); document.getElementById('tspResults').style.display = 'none'; }
         function generateRandomDistances() { for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { let v = Math.floor(Math.random() * 30) + 10; tspDistanceMatrix[i][j] = v; tspDistanceMatrix[j][i] = v; let field = document.getElementById(`dist_${i}_${j}`); if (field) field.value = v; let field2 = document.getElementById(`dist_${j}_${i}`); if (field2) field2.value = v; } drawTSPGraph(lastTSPRoute); document.getElementById('tspResults').style.display = 'none'; }
         function totalTime(route) { let d = 0; for (let i = 0; i < route.length - 1; i++) d += tspDistanceMatrix[route[i]][route[i + 1]]; d += tspDistanceMatrix[route[route.length - 1]][route[0]]; return d; }
@@ -842,25 +853,11 @@
             const limit = parseInt(document.getElementById('tspLimit').value) || 999999;
             const N = tspCities;
             if (N < 2) return;
-            let bestRoute = null;
-            let bestDist = Infinity;
-            let permutationsCount = 0;
+            let bestRoute = null, bestDist = Infinity, permutationsCount = 0;
             const cities = Array.from({ length: N }, (_, i) => i);
             function permute(arr, start) {
-                if (start === N - 1) {
-                    permutationsCount++;
-                    let dist = totalTime(arr);
-                    if (dist < bestDist) {
-                        bestDist = dist;
-                        bestRoute = arr.slice();
-                    }
-                    return;
-                }
-                for (let i = start; i < N; i++) {
-                    [arr[start], arr[i]] = [arr[i], arr[start]];
-                    permute(arr, start + 1);
-                    [arr[start], arr[i]] = [arr[i], arr[start]];
-                }
+                if (start === N - 1) { permutationsCount++; let dist = totalTime(arr); if (dist < bestDist) { bestDist = dist; bestRoute = arr.slice(); } return; }
+                for (let i = start; i < N; i++) { [arr[start], arr[i]] = [arr[i], arr[start]]; permute(arr, start + 1);[arr[start], arr[i]] = [arr[i], arr[start]]; }
             }
             permute(cities, 0);
             const endTime = performance.now();
@@ -879,7 +876,7 @@
         }
         function drawTSPGraph(route) { if (!tspCanvas) return; const ctx = tspCanvas.getContext('2d'); const w = tspCanvas.width, h = tspCanvas.height; ctx.clearRect(0, 0, w, h); if (tspCities === 0) return; const angleStep = 2 * Math.PI / tspCities, radius = Math.min(w, h) * 0.35, cx = w / 2, cy = h / 2; let points = []; for (let i = 0; i < tspCities; i++) { let angle = i * angleStep - Math.PI / 2; points.push({ x: cx + radius * Math.cos(angle), y: cy + radius * Math.sin(angle) }); } for (let i = 0; i < tspCities; i++) for (let j = i + 1; j < tspCities; j++) { ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.strokeStyle = "#555"; ctx.stroke(); ctx.fillStyle = "#aaa"; ctx.fillText(tspDistanceMatrix[i][j], (points[i].x + points[j].x) / 2, (points[i].y + points[j].y) / 2 - 5); } for (let i = 0; i < tspCities; i++) { ctx.beginPath(); ctx.arc(points[i].x, points[i].y, 20, 0, 2 * Math.PI); ctx.fillStyle = "#9b59b6"; ctx.fill(); ctx.fillStyle = "white"; ctx.font = "bold 16px 'Segoe UI'"; ctx.fillText(i + 1, points[i].x - 7, points[i].y + 7); } if (route && route.length > 1) { for (let k = 0; k < route.length; k++) { let from = route[k], to = route[(k + 1) % route.length]; ctx.beginPath(); ctx.moveTo(points[from].x, points[from].y); ctx.lineTo(points[to].x, points[to].y); ctx.strokeStyle = "#e74c3c"; ctx.lineWidth = 3; ctx.stroke(); } } }
 
-        //  3.  СИМПЛЕКС (≤, max) 
+        // 3. СИМПЛЕКС (≤, max) 
         let simplexVars = 2, simplexCons = 2;
         function buildSimplexInput() { let n = parseInt(document.getElementById('simplexVars').value); let m = parseInt(document.getElementById('simplexCons').value); simplexVars = n; simplexCons = m; let html = `<div class="mb-3"><label>Целевая функция: c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 5 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≤ b, x ≥ 0 (b ≥ 0)</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="simplex_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≤ </span><input type="number" id="simplex_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 10 : 12}"></div>`; } document.getElementById('simplexInputArea').innerHTML = html; document.getElementById('simplexResult').style.display = 'none'; }
         function solveSimplex() {
@@ -905,7 +902,7 @@
             document.getElementById('simplexSteps').innerHTML = steps.join('<br>') || "Оптимум найден без итераций";
         }
 
-        //  4. ДВОЙСТВЕННЫЙ (≥, min) 
+        // 4. ДВОЙСТВЕННЫЙ СИМПЛЕКС (≥, min) 
         let dualVars = 2, dualCons = 2;
         function buildDualInput() { let n = parseInt(document.getElementById('dualVars').value); let m = parseInt(document.getElementById('dualCons').value); dualVars = n; dualCons = m; let html = `<div class="mb-3"><label>Целевая функция (минимизация): c₁x₁ + ...</label><div class="d-flex flex-wrap gap-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_c${j}" class="form-control" style="width:80px" placeholder="c${j + 1}" value="${j === 0 ? 3 : 4}">`; html += `</div></div><div class="mb-3"><strong>Ограничения Ax ≥ b, x ≥ 0</strong></div>`; for (let i = 0; i < m; i++) { html += `<div class="d-flex flex-wrap align-items-center gap-2 mb-2">`; for (let j = 0; j < n; j++) html += `<input type="number" id="dual_a${i}_${j}" class="form-control" style="width:70px" placeholder="a${i + 1}${j + 1}" value="${i === 0 ? (j === 0 ? 2 : 1) : (i === 1 ? (j === 0 ? 1 : 2) : 1)}">`; html += `<span> ≥ </span><input type="number" id="dual_b${i}" class="form-control" style="width:80px" value="${i === 0 ? 8 : 10}"></div>`; } document.getElementById('dualInputArea').innerHTML = html; document.getElementById('dualResult').style.display = 'none'; }
         function solveDualSimplex() {
